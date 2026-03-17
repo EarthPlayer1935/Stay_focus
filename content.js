@@ -132,6 +132,8 @@ function onKeyDown(e) {
     currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
     overlayWindow.style.left = `${currentX}px`;
     e.preventDefault();
+  } else if (e.key === 'Escape') {
+    chrome.storage.local.set({ enabled: false });
   }
 }
 

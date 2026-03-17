@@ -110,7 +110,8 @@ function updateStyles() {
 function updateVisibility() {
   if (!overlayContainer) return;
 
-  const shouldBeVisible = isEnabled && !(isAutoHideEnabled && isMouseOutside);
+  // Override auto-hide if the popup is open so the user can see their adjustments
+  const shouldBeVisible = isEnabled && (!(isAutoHideEnabled && isMouseOutside) || isPopupOpen);
   
   if (shouldBeVisible) {
     overlayContainer.classList.add('active');

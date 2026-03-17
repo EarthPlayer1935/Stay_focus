@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(() => {
       borderRadius: result.borderRadius !== undefined ? result.borderRadius : 12,
       opacity: result.opacity !== undefined ? result.opacity : 75,
       color: result.color !== undefined ? result.color : '#000000',
-      autoHide: result.autoHide !== undefined ? result.autoHide : false,
+      autoHide: result.autoHide !== undefined ? result.autoHide : true,
       isPopupOpen: false
     });
   });

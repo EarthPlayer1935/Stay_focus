@@ -19,18 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updateSettings(updates) {
-    chrome.storage.local.set(updates, () => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0] && tabs[0].id) {
-          chrome.tabs.sendMessage(tabs[0].id, { type: 'UPDATE_FOCUS_SETTINGS', ...updates }, (response) => {
-            // Ignore if we can't connect, script might not be injected
-            if (chrome.runtime.lastError) {
-              console.log("Could not send message to tab, maybe script is not injected yet.");
-            }
-          });
-        }
-      });
-    });
+    chrome.storage.local.set(updates);
   }
 
   toggleFocus.addEventListener('change', (e) => {

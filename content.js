@@ -157,9 +157,12 @@ chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', '
   applySettings(result);
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'UPDATE_FOCUS_SETTINGS') {
-    applySettings(request);
-    sendResponse({ success: true });
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'local') {
+    let updates = {};
+    for (let key in changes) {
+      updates[key] = changes[key].newValue;
+    }
+    applySettings(updates);
   }
 });

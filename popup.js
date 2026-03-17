@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Notify content script that popup is open
+  notifyPopupState(true);
+
   const toggleFocus = document.getElementById('toggleFocus');
   const toggleFullRow = document.getElementById('toggleFullRow');
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
@@ -20,6 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateSettings(updates) {
     chrome.storage.local.set(updates);
+  }
+
+  function notifyPopupState(isOpen) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0] && tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, { type: 'POPUP_STATE_CHANGED', isOpen: isOpen }, (response) => {
+          if (chrome.runtime.lastError) {
+             // Script might not be injected
+          }
+        });
+      }
+    });
   }
 
   toggleFocus.addEventListener('change', (e) => {
@@ -53,4 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
   colorPicker.addEventListener('change', (e) => {
     updateSettings({ color: e.target.value });
   });
+});
+
+window.addEventListener('unload', () => {
+  // Notify content script that popup is closed
+  notifyPopupState(false);
 });

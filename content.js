@@ -1,6 +1,7 @@
 let isEnabled = false;
 let isFullRow = false;
 let isHighlightMode = false;
+let isPopupOpen = false;
 let windowHeight = 50;
 let windowWidth = 200;
 let bgOpacity = 75; // 0 to 100
@@ -95,7 +96,7 @@ function updateStyles() {
 }
 
 function onMouseMove(e) {
-  if (!isEnabled) return;
+  if (!isEnabled || isPopupOpen) return;
   
   // Center the window on the mouse cursor
   let newY = e.clientY - (windowHeight / 2);
@@ -163,6 +164,12 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     for (let key in changes) {
       updates[key] = changes[key].newValue;
     }
-    applySettings(updates);
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'POPUP_STATE_CHANGED') {
+    isPopupOpen = request.isOpen;
+    sendResponse({ success: true });
   }
 });

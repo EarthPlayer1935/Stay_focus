@@ -125,7 +125,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     heightRange.value = height;
     borderRadiusRange.value = radius;
     toggleLinkSize.checked = link;
-    updateSettings({ width: width, height: height, borderRadius: radius, linkSize: link });
+    toggleFullRow.checked = false; // Disable full row when a shape is picked
+    updateSettings({ 
+      width: width, 
+      height: height, 
+      borderRadius: radius, 
+      linkSize: link,
+      fullRowMode: false 
+    });
   }
 
   btnSquare.addEventListener('click', () => {

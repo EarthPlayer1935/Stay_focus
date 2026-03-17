@@ -1,3 +1,5 @@
+**English** | [中文](./README.zh-CN.md) | [日本語](./README.ja.md) | [Français](./README.fr.md) | [Deutsch](./README.de.md)
+
 # Stay Focus
 
 A Chrome extension that adds a focus spotlight to any webpage — helping you concentrate on what you're reading.

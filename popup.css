@@ -54,6 +54,8 @@ h1 {
   align-items: center;
   padding-bottom: 8px;
   border-bottom: 1px dotted #e0e0e0;
+  cursor: pointer;
+  user-select: none;
 }
 
 .control-group label {

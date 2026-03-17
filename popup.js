@@ -2,6 +2,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Connect a port so background.js can detect when popup opens and closes
   chrome.runtime.connect({ name: 'stay_focus_popup' });
 
+  // Make entire row clickable for toggle switches
+  document.querySelectorAll('.switch-group').forEach(row => {
+    row.addEventListener('click', (e) => {
+      // Don't double-fire if user clicks the input or its visual slider directly
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        if (checkbox) checkbox.click();
+      }
+    });
+  });
 
   const toggleFocus = document.getElementById('toggleFocus');
   const toggleFullRow = document.getElementById('toggleFullRow');

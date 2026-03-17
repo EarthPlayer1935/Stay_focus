@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Flag that popup is open
-  chrome.storage.local.set({ isPopupOpen: true });
+  // Connect a port so background.js can detect when popup opens and closes
+  chrome.runtime.connect({ name: 'stay_focus_popup' });
 
 
   const toggleFocus = document.getElementById('toggleFocus');
@@ -114,8 +114,3 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSettings({ color: e.target.value });
   });
 });
-
-window.addEventListener('unload', () => {
-  chrome.storage.local.set({ isPopupOpen: false });
-});
-

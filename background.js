@@ -1,7 +1,9 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     enabled: false,
-    height: 150,
+    fullRowMode: false,
+    height: 50,
+    width: 200,
     opacity: 75,
     color: '#000000'
   });

@@ -48,6 +48,14 @@ h1 {
   gap: 6px;
 }
 
+.switch-group {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #e0e0e0;
+}
+
 .control-group label {
   font-size: 13px;
   font-weight: 500;
@@ -137,6 +145,11 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.small-switch {
+  transform: scale(0.8);
+  transform-origin: right center;
 }
 
 .footer {

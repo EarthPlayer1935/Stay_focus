@@ -16,13 +16,6 @@
 
 .stay-focus-window {
   position: absolute;
-  left: 0;
-  width: 100%;
   pointer-events: none;
-  /* box-shadow handles the dimming effect. Updated dynamically via JS. */
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
   box-sizing: border-box;
-  /* subtle border to outline the reading area */
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }

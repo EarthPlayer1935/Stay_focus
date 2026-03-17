@@ -1,8 +1,11 @@
 let isEnabled = false;
-let windowHeight = 150;
+let isFullRow = false;
+let windowHeight = 50;
+let windowWidth = 200;
 let bgOpacity = 75; // 0 to 100
 let bgColor = '#000000';
 let currentY = window.innerHeight / 2 - windowHeight / 2;
+let currentX = window.innerWidth / 2 - windowWidth / 2;
 
 let overlayContainer = null;
 let overlayWindow = null;
@@ -15,6 +18,7 @@ function initOverlay() {
 
   overlayWindow = document.createElement('div');
   overlayWindow.className = 'stay-focus-window';
+  // Note: border-radius handles the rounded corners; it's dynamically set or hardcoded in CSS. We'll set it in JS or CSS.
   
   overlayContainer.appendChild(overlayWindow);
   document.body.appendChild(overlayContainer);
@@ -47,7 +51,21 @@ function updateStyles() {
 
   overlayWindow.style.height = `${windowHeight}px`;
   
-  // Ensure window stays within bounds
+  if (isFullRow) {
+    overlayWindow.style.width = '100vw';
+    overlayWindow.style.left = '0px';
+    overlayWindow.style.borderRadius = '0px'; // No corners for full row
+  } else {
+    overlayWindow.style.width = `${windowWidth}px`;
+    overlayWindow.style.borderRadius = '12px'; // Rounded corners for local block
+    if (currentX + windowWidth > window.innerWidth) {
+      currentX = window.innerWidth - windowWidth;
+    }
+    if (currentX < 0) currentX = 0;
+    overlayWindow.style.left = `${currentX}px`;
+  }
+  
+  // Ensure window stays within bounds vertically (applies to both modes)
   if (currentY + windowHeight > window.innerHeight) {
     currentY = window.innerHeight - windowHeight;
   }
@@ -57,6 +75,7 @@ function updateStyles() {
 
   const rgb = hexToRgb(bgColor);
   const alpha = bgOpacity / 100;
+  overlayWindow.style.backgroundColor = 'transparent';
   overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
 
   if (isEnabled) {
@@ -72,8 +91,13 @@ function onMouseMove(e) {
   // Center the window on the mouse cursor
   let newY = e.clientY - (windowHeight / 2);
   currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
-  
   overlayWindow.style.top = `${currentY}px`;
+
+  if (!isFullRow) {
+    let newX = e.clientX - (windowWidth / 2);
+    currentX = Math.max(0, Math.min(newX, window.innerWidth - windowWidth));
+    overlayWindow.style.left = `${currentX}px`;
+  }
 }
 
 function onKeyDown(e) {
@@ -89,12 +113,22 @@ function onKeyDown(e) {
     currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
     overlayWindow.style.top = `${currentY}px`;
     e.preventDefault();
+  } else if (e.key === 'ArrowLeft' && !isFullRow) {
+    currentX = Math.max(0, currentX - step);
+    overlayWindow.style.left = `${currentX}px`;
+    e.preventDefault();
+  } else if (e.key === 'ArrowRight' && !isFullRow) {
+    currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
+    overlayWindow.style.left = `${currentX}px`;
+    e.preventDefault();
   }
 }
 
 function applySettings(settings) {
   if (settings.enabled !== undefined) isEnabled = settings.enabled;
+  if (settings.fullRowMode !== undefined) isFullRow = settings.fullRowMode;
   if (settings.height !== undefined) windowHeight = settings.height;
+  if (settings.width !== undefined) windowWidth = settings.width;
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
   
@@ -109,7 +143,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'height', 'opacity', 'color'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'height', 'width', 'opacity', 'color'], (result) => {
   applySettings(result);
 });
 

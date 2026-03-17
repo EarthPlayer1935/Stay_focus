@@ -1,13 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   const toggleFocus = document.getElementById('toggleFocus');
+  const toggleFullRow = document.getElementById('toggleFullRow');
   const heightRange = document.getElementById('heightRange');
+  const widthRange = document.getElementById('widthRange');
   const opacityRange = document.getElementById('opacityRange');
   const colorPicker = document.getElementById('colorPicker');
 
   // Load saved settings
-  chrome.storage.local.get(['enabled', 'height', 'opacity', 'color'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'height', 'width', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
-    heightRange.value = result.height || 150;
+    toggleFullRow.checked = result.fullRowMode || false;
+    heightRange.value = result.height || 50;
+    widthRange.value = result.width || 200;
     opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
   });
@@ -31,8 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateSettings({ enabled: e.target.checked });
   });
 
+  toggleFullRow.addEventListener('change', (e) => {
+    updateSettings({ fullRowMode: e.target.checked });
+  });
+
   heightRange.addEventListener('input', (e) => {
     updateSettings({ height: parseInt(e.target.value) });
+  });
+
+  widthRange.addEventListener('input', (e) => {
+    updateSettings({ width: parseInt(e.target.value) });
   });
 
   opacityRange.addEventListener('input', (e) => {
@@ -40,6 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   colorPicker.addEventListener('input', (e) => {
+    updateSettings({ color: e.target.value });
+  });
+
+  colorPicker.addEventListener('change', (e) => {
     updateSettings({ color: e.target.value });
   });
 });

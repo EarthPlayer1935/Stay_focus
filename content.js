@@ -170,6 +170,12 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'POPUP_STATE_CHANGED') {
     isPopupOpen = request.isOpen;
+    if (isPopupOpen) {
+      // Reposition to center so user can see it while popup is open
+      currentY = window.innerHeight / 2 - windowHeight / 2;
+      currentX = window.innerWidth / 2 - windowWidth / 2;
+      updateStyles();
+    }
     sendResponse({ success: true });
   }
 });

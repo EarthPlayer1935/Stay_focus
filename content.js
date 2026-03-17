@@ -1,5 +1,6 @@
 let isEnabled = false;
 let isFullRow = false;
+let isHighlightMode = false;
 let windowHeight = 50;
 let windowWidth = 200;
 let bgOpacity = 75; // 0 to 100
@@ -75,8 +76,16 @@ function updateStyles() {
 
   const rgb = hexToRgb(bgColor);
   const alpha = bgOpacity / 100;
-  overlayWindow.style.backgroundColor = 'transparent';
-  overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+  
+  if (isHighlightMode) {
+    // Color the focus area, no dimming background
+    overlayWindow.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    overlayWindow.style.boxShadow = 'none';
+  } else {
+    // Dim background, transparent focus area
+    overlayWindow.style.backgroundColor = 'transparent';
+    overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+  }
 
   if (isEnabled) {
     overlayContainer.classList.add('active');
@@ -127,6 +136,7 @@ function onKeyDown(e) {
 function applySettings(settings) {
   if (settings.enabled !== undefined) isEnabled = settings.enabled;
   if (settings.fullRowMode !== undefined) isFullRow = settings.fullRowMode;
+  if (settings.highlightMode !== undefined) isHighlightMode = settings.highlightMode;
   if (settings.height !== undefined) windowHeight = settings.height;
   if (settings.width !== undefined) windowWidth = settings.width;
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
@@ -143,7 +153,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'height', 'width', 'opacity', 'color'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'opacity', 'color'], (result) => {
   applySettings(result);
 });
 

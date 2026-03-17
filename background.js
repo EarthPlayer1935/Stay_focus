@@ -2,6 +2,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     enabled: false,
     fullRowMode: false,
+    highlightMode: false, // false = dim background, true = colored focus area
     height: 50,
     width: 200,
     opacity: 75,

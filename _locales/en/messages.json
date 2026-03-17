@@ -35,10 +35,7 @@
   "opacity": {
     "message": "Opacity"
   },
-  "color": {
-    "message": "Color"
-  },
-  "footerTip": {
-    "message": "Use Mouse or Up/Down arrows to move."
-  }
+  "color": { "message": "Color" },
+  "autoHideOnLeave": { "message": "Auto-hide on Mouse Leave" },
+  "footerTip": { "message": "Use Mouse or Up/Down arrows to move." }
 }

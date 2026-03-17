@@ -12,5 +12,6 @@
   "cornerRadius": { "message": "Eckenradius" },
   "opacity": { "message": "Deckkraft" },
   "color": { "message": "Farbe" },
+  "autoHideOnLeave": { "message": "Auto-Ausblenden beim Verlassen" },
   "footerTip": { "message": "Maus oder Pfeiltasten zum Verschieben des Rahmens nutzen." }
 }

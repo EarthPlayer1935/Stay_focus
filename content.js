@@ -7,6 +7,8 @@ let windowWidth = 200;
 let currentBorderRadius = 12;
 let bgOpacity = 75; // 0 to 100
 let bgColor = '#000000';
+let isAutoHideEnabled = false;
+let isMouseOutside = false;
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
 
@@ -33,6 +35,19 @@ function initOverlay() {
   
   // Track keyboard arrow keys for fine tuning
   document.addEventListener('keydown', onKeyDown);
+
+  // Auto-hide when mouse leaves window
+  document.addEventListener('mouseleave', () => {
+    if (isAutoHideEnabled) {
+      isMouseOutside = true;
+      updateVisibility();
+    }
+  });
+
+  document.addEventListener('mouseenter', () => {
+    isMouseOutside = false;
+    updateVisibility();
+  });
 }
 
 function hexToRgb(hex) {
@@ -89,7 +104,15 @@ function updateStyles() {
     overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
   }
 
-  if (isEnabled) {
+  updateVisibility();
+}
+
+function updateVisibility() {
+  if (!overlayContainer) return;
+
+  const shouldBeVisible = isEnabled && !(isAutoHideEnabled && isMouseOutside);
+  
+  if (shouldBeVisible) {
     overlayContainer.classList.add('active');
   } else {
     overlayContainer.classList.remove('active');
@@ -146,6 +169,7 @@ function applySettings(settings) {
   if (settings.borderRadius !== undefined) currentBorderRadius = settings.borderRadius;
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
+  if (settings.autoHide !== undefined) isAutoHideEnabled = settings.autoHide;
   
   if (settings.isPopupOpen !== undefined) {
     isPopupOpen = settings.isPopupOpen;
@@ -167,7 +191,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide'], (result) => {
   applySettings(result);
 });
 

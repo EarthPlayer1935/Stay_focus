@@ -12,5 +12,6 @@
   "cornerRadius": { "message": "Radio de Esquinas" },
   "opacity": { "message": "Opacidad" },
   "color": { "message": "Color" },
+  "autoHideOnLeave": { "message": "Auto-ocultar al salir el ratón" },
   "footerTip": { "message": "Usa el ratón o las teclas de flecha para mover el marco." }
 }

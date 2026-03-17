@@ -12,5 +12,6 @@
   "cornerRadius": { "message": "모서리 반경" },
   "opacity": { "message": "불투명도" },
   "color": { "message": "색상" },
+  "autoHideOnLeave": { "message": "마우스 이탈 시 자동 숨김" },
   "footerTip": { "message": "마우스 또는 방향키로 포커스 프레임을 이동하세요." }
 }

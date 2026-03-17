@@ -12,5 +12,6 @@
   "cornerRadius": { "message": "Rayon des Coins" },
   "opacity": { "message": "Opacité" },
   "color": { "message": "Couleur" },
+  "autoHideOnLeave": { "message": "Masquer auto. si la souris sort" },
   "footerTip": { "message": "Utilisez la souris ou les touches fléchées pour déplacer le cadre." }
 }

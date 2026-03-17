@@ -11,16 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
   const heightRange = document.getElementById('heightRange');
   const widthRange = document.getElementById('widthRange');
+  const borderRadiusRange = document.getElementById('borderRadiusRange');
   const opacityRange = document.getElementById('opacityRange');
   const colorPicker = document.getElementById('colorPicker');
 
   // Load saved settings
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'opacity', 'color'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
     heightRange.value = result.height || 50;
     widthRange.value = result.width || 200;
+    borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
     opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
   });
@@ -49,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   widthRange.addEventListener('input', (e) => {
     updateSettings({ width: parseInt(e.target.value) });
+  });
+
+  borderRadiusRange.addEventListener('input', (e) => {
+    updateSettings({ borderRadius: parseInt(e.target.value) });
   });
 
   opacityRange.addEventListener('input', (e) => {

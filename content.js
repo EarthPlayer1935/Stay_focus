@@ -4,6 +4,7 @@ let isHighlightMode = false;
 let isPopupOpen = false;
 let windowHeight = 50;
 let windowWidth = 200;
+let currentBorderRadius = 12;
 let bgOpacity = 75; // 0 to 100
 let bgColor = '#000000';
 let currentY = window.innerHeight / 2 - windowHeight / 2;
@@ -59,7 +60,7 @@ function updateStyles() {
     overlayWindow.style.borderRadius = '0px'; // No corners for full row
   } else {
     overlayWindow.style.width = `${windowWidth}px`;
-    overlayWindow.style.borderRadius = '12px'; // Rounded corners for local block
+    overlayWindow.style.borderRadius = `${currentBorderRadius}px`; // Configurable rounded corners
     if (currentX + windowWidth > window.innerWidth) {
       currentX = window.innerWidth - windowWidth;
     }
@@ -140,6 +141,7 @@ function applySettings(settings) {
   if (settings.highlightMode !== undefined) isHighlightMode = settings.highlightMode;
   if (settings.height !== undefined) windowHeight = settings.height;
   if (settings.width !== undefined) windowWidth = settings.width;
+  if (settings.borderRadius !== undefined) currentBorderRadius = settings.borderRadius;
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
   
@@ -154,7 +156,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'opacity', 'color'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
   applySettings(result);
 });
 

@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleFocus = document.getElementById('toggleFocus');
   const toggleFullRow = document.getElementById('toggleFullRow');
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
+  const toggleLinkSize = document.getElementById('toggleLinkSize');
   const heightRange = document.getElementById('heightRange');
   const widthRange = document.getElementById('widthRange');
   const borderRadiusRange = document.getElementById('borderRadiusRange');
@@ -17,10 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCircle = document.getElementById('btnCircle');
 
   // Load saved settings
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
+    toggleLinkSize.checked = result.linkSize || false;
     heightRange.value = result.height || 50;
     widthRange.value = result.width || 200;
     borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
@@ -45,33 +47,55 @@ document.addEventListener('DOMContentLoaded', () => {
   toggleHighlightMode.addEventListener('change', (e) => {
     updateSettings({ highlightMode: e.target.checked });
   });
+  
+  toggleLinkSize.addEventListener('change', (e) => {
+    updateSettings({ linkSize: e.target.checked });
+    if (e.target.checked) {
+      // Upon linking, immediately match height to width
+      heightRange.value = widthRange.value;
+      updateSettings({ height: parseInt(widthRange.value) });
+    }
+  });
 
   // Preset Buttons Logic
-  function applyPreset(width, height, radius) {
+  function applyPreset(width, height, radius, link) {
     widthRange.value = width;
     heightRange.value = height;
     borderRadiusRange.value = radius;
-    updateSettings({ width: width, height: height, borderRadius: radius });
+    toggleLinkSize.checked = link;
+    updateSettings({ width: width, height: height, borderRadius: radius, linkSize: link });
   }
 
   btnSquare.addEventListener('click', () => {
-    applyPreset(200, 200, 0); // Square
+    applyPreset(200, 200, 0, true); // Square, link dimensions
   });
 
   btnRounded.addEventListener('click', () => {
-    applyPreset(300, 50, 12); // Standard reading line
+    applyPreset(300, 50, 12, false); // Standard reading line, unlink dimensions
   });
 
   btnCircle.addEventListener('click', () => {
-    applyPreset(150, 150, 150); // Circle (large enough border radius)
+    applyPreset(150, 150, 150, true); // Circle, link dimensions
   });
 
   heightRange.addEventListener('input', (e) => {
-    updateSettings({ height: parseInt(e.target.value) });
+    let val = parseInt(e.target.value);
+    let updates = { height: val };
+    if (toggleLinkSize.checked) {
+      widthRange.value = val;
+      updates.width = val;
+    }
+    updateSettings(updates);
   });
 
   widthRange.addEventListener('input', (e) => {
-    updateSettings({ width: parseInt(e.target.value) });
+    let val = parseInt(e.target.value);
+    let updates = { width: val };
+    if (toggleLinkSize.checked) {
+      heightRange.value = val;
+      updates.height = val;
+    }
+    updateSettings(updates);
   });
 
   borderRadiusRange.addEventListener('input', (e) => {

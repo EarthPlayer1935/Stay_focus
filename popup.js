@@ -1,24 +1,60 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Connect a port so background.js can detect when popup opens and closes
   chrome.runtime.connect({ name: 'stay_focus_popup' });
 
-  // Apply translations
-  const i18n = (key) => chrome.i18n.getMessage(key);
-  document.querySelector('.header h1').textContent             = i18n('appName');
-  document.querySelector('[for="toggleFullRow"]').textContent  = i18n('fullRowMode');
-  document.querySelector('[for="toggleHighlightMode"]').textContent = i18n('colorHighlightMode');
-  document.querySelector('[for="toggleLinkSize"]').textContent = i18n('linkDimensions');
-  document.querySelector('[for="heightRange"]').textContent    = i18n('spotlightHeight');
-  document.querySelector('[for="widthRange"]').textContent     = i18n('spotlightWidth');
-  document.querySelector('[for="borderRadiusRange"]').textContent = i18n('cornerRadius');
-  document.querySelector('[for="opacityRange"]').textContent   = i18n('opacity');
-  document.querySelector('[for="colorPicker"]').textContent    = i18n('color');
-  document.querySelector('.footer').textContent                = i18n('footerTip');
-  document.getElementById('btnSquare').title                   = i18n('shapeSquare');
-  document.getElementById('btnRounded').title                  = i18n('shapeRounded');
-  document.getElementById('btnCircle').title                   = i18n('shapeCircle');
+  // --- Internationalization (i18n) ---
+  // Fetch a locale's messages.json and return a translator function
+  async function loadLocale(lang) {
+    try {
+      const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('not found');
+      const data = await resp.json();
+      return (key) => (data[key] && data[key].message) || key;
+    } catch {
+      // Fallback to Chrome's built-in i18n
+      return (key) => chrome.i18n.getMessage(key) || key;
+    }
+  }
 
-  // Make entire row clickable for toggle switches
+  function applyTranslations(t) {
+    document.querySelector('.header h1').textContent                  = t('appName');
+    document.querySelector('[for="toggleFullRow"]').textContent       = t('fullRowMode');
+    document.querySelector('[for="toggleHighlightMode"]').textContent = t('colorHighlightMode');
+    document.querySelector('[for="toggleLinkSize"]').textContent      = t('linkDimensions');
+    document.querySelector('[for="heightRange"]').textContent         = t('spotlightHeight');
+    document.querySelector('[for="widthRange"]').textContent          = t('spotlightWidth');
+    document.querySelector('[for="borderRadiusRange"]').textContent   = t('cornerRadius');
+    document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
+    document.querySelector('[for="colorPicker"]').textContent         = t('color');
+    document.querySelector('.footer').textContent                     = t('footerTip');
+    document.getElementById('btnSquare').title                        = t('shapeSquare');
+    document.getElementById('btnRounded').title                       = t('shapeRounded');
+    document.getElementById('btnCircle').title                        = t('shapeCircle');
+  }
+
+  const langSelect = document.getElementById('langSelect');
+
+  // Detect initial language: user preference > browser UI language > 'en'
+  const browserLang = chrome.i18n.getUILanguage().replace('-', '_');
+  chrome.storage.local.get(['userLang'], async (result) => {
+    const lang = result.userLang || browserLang || 'en';
+    // Normalise zh-TW etc
+    const normalised = lang.startsWith('zh') ? 'zh_CN' : lang.split('_')[0];
+    const resolved = langSelect.querySelector(`option[value="${lang}"]`) ? lang :
+                     langSelect.querySelector(`option[value="${normalised}"]`) ? normalised : 'en';
+    langSelect.value = resolved;
+    const t = await loadLocale(resolved);
+    applyTranslations(t);
+  });
+
+  langSelect.addEventListener('change', async () => {
+    const lang = langSelect.value;
+    chrome.storage.local.set({ userLang: lang });
+    const t = await loadLocale(lang);
+    applyTranslations(t);
+  });
+
   document.querySelectorAll('.switch-group').forEach(row => {
     row.addEventListener('click', (e) => {
       // Don't double-fire if user clicks the input or its visual slider directly

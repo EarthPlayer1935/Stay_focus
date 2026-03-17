@@ -29,6 +29,28 @@ body {
   padding-bottom: 12px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#langSelect {
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 3px 5px;
+  background: #f8f9fa;
+  color: #555;
+  cursor: pointer;
+  max-width: 90px;
+}
+
+#langSelect:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
 h1 {
   margin: 0;
   font-size: 18px;

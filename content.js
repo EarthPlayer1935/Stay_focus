@@ -1,0 +1,121 @@
+let isEnabled = false;
+let windowHeight = 150;
+let bgOpacity = 75; // 0 to 100
+let bgColor = '#000000';
+let currentY = window.innerHeight / 2 - windowHeight / 2;
+
+let overlayContainer = null;
+let overlayWindow = null;
+
+function initOverlay() {
+  if (overlayContainer) return;
+
+  overlayContainer = document.createElement('div');
+  overlayContainer.className = 'stay-focus-overlay-container';
+
+  overlayWindow = document.createElement('div');
+  overlayWindow.className = 'stay-focus-window';
+  
+  overlayContainer.appendChild(overlayWindow);
+  document.body.appendChild(overlayContainer);
+
+  updateStyles();
+  
+  // Track mouse movement
+  document.addEventListener('mousemove', onMouseMove);
+  
+  // Track keyboard arrow keys for fine tuning
+  document.addEventListener('keydown', onKeyDown);
+}
+
+function hexToRgb(hex) {
+  let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 0, g: 0, b: 0 };
+}
+
+function updateStyles() {
+  if (!overlayWindow) return;
+
+  overlayWindow.style.height = `${windowHeight}px`;
+  
+  // Ensure window stays within bounds
+  if (currentY + windowHeight > window.innerHeight) {
+    currentY = window.innerHeight - windowHeight;
+  }
+  if (currentY < 0) currentY = 0;
+  
+  overlayWindow.style.top = `${currentY}px`;
+
+  const rgb = hexToRgb(bgColor);
+  const alpha = bgOpacity / 100;
+  overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+
+  if (isEnabled) {
+    overlayContainer.classList.add('active');
+  } else {
+    overlayContainer.classList.remove('active');
+  }
+}
+
+function onMouseMove(e) {
+  if (!isEnabled) return;
+  
+  // Center the window on the mouse cursor
+  let newY = e.clientY - (windowHeight / 2);
+  currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
+  
+  overlayWindow.style.top = `${currentY}px`;
+}
+
+function onKeyDown(e) {
+  if (!isEnabled) return;
+  
+  const step = 20; // 20px step for keyboard
+  
+  if (e.key === 'ArrowUp') {
+    currentY = Math.max(0, currentY - step);
+    overlayWindow.style.top = `${currentY}px`;
+    e.preventDefault(); // Optional: prevent page scroll when tuning
+  } else if (e.key === 'ArrowDown') {
+    currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
+    overlayWindow.style.top = `${currentY}px`;
+    e.preventDefault();
+  }
+}
+
+function applySettings(settings) {
+  if (settings.enabled !== undefined) isEnabled = settings.enabled;
+  if (settings.height !== undefined) windowHeight = settings.height;
+  if (settings.opacity !== undefined) bgOpacity = settings.opacity;
+  if (settings.color !== undefined) bgColor = settings.color;
+  
+  if (isEnabled && !overlayContainer) {
+    initOverlay();
+  }
+  
+  updateStyles();
+}
+
+// Ensure manifest specifies "content_scripts" if we want it auto-injected.
+// Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
+// Actually, it's better to add it to manifest.json so it auto-loads on all pages.
+
+chrome.storage.local.get(['enabled', 'height', 'opacity', 'color'], (result) => {
+  applySettings(result);
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'UPDATE_FOCUS_SETTINGS') {
+    applySettings(request);
+    sendResponse({ success: true });
+  }
+});

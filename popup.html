@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stay Focus</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Stay Focus</h1>
+      <label class="switch">
+        <input type="checkbox" id="toggleFocus" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="heightRange">Window Height</label>
+        <input type="range" id="heightRange" min="50" max="600" value="150" />
+      </div>
+
+      <div class="control-group">
+        <label for="opacityRange">Background Opacity</label>
+        <input type="range" id="opacityRange" min="10" max="95" value="75" />
+      </div>
+      
+      <div class="control-group">
+        <label for="colorPicker">Overlay Color</label>
+        <input type="color" id="colorPicker" value="#000000" />
+      </div>
+    </div>
+    <div class="footer">
+      Use Mouse or Up/Down arrows to move.
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

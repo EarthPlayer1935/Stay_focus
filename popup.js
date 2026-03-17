@@ -2,6 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Connect a port so background.js can detect when popup opens and closes
   chrome.runtime.connect({ name: 'stay_focus_popup' });
 
+  // Apply translations
+  const i18n = (key) => chrome.i18n.getMessage(key);
+  document.querySelector('.header h1').textContent             = i18n('appName');
+  document.querySelector('[for="toggleFullRow"]').textContent  = i18n('fullRowMode');
+  document.querySelector('[for="toggleHighlightMode"]').textContent = i18n('colorHighlightMode');
+  document.querySelector('[for="toggleLinkSize"]').textContent = i18n('linkDimensions');
+  document.querySelector('[for="heightRange"]').textContent    = i18n('spotlightHeight');
+  document.querySelector('[for="widthRange"]').textContent     = i18n('spotlightWidth');
+  document.querySelector('[for="borderRadiusRange"]').textContent = i18n('cornerRadius');
+  document.querySelector('[for="opacityRange"]').textContent   = i18n('opacity');
+  document.querySelector('[for="colorPicker"]').textContent    = i18n('color');
+  document.querySelector('.footer').textContent                = i18n('footerTip');
+  document.getElementById('btnSquare').title                   = i18n('shapeSquare');
+  document.getElementById('btnRounded').title                  = i18n('shapeRounded');
+  document.getElementById('btnCircle').title                   = i18n('shapeCircle');
+
   // Make entire row clickable for toggle switches
   document.querySelectorAll('.switch-group').forEach(row => {
     row.addEventListener('click', (e) => {

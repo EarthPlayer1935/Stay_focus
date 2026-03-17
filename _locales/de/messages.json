@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "Fokusmodus" },
+  "appDescription": { "message": "Ein Lese-Spotlight, das Ihnen hilft, auf jeder Webseite konzentriert zu bleiben." },
+  "fullRowMode": { "message": "Gesamte Zeile" },
+  "colorHighlightMode": { "message": "Farb-Hervorhebungsmodus" },
+  "shapeSquare": { "message": "Quadrat" },
+  "shapeRounded": { "message": "Abgerundetes Rechteck" },
+  "shapeCircle": { "message": "Kreis" },
+  "linkDimensions": { "message": "Maße koppeln (1:1)" },
+  "spotlightHeight": { "message": "Fokusrahmen-Höhe" },
+  "spotlightWidth": { "message": "Fokusrahmen-Breite" },
+  "cornerRadius": { "message": "Eckenradius" },
+  "opacity": { "message": "Deckkraft" },
+  "color": { "message": "Farbe" },
+  "footerTip": { "message": "Maus oder Pfeiltasten zum Verschieben des Rahmens nutzen." }
+}

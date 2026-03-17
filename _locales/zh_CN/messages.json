@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "专注模式" },
+  "appDescription": { "message": "一个阅读聚光灯，帮助你在任何网页上保持专注。" },
+  "fullRowMode": { "message": "整行模式" },
+  "colorHighlightMode": { "message": "彩色高亮模式" },
+  "shapeSquare": { "message": "正方形" },
+  "shapeRounded": { "message": "圆角矩形" },
+  "shapeCircle": { "message": "正圆形" },
+  "linkDimensions": { "message": "联动宽高 (1:1)" },
+  "spotlightHeight": { "message": "聚焦框高度" },
+  "spotlightWidth": { "message": "聚焦框宽度" },
+  "cornerRadius": { "message": "圆角程度" },
+  "opacity": { "message": "透明度" },
+  "color": { "message": "颜色" },
+  "footerTip": { "message": "移动鼠标或按方向键来移动聚焦框。" }
+}

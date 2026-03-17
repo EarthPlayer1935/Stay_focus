@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "Modo Foco" },
+  "appDescription": { "message": "Um holofote de leitura para ajudá-lo a manter o foco em qualquer página da web." },
+  "fullRowMode": { "message": "Modo Linha Inteira" },
+  "colorHighlightMode": { "message": "Modo Destaque Colorido" },
+  "shapeSquare": { "message": "Quadrado" },
+  "shapeRounded": { "message": "Retângulo Arredondado" },
+  "shapeCircle": { "message": "Círculo" },
+  "linkDimensions": { "message": "Vincular Dimensões (1:1)" },
+  "spotlightHeight": { "message": "Altura do Quadro" },
+  "spotlightWidth": { "message": "Largura do Quadro" },
+  "cornerRadius": { "message": "Raio dos Cantos" },
+  "opacity": { "message": "Opacidade" },
+  "color": { "message": "Cor" },
+  "footerTip": { "message": "Use o mouse ou as teclas de seta para mover o quadro." }
+}

@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "फ़ोकस मोड" },
+  "appDescription": { "message": "किसी भी वेबपेज पर ध्यान केंद्रित रखने में मदद करने के लिए एक रीडिंग स्पॉटलाइट।" },
+  "fullRowMode": { "message": "पूरी पंक्ति मोड" },
+  "colorHighlightMode": { "message": "रंगीन हाइलाइट मोड" },
+  "shapeSquare": { "message": "वर्ग" },
+  "shapeRounded": { "message": "गोल आयत" },
+  "shapeCircle": { "message": "वृत्त" },
+  "linkDimensions": { "message": "आयाम जोड़ें (1:1)" },
+  "spotlightHeight": { "message": "फ़ोकस फ्रेम ऊँचाई" },
+  "spotlightWidth": { "message": "फ़ोकस फ्रेम चौड़ाई" },
+  "cornerRadius": { "message": "कोने का त्रिज्या" },
+  "opacity": { "message": "पारदर्शिता" },
+  "color": { "message": "रंग" },
+  "footerTip": { "message": "फ्रेम को स्थानांतरित करने के लिए माउस या तीर कुंजियों का उपयोग करें।" }
+}

@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "وضع التركيز" },
+  "appDescription": { "message": "بقعة ضوء للقراءة تساعدك على التركيز في أي صفحة ويب." },
+  "fullRowMode": { "message": "وضع الصف الكامل" },
+  "colorHighlightMode": { "message": "وضع التظليل الملون" },
+  "shapeSquare": { "message": "مربع" },
+  "shapeRounded": { "message": "مستطيل بزوايا مدورة" },
+  "shapeCircle": { "message": "دائرة" },
+  "linkDimensions": { "message": "ربط الأبعاد (1:1)" },
+  "spotlightHeight": { "message": "ارتفاع إطار التركيز" },
+  "spotlightWidth": { "message": "عرض إطار التركيز" },
+  "cornerRadius": { "message": "نصف قطر الزوايا" },
+  "opacity": { "message": "الشفافية" },
+  "color": { "message": "اللون" },
+  "footerTip": { "message": "استخدم الماوس أو مفاتيح الأسهم لتحريك الإطار." }
+}

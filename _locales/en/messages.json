@@ -1,0 +1,16 @@
+{
+  "appName": { "message": "Stay Focus" },
+  "appDescription": { "message": "A reading spotlight to help you maintain focus on any webpage." },
+  "fullRowMode": { "message": "Full Row Mode" },
+  "colorHighlightMode": { "message": "Color Highlight Mode" },
+  "shapeSquare": { "message": "Square" },
+  "shapeRounded": { "message": "Rounded Box" },
+  "shapeCircle": { "message": "Circle" },
+  "linkDimensions": { "message": "Link Dimensions (1:1)" },
+  "spotlightHeight": { "message": "Spotlight Height" },
+  "spotlightWidth": { "message": "Spotlight Width" },
+  "cornerRadius": { "message": "Corner Radius" },
+  "opacity": { "message": "Opacity" },
+  "color": { "message": "Color" },
+  "footerTip": { "message": "Use Mouse or Up/Down arrows to move." }
+}

@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-  chrome.runtime.connect({ name: 'stay_focus_popup' });
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0] && tabs[0].id) {
+      const port = chrome.runtime.connect({ name: 'stay_focus_popup' });
+      port.postMessage({ tabId: tabs[0].id });
+    }
+  });
 
   const toggleFocus = document.getElementById('toggleFocus');
   const toggleFullRow = document.getElementById('toggleFullRow');

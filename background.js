@@ -13,21 +13,3 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.runtime.onConnect.addListener((port) => {
-  if (port.name === 'stay_focus_popup') {
-    let activeTabId = null;
-    
-    port.onMessage.addListener((msg) => {
-      if (msg.tabId) {
-        activeTabId = msg.tabId;
-        chrome.tabs.sendMessage(activeTabId, { type: 'POPUP_STATE_CHANGED', isOpen: true }, () => chrome.runtime.lastError);
-      }
-    });
-
-    port.onDisconnect.addListener(() => {
-      if (activeTabId) {
-        chrome.tabs.sendMessage(activeTabId, { type: 'POPUP_STATE_CHANGED', isOpen: false }, () => chrome.runtime.lastError);
-      }
-    });
-  }
-});

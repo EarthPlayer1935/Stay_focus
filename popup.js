@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs[0] && tabs[0].id) {
-      const port = chrome.runtime.connect({ name: 'stay_focus_popup' });
-      port.postMessage({ tabId: tabs[0].id });
-    }
-  });
+  // Flag that popup is open
+  chrome.storage.local.set({ isPopupOpen: true });
+
 
   const toggleFocus = document.getElementById('toggleFocus');
   const toggleFullRow = document.getElementById('toggleFullRow');
@@ -70,4 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+window.addEventListener('unload', () => {
+  chrome.storage.local.set({ isPopupOpen: false });
+});
 

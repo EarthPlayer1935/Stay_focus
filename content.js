@@ -145,6 +145,15 @@ function applySettings(settings) {
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
   
+  if (settings.isPopupOpen !== undefined) {
+    isPopupOpen = settings.isPopupOpen;
+    if (isPopupOpen) {
+      // Reposition to center so user can see it while popup is open
+      currentY = window.innerHeight / 2 - windowHeight / 2;
+      currentX = window.innerWidth / 2 - windowWidth / 2;
+    }
+  }
+  
   if (isEnabled && !overlayContainer) {
     initOverlay();
   }
@@ -156,7 +165,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen'], (result) => {
   applySettings(result);
 });
 
@@ -170,15 +179,3 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'POPUP_STATE_CHANGED') {
-    isPopupOpen = request.isOpen;
-    if (isPopupOpen) {
-      // Reposition to center so user can see it while popup is open
-      currentY = window.innerHeight / 2 - windowHeight / 2;
-      currentX = window.innerWidth / 2 - windowWidth / 2;
-      updateStyles();
-    }
-    sendResponse({ success: true });
-  }
-});

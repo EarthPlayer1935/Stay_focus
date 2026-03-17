@@ -164,6 +164,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     for (let key in changes) {
       updates[key] = changes[key].newValue;
     }
+    applySettings(updates);
   }
 });
 

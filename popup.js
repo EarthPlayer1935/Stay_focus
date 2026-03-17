@@ -90,6 +90,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
     opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
+    
+    // Initial binding state
+    if (result.fullRowMode) {
+      widthRange.disabled = true;
+      toggleLinkSize.disabled = true;
+    }
   });
 
   function updateSettings(updates) {
@@ -103,7 +109,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   toggleFullRow.addEventListener('change', (e) => {
-    updateSettings({ fullRowMode: e.target.checked });
+    const isFull = e.target.checked;
+    updateSettings({ fullRowMode: isFull });
+    
+    // Bind logic: if Full Row is ON, width slider and link toggle are useless
+    widthRange.disabled = isFull;
+    toggleLinkSize.disabled = isFull;
   });
 
   toggleHighlightMode.addEventListener('change', (e) => {
@@ -133,6 +144,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       linkSize: link,
       fullRowMode: false 
     });
+    // Ensure controls are re-enabled when a preset is picked
+    widthRange.disabled = false;
+    toggleLinkSize.disabled = false;
   }
 
   btnSquare.addEventListener('click', () => {

@@ -212,3 +212,17 @@ input:checked + .slider:before {
   text-align: center;
   margin-top: 8px;
 }
+
+/* Disabled states for bound controls */
+input:disabled,
+input:disabled + .slider {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.switch-group:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+

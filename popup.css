@@ -62,6 +62,36 @@ h1 {
   color: #555;
 }
 
+.shape-presets {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.preset-btn {
+  flex: 1;
+  background: #f0f2f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: #555;
+}
+
+.preset-btn:hover {
+  background: #e4e6e9;
+  border-color: #bbb;
+  transform: translateY(-1px);
+}
+
+.preset-btn:active {
+  transform: translateY(0);
+}
+
 input[type=range] {
   -webkit-appearance: none;
   appearance: none;

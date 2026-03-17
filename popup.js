@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const opacityRange = document.getElementById('opacityRange');
   const colorPicker = document.getElementById('colorPicker');
 
+  const btnSquare = document.getElementById('btnSquare');
+  const btnRounded = document.getElementById('btnRounded');
+  const btnCircle = document.getElementById('btnCircle');
+
   // Load saved settings
   chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
@@ -40,6 +44,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   toggleHighlightMode.addEventListener('change', (e) => {
     updateSettings({ highlightMode: e.target.checked });
+  });
+
+  // Preset Buttons Logic
+  function applyPreset(width, height, radius) {
+    widthRange.value = width;
+    heightRange.value = height;
+    borderRadiusRange.value = radius;
+    updateSettings({ width: width, height: height, borderRadius: radius });
+  }
+
+  btnSquare.addEventListener('click', () => {
+    applyPreset(200, 200, 0); // Square
+  });
+
+  btnRounded.addEventListener('click', () => {
+    applyPreset(300, 50, 12); // Standard reading line
+  });
+
+  btnCircle.addEventListener('click', () => {
+    applyPreset(150, 150, 150); // Circle (large enough border radius)
   });
 
   heightRange.addEventListener('input', (e) => {

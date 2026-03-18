@@ -1,0 +1,21 @@
+.stay-focus-overlay-container {
+  display: none;
+  pointer-events: none;
+  z-index: 2147483647;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.stay-focus-overlay-container.active {
+  display: block;
+}
+
+.stay-focus-window {
+  position: absolute;
+  pointer-events: none;
+  box-sizing: border-box;
+}

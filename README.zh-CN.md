@@ -1,0 +1,36 @@
+[English](./README.md) | **中文**
+
+# 保持专注 (Stay Focus)
+
+一个 Chrome 扩展程序，可以为任何网页添加焦点聚光灯 —— 帮助你集中注意力阅读。
+
+## 功能特点
+
+- 🎯 **聚光灯模式** — 背景变暗，鼠标周围区域保持明亮
+- 🖍️ **高亮模式** — 背景保持正常，焦点区域显示自定义颜色
+- 📄 **整行模式** — 高亮区域横跨整个屏幕宽度，像一把阅读尺
+- ⬛ 🔲 ⏺ **形状预设** — 一键切换正方形、圆角矩形和圆形
+- 🔗 **联动宽高 (1:1)** — 锁定宽度和高度，轻松制作完美的圆形/正方形
+- ↕️ **可调节参数** — 支持调整大小、透明度、颜色和圆角半径
+- 💾 **自动保存设置** — 浏览器重启后依然保留你的偏好
+- ⚡ **即时生效** — 无需刷新页面，修改设置后立即更新界面
+
+## 使用方法
+
+1. 在 Chrome 中安装扩展程序（`chrome://extensions/` → 加载已解压的扩展程序）
+2. 点击扩展图标打开控制面板
+3. 切换主开关以启用聚光灯
+
+## 支持
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
+## 开源协议
+
+本项目采用 **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** 协议授权。
+
+- ✅ 可以免费使用、共享和修改，仅限**非商业**用途
+- ✅ 衍生作品必须采用**相同的协议**发布
+- ❌ **严禁商业用途**
+
+详情请参阅 [LICENSE](./LICENSE) 文件，或访问 [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)。

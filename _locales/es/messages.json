@@ -1,0 +1,20 @@
+{
+  "appName": { "message": "Modo Enfoque" },
+  "appDescription": { "message": "Un foco de lectura para ayudarte a mantener la concentración en cualquier página web." },
+  "fullRowMode": { "message": "Modo Línea Completa" },
+  "colorHighlightMode": { "message": "Modo Resaltado de Color" },
+  "shapeSquare": { "message": "Cuadrado" },
+  "shapeRounded": { "message": "Rectángulo Redondeado" },
+  "shapeCircle": { "message": "Círculo" },
+  "linkDimensions": { "message": "Vincular Dimensiones (1:1)" },
+  "spotlightHeight": { "message": "Altura del Marco" },
+  "spotlightWidth": { "message": "Ancho del Marco" },
+  "cornerRadius": { "message": "Radio de Esquinas" },
+  "opacity": { "message": "Opacidad" },
+  "color": { "message": "Color" },
+  "autoHideOnLeave": { "message": "Auto-ocultar al salir el ratón" },
+  "keyboardControl": { "message": "Control de teclado" },
+  "supportKofi": { "message": "Apóyanos en Ko-fi" },
+  "supportGithub": { "message": "Estrella en GitHub" },
+  "footerTip": { "message": "Resaltar el texto usando el ratón o las teclas de dirección." }
+}

@@ -29,13 +29,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
     document.querySelector('[for="toggleKeyboardControl"]').textContent = t('keyboardControl');
-    document.querySelector('.footer').textContent                     = t('footerTip');
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');
     document.getElementById('btnCircle').title                        = t('shapeCircle');
+    document.getElementById('btnKofi').title                          = t('supportKofi');
   }
 
   const btnLanguage = document.getElementById('btnLanguage');
+  const btnKofi = document.getElementById('btnKofi');
   const btnNightMode = document.getElementById('btnNightMode');
   const langMenu = document.getElementById('langMenu');
 
@@ -83,6 +84,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isDark = document.body.classList.toggle('dark-mode');
     chrome.storage.local.set({ nightMode: isDark });
     btnNightMode.textContent = isDark ? '☀️' : '🌙';
+  });
+
+  btnKofi.addEventListener('click', () => {
+    chrome.tabs.create({ url: 'https://ko-fi.com/EarthPlayer1935' });
   });
 
   document.querySelectorAll('.switch-group').forEach(row => {

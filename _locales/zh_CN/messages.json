@@ -44,6 +44,9 @@
   "keyboardControl": {
     "message": "键盘控制"
   },
+  "supportKofi": {
+    "message": "请我喝杯咖啡"
+  },
   "footerTip": {
     "message": "移动鼠标或按方向键来移动聚焦框。"
   }

@@ -12,5 +12,8 @@
   "cornerRadius": { "message": "Радиус углов" },
   "opacity": { "message": "Прозрачность" },
   "color": { "message": "Цвет" },
+  "autoHideOnLeave": { "message": "Автоматически скрывать при уходе курсора" },
+  "keyboardControl": { "message": "Управление клавиатурой" },
+  "supportKofi": { "message": "Поддержать на Ko-fi" },
   "footerTip": { "message": "Используйте мышь или стрелки для перемещения рамки." }
 }

@@ -14,5 +14,6 @@
   "color": { "message": "Couleur" },
   "autoHideOnLeave": { "message": "Masquer auto. si la souris sort" },
   "keyboardControl": { "message": "Contrôle Clavier" },
+  "supportKofi": { "message": "Soutenez-moi sur Ko-fi" },
   "footerTip": { "message": "Utilisez la souris ou les touches fléchées pour déplacer le cadre." }
 }

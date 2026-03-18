@@ -13,5 +13,7 @@
   "opacity": { "message": "Opacidad" },
   "color": { "message": "Color" },
   "autoHideOnLeave": { "message": "Auto-ocultar al salir el ratón" },
+  "keyboardControl": { "message": "Control de teclado" },
+  "supportKofi": { "message": "Apóyame en Ko-fi" },
   "footerTip": { "message": "Usa el ratón o las teclas de flecha para mover el marco." }
 }

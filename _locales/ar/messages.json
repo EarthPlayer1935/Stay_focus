@@ -12,5 +12,8 @@
   "cornerRadius": { "message": "نصف قطر الزوايا" },
   "opacity": { "message": "الشفافية" },
   "color": { "message": "اللون" },
+  "autoHideOnLeave": { "message": "إخفاء تلقائي عند مغادرة الماوس" },
+  "keyboardControl": { "message": "التحكم بلوحة المفاتيح" },
+  "supportKofi": { "message": "ادعمني على Ko-fi" },
   "footerTip": { "message": "استخدم الماوس أو مفاتيح الأسهم لتحريك الإطار." }
 }

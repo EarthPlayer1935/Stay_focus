@@ -12,5 +12,8 @@
   "cornerRadius": { "message": "कोने का त्रिज्या" },
   "opacity": { "message": "पारदर्शिता" },
   "color": { "message": "रंग" },
-  "footerTip": { "message": "फ्रेम को स्थानांतरित करने के लिए माउस या तीर कुंजियों का उपयोग करें।" }
+  "autoHideOnLeave": { "message": "माउस हटाने पर ऑटो-हाइड" },
+  "keyboardControl": { "message": "कीबोर्ड कंट्रोल" },
+  "supportKofi": { "message": "Ko-fi पर समर्थन करें" },
+  "footerTip": { "message": "फ्रेม को स्थानांतरित करने के लिए माउस या तीर कुंजियों का उपयोग करें।" }
 }

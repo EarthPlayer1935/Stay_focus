@@ -279,6 +279,8 @@ input:checked + .slider:before {
   color: #888;
   text-align: center;
   margin-top: 8px;
+  display: flex;
+  justify-content: center;
 }
 
 /* Disabled states for bound controls */

@@ -15,5 +15,6 @@
   "autoHideOnLeave": { "message": "Auto-Ausblenden beim Verlassen" },
   "keyboardControl": { "message": "Tastatursteuerung" },
   "supportKofi": { "message": "Auf Ko-fi unterstützen" },
+  "supportGithub": { "message": "GitHub-Projektseite" },
   "footerTip": { "message": "Maus oder Pfeiltasten zum Verschieben des Rahmens nutzen." }
 }

@@ -47,6 +47,9 @@
   "supportKofi": {
     "message": "请我喝杯咖啡"
   },
+  "supportGithub": {
+    "message": "在 GitHub 上点个 Star"
+  },
   "footerTip": {
     "message": "移动鼠标或按方向键来移动聚焦框。"
   }

@@ -14,6 +14,7 @@
   "color": { "message": "Cor" },
   "autoHideOnLeave": { "message": "Auto-ocultar ao sair o mouse" },
   "keyboardControl": { "message": "Controle do teclado" },
-  "supportKofi": { "message": "Apoie no Ko-fi" },
-  "footerTip": { "message": "Use o mouse ou as teclas de seta para mover o quadro." }
+  "supportKofi": { "message": "Apoie-me no Ko-fi" },
+  "supportGithub": { "message": "Estrela no GitHub" },
+  "footerTip": { "message": "Use o mouse ou as setas para mover a moldura." }
 }

@@ -14,5 +14,6 @@
   "color": { "message": "색상" },
   "keyboardControl": { "message": "키보드 제어" },
   "supportKofi": { "message": "Ko-fi에서 지원" },
+  "supportGithub": { "message": "GitHub에서 스타" },
   "footerTip": { "message": "마우스 또는 방향키로 포커스 프레임을 이동하세요." }
 }

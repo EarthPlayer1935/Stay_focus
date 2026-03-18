@@ -33,10 +33,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btnRounded').title                       = t('shapeRounded');
     document.getElementById('btnCircle').title                        = t('shapeCircle');
     document.getElementById('btnKofi').title                          = t('supportKofi');
+    document.getElementById('btnGithub').title                        = t('supportGithub');
   }
 
   const btnLanguage = document.getElementById('btnLanguage');
   const btnKofi = document.getElementById('btnKofi');
+  const btnGithub = document.getElementById('btnGithub');
   const btnNightMode = document.getElementById('btnNightMode');
   const langMenu = document.getElementById('langMenu');
   const pluginName = document.getElementById('pluginName');
@@ -89,6 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   btnKofi.addEventListener('click', () => {
     chrome.tabs.create({ url: 'https://ko-fi.com/EarthPlayer1935' });
+  });
+
+  btnGithub.addEventListener('click', () => {
+    chrome.tabs.create({ url: 'https://github.com/EarthPlayer1935/Stay_focus' });
   });
 
   pluginName.addEventListener('click', () => {

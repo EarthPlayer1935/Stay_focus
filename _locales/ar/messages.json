@@ -14,6 +14,7 @@
   "color": { "message": "اللون" },
   "autoHideOnLeave": { "message": "إخفاء تلقائي عند مغادرة الماوس" },
   "keyboardControl": { "message": "التحكم بلوحة المفاتيح" },
-  "supportKofi": { "message": "ادعمني على Ko-fi" },
-  "footerTip": { "message": "استخدم الماوس أو مفاتيح الأسهم لتحريك الإطار." }
+  "supportKofi": { "message": "دعم على Ko-fi" },
+  "supportGithub": { "message": "نجمة على GitHub" },
+  "footerTip": { "message": "استخدم الماوس أو مفاتيح الأسهم للتحريك." }
 }

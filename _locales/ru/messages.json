@@ -15,5 +15,6 @@
   "autoHideOnLeave": { "message": "Автоматически скрывать при уходе курсора" },
   "keyboardControl": { "message": "Управление клавиатурой" },
   "supportKofi": { "message": "Поддержать на Ko-fi" },
-  "footerTip": { "message": "Используйте мышь или стрелки для перемещения рамки." }
+  "supportGithub": { "message": "Звезда на GitHub" },
+  "footerTip": { "message": "Используйте мышь или стрелки для перемещения." }
 }

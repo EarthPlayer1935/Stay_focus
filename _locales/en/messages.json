@@ -39,5 +39,6 @@
   "autoHideOnLeave": { "message": "Auto-hide on Mouse Leave" },
   "keyboardControl": { "message": "Keyboard Control" },
   "supportKofi": { "message": "Support on Ko-fi" },
+  "supportGithub": { "message": "Star on GitHub" },
   "footerTip": { "message": "Use Mouse or Up/Down arrows to move." }
 }

@@ -15,5 +15,6 @@
   "autoHideOnLeave": { "message": "ซ่อนอัตโนมัติเมื่อเมาส์ออก" },
   "keyboardControl": { "message": "การควบคุมด้วยคีย์บอร์ด" },
   "supportKofi": { "message": "สนับสนุนบน Ko-fi" },
-  "footerTip": { "message": "ใช้เมาส์หรือแป้นลูกศรเพื่อเลื่อนกรอบโฟกัส" }
+  "supportGithub": { "message": "ดาวบน GitHub" },
+  "footerTip": { "message": "ใช้เมาส์หรือปุ่มลูกศรเพื่อย้ายเฟรม" }
 }

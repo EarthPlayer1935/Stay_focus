@@ -13,5 +13,6 @@
   "opacity": { "message": "不透明度" },
   "color": { "message": "色" },
   "autoHideOnLeave": { "message": "マウスが離れた時に自動非表示" },
+  "keyboardControl": { "message": "キーボード制御" },
   "footerTip": { "message": "マウスまたは矢印キーでフォーカス枠を移動できます。" }
 }

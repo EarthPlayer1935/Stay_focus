@@ -41,6 +41,9 @@
   "autoHideOnLeave": {
     "message": "鼠标移出时自动隐藏"
   },
+  "keyboardControl": {
+    "message": "键盘控制"
+  },
   "footerTip": {
     "message": "移动鼠标或按方向键来移动聚焦框。"
   }

@@ -8,6 +8,7 @@ let currentBorderRadius = 12;
 let bgOpacity = 75; // 0 to 100
 let bgColor = '#000000';
 let isAutoHideEnabled = false;
+let isKeyboardControlEnabled = false;
 let isMouseOutside = false;
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
@@ -137,25 +138,40 @@ function onMouseMove(e) {
 
 function onKeyDown(e) {
   if (!isEnabled) return;
+
+  const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+  const isArrowKey = arrowKeys.includes(e.key);
   
-  const step = 20; // 20px step for keyboard
+  if (isArrowKey && !isKeyboardControlEnabled) return;
+
+  const activeElem = document.activeElement;
+  const isInput = activeElem && (
+    activeElem.tagName === 'INPUT' || 
+    activeElem.tagName === 'TEXTAREA' || 
+    activeElem.isContentEditable
+  );
+
+  const step = 20;
   
-  if (e.key === 'ArrowUp') {
-    currentY = Math.max(0, currentY - step);
+  if (isArrowKey) {
+    if (e.key === 'ArrowUp') {
+      currentY = Math.max(0, currentY - step);
+    } else if (e.key === 'ArrowDown') {
+      currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
+    } else if (e.key === 'ArrowLeft' && !isFullRow) {
+      currentX = Math.max(0, currentX - step);
+    } else if (e.key === 'ArrowRight' && !isFullRow) {
+      currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
+    }
+    
     overlayWindow.style.top = `${currentY}px`;
-    e.preventDefault(); // Optional: prevent page scroll when tuning
-  } else if (e.key === 'ArrowDown') {
-    currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
-    overlayWindow.style.top = `${currentY}px`;
-    e.preventDefault();
-  } else if (e.key === 'ArrowLeft' && !isFullRow) {
-    currentX = Math.max(0, currentX - step);
     overlayWindow.style.left = `${currentX}px`;
-    e.preventDefault();
-  } else if (e.key === 'ArrowRight' && !isFullRow) {
-    currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
-    overlayWindow.style.left = `${currentX}px`;
-    e.preventDefault();
+
+    // Only prevent default if we are NOT in an input field
+    // This allows the cursor to move normally in text boxes
+    if (!isInput) {
+      e.preventDefault();
+    }
   } else if (e.key === 'Escape') {
     chrome.storage.local.set({ enabled: false });
   }
@@ -171,6 +187,7 @@ function applySettings(settings) {
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
   if (settings.autoHide !== undefined) isAutoHideEnabled = settings.autoHide;
+  if (settings.keyboardControl !== undefined) isKeyboardControlEnabled = settings.keyboardControl;
   
   if (settings.isPopupOpen !== undefined) {
     isPopupOpen = settings.isPopupOpen;
@@ -192,7 +209,7 @@ function applySettings(settings) {
 // Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
 // Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide', 'keyboardControl'], (result) => {
   applySettings(result);
 });
 

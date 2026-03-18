@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
+    document.querySelector('[for="toggleKeyboardControl"]').textContent = t('keyboardControl');
     document.querySelector('.footer').textContent                     = t('footerTip');
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');
@@ -71,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
   const toggleLinkSize = document.getElementById('toggleLinkSize');
   const toggleAutoHide = document.getElementById('toggleAutoHide');
+  const toggleKeyboardControl = document.getElementById('toggleKeyboardControl');
   const heightRange = document.getElementById('heightRange');
   const widthRange = document.getElementById('widthRange');
   const borderRadiusRange = document.getElementById('borderRadiusRange');
@@ -82,12 +84,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnCircle = document.getElementById('btnCircle');
 
   // Load saved settings
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
     toggleLinkSize.checked = result.linkSize || false;
     toggleAutoHide.checked = result.autoHide || false;
+    toggleKeyboardControl.checked = result.keyboardControl || false;
     heightRange.value = result.height || 50;
     widthRange.value = result.width || 200;
     borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
@@ -126,6 +129,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   toggleAutoHide.addEventListener('change', (e) => {
     updateSettings({ autoHide: e.target.checked });
+  });
+
+  toggleKeyboardControl.addEventListener('change', (e) => {
+    updateSettings({ keyboardControl: e.target.checked });
   });
   
   toggleLinkSize.addEventListener('change', (e) => {

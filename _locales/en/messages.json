@@ -37,5 +37,6 @@
   },
   "color": { "message": "Color" },
   "autoHideOnLeave": { "message": "Auto-hide on Mouse Leave" },
+  "keyboardControl": { "message": "Keyboard Control" },
   "footerTip": { "message": "Use Mouse or Up/Down arrows to move." }
 }

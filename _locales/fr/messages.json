@@ -13,5 +13,6 @@
   "opacity": { "message": "Opacité" },
   "color": { "message": "Couleur" },
   "autoHideOnLeave": { "message": "Masquer auto. si la souris sort" },
+  "keyboardControl": { "message": "Contrôle Clavier" },
   "footerTip": { "message": "Utilisez la souris ou les touches fléchées pour déplacer le cadre." }
 }

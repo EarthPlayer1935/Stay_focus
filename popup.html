@@ -11,20 +11,26 @@
     <div class="header">
       <h1>Stay Focus</h1>
       <div class="header-right">
-        <select id="langSelect" title="Language">
-          <option value="en">English</option>
-          <option value="zh_CN">中文</option>
-          <option value="ja">日本語</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="es">Español</option>
-          <option value="ru">Русский</option>
-          <option value="ko">한국어</option>
-          <option value="th">ภาษาไทย</option>
-          <option value="ar">العربية</option>
-          <option value="pt">Português</option>
-          <option value="hi">हिन्दी</option>
-        </select>
+        <div class="icon-actions">
+          <button id="btnLanguage" class="icon-btn" title="Language">🌐</button>
+          <button id="btnNightMode" class="icon-btn" title="Night Mode">🌙</button>
+        </div>
+        
+        <div id="langMenu" class="lang-menu hidden">
+          <div class="lang-option" data-value="en">English</div>
+          <div class="lang-option" data-value="zh_CN">中文</div>
+          <div class="lang-option" data-value="ja">日本語</div>
+          <div class="lang-option" data-value="fr">Français</div>
+          <div class="lang-option" data-value="de">Deutsch</div>
+          <div class="lang-option" data-value="es">Español</div>
+          <div class="lang-option" data-value="ru">Русский</div>
+          <div class="lang-option" data-value="ko">한국어</div>
+          <div class="lang-option" data-value="th">ภาษาไทย</div>
+          <div class="lang-option" data-value="ar">العربية</div>
+          <div class="lang-option" data-value="pt">Português</div>
+          <div class="lang-option" data-value="hi">हिन्दी</div>
+        </div>
+
         <label class="switch">
           <input type="checkbox" id="toggleFocus" />
           <span class="slider round"></span>

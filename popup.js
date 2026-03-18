@@ -35,26 +35,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btnCircle').title                        = t('shapeCircle');
   }
 
-  const langSelect = document.getElementById('langSelect');
+  const btnLanguage = document.getElementById('btnLanguage');
+  const btnNightMode = document.getElementById('btnNightMode');
+  const langMenu = document.getElementById('langMenu');
 
   // Detect initial language: user preference > browser UI language > 'en'
   const browserLang = chrome.i18n.getUILanguage().replace('-', '_');
-  chrome.storage.local.get(['userLang'], async (result) => {
+  
+  chrome.storage.local.get(['userLang', 'nightMode'], async (result) => {
+    // Language logic
     const lang = result.userLang || browserLang || 'en';
-    // Normalise zh-TW etc
-    const normalised = lang.startsWith('zh') ? 'zh_CN' : lang.split('_')[0];
-    const resolved = langSelect.querySelector(`option[value="${lang}"]`) ? lang :
-                     langSelect.querySelector(`option[value="${normalised}"]`) ? normalised : 'en';
-    langSelect.value = resolved;
+    const normalized = lang.startsWith('zh') ? 'zh_CN' : lang.split('_')[0];
+    const options = Array.from(document.querySelectorAll('.lang-option'));
+    const resolved = options.find(opt => opt.dataset.value === lang) ? lang :
+                     options.find(opt => opt.dataset.value === normalized) ? normalized : 'en';
+    
     const t = await loadLocale(resolved);
     applyTranslations(t);
+
+    // Night mode logic
+    if (result.nightMode) {
+      document.body.classList.add('dark-mode');
+      btnNightMode.textContent = '☀️';
+    }
   });
 
-  langSelect.addEventListener('change', async () => {
-    const lang = langSelect.value;
-    chrome.storage.local.set({ userLang: lang });
-    const t = await loadLocale(lang);
-    applyTranslations(t);
+  btnLanguage.addEventListener('click', (e) => {
+    langMenu.classList.toggle('hidden');
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', () => {
+    langMenu.classList.add('hidden');
+  });
+
+  document.querySelectorAll('.lang-option').forEach(option => {
+    option.addEventListener('click', async () => {
+      const lang = option.dataset.value;
+      chrome.storage.local.set({ userLang: lang });
+      const t = await loadLocale(lang);
+      applyTranslations(t);
+      langMenu.classList.add('hidden');
+    });
+  });
+
+  btnNightMode.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    chrome.storage.local.set({ nightMode: isDark });
+    btnNightMode.textContent = isDark ? '☀️' : '🌙';
   });
 
   document.querySelectorAll('.switch-group').forEach(row => {

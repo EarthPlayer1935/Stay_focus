@@ -3,6 +3,16 @@
   --bg-color: #f8f9fa;
   --text-color: #333;
   --surface: #ffffff;
+  --border-color: #eee;
+  --hover-bg: #e4e6e9;
+}
+
+body.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --surface: #2d2d2d;
+  --border-color: #444;
+  --hover-bg: #3d3d3d;
 }
 
 body {
@@ -25,30 +35,88 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 12px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-#langSelect {
-  font-size: 12px;
-  border: 1px solid #ddd;
+.icon-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: none;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  padding: 3px 5px;
-  background: #f8f9fa;
-  color: #555;
+  padding: 4px 6px;
   cursor: pointer;
-  max-width: 90px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--text-color);
 }
 
-#langSelect:focus {
-  outline: none;
-  border-color: var(--primary);
+.icon-btn:hover {
+  background-color: var(--hover-bg);
+  border-color: #bbb;
+}
+
+.lang-menu {
+  position: absolute;
+  top: 50px;
+  right: 16px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  width: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.lang-menu.hidden {
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.lang-option {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.lang-option:hover {
+  background-color: var(--hover-bg);
+}
+
+body.dark-mode h1 {
+  color: #fff;
+}
+
+body.dark-mode .preset-btn {
+  background: #333;
+  border-color: #444;
+  color: #ccc;
+}
+
+body.dark-mode .preset-btn:hover {
+  background: #444;
+}
+
+body.dark-mode input[type=range]::-webkit-slider-runnable-track {
+  background: #444;
 }
 
 h1 {

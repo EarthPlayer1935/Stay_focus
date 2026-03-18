@@ -47,7 +47,8 @@ body {
 
 .icon-actions {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  gap: 12px;
 }
 
 .icon-btn {
@@ -71,12 +72,12 @@ body {
 
 .lang-menu {
   position: absolute;
-  top: 50px;
+  bottom: 45px;
   right: 16px;
   background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
   z-index: 100;
   width: 120px;
   max-height: 200px;
@@ -87,7 +88,7 @@ body {
 .lang-menu.hidden {
   display: none;
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(10px);
 }
 
 .lang-option {
@@ -124,6 +125,8 @@ h1 {
   font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .controls {
@@ -281,6 +284,11 @@ input:checked + .slider:before {
   margin-top: 8px;
   display: flex;
   justify-content: center;
+  position: relative;
+}
+
+.footer-icons {
+  width: 100%;
 }
 
 /* Disabled states for bound controls */

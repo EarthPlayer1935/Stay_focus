@@ -21,6 +21,10 @@
 2. 点击扩展图标打开控制面板
 3. 切换主开关以启用聚光灯
 
+## 支持
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
 ## 开源协议
 
 本项目采用 **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** 协议授权。

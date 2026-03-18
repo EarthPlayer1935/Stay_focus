@@ -21,6 +21,10 @@ A Chrome extension that adds a focus spotlight to any webpage — helping you co
 2. Click the extension icon to open the control panel
 3. Toggle the main switch to enable the spotlight
 
+## Support
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
 ## License
 
 This project is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** license.

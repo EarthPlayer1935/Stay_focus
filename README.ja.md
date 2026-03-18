@@ -21,6 +21,10 @@
 2. 拡張機能アイコンをクリックしてコントロールパネルを開きます
 3. メインスイッチを切り替えてスポットライトを有効にします
 
+## サポート
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
 ## ライセンス
 
 このプロジェクトは **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** ライセンスのもとで公開されています。

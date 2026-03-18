@@ -21,6 +21,10 @@ Une extension Chrome qui ajoute un projecteur de mise au point sur n'importe que
 2. Cliquez sur l'icône de l'extension pour ouvrir le panneau de contrôle
 3. Activez l'interrupteur principal pour lancer le projecteur
 
+## Soutien
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
 ## Licence
 
 Ce projet est sous licence **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**.

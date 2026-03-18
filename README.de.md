@@ -21,6 +21,10 @@ Eine Chrome-Erweiterung, die jeder Webseite ein Fokus-Spotlight hinzufügt — d
 2. Klicke auf das Erweiterungssymbol, um das Bedienfeld zu öffnen
 3. Lege den Hauptschalter um, um das Spotlight zu aktivieren
 
+## Unterstützung
+
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+
 ## Lizenz
 
 Dieses Projekt ist unter der **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)** Lizenz lizenziert.

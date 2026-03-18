@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function applyTranslations(t) {
-    document.querySelector('.header h1').textContent                  = t('appName');
+    document.getElementById('pluginName').textContent                 = t('appName');
     document.querySelector('[for="toggleFullRow"]').textContent       = t('fullRowMode');
     document.querySelector('[for="toggleHighlightMode"]').textContent = t('colorHighlightMode');
     document.querySelector('[for="toggleLinkSize"]').textContent      = t('linkDimensions');
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnKofi = document.getElementById('btnKofi');
   const btnNightMode = document.getElementById('btnNightMode');
   const langMenu = document.getElementById('langMenu');
+  const pluginName = document.getElementById('pluginName');
 
   // Detect initial language: user preference > browser UI language > 'en'
   const browserLang = chrome.i18n.getUILanguage().replace('-', '_');
@@ -88,6 +89,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   btnKofi.addEventListener('click', () => {
     chrome.tabs.create({ url: 'https://ko-fi.com/EarthPlayer1935' });
+  });
+
+  pluginName.addEventListener('click', () => {
+    toggleFocus.click();
   });
 
   document.querySelectorAll('.switch-group').forEach(row => {

@@ -19,7 +19,7 @@
       "output": "build"
     },
     "win": {
-      "target": "dir"
+      "target": "nsis"
     },
     "mac": {
       "target": "dmg",

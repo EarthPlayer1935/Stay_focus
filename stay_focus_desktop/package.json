@@ -1,6 +1,6 @@
 {
   "name": "stay-focus-desktop",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Stay Focus desktop application with click-through masking",
   "main": "main/index.js",
   "scripts": {

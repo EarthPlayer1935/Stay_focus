@@ -6,7 +6,7 @@ const fs = require('fs');
 const { execFile } = require('child_process');
 
 const DEFAULT_SETTINGS = {
-  enabled: false,
+  enabled: true,
   fullRowMode: false,
   highlightMode: false,
   linkSize: false,
@@ -72,9 +72,11 @@ using System.Runtime.InteropServices;
 public class WinHelper {
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
   public struct RECT { public int L, T, R, B; }
 }
 "@
+$fg = [WinHelper]::GetForegroundWindow()
 $names = @(${nameList})
 $procs = Get-Process | Where-Object { $names -contains $_.ProcessName }
 $results = @()
@@ -83,7 +85,8 @@ foreach ($p in $procs) {
     if ($h -eq [IntPtr]::Zero) { continue }
     $r = New-Object WinHelper+RECT
     if ([WinHelper]::GetWindowRect($h, [ref]$r) -and [WinHelper]::IsWindowVisible($h)) {
-      $results += "$($r.L),$($r.T),$($r.R - $r.L),$($r.B - $r.T)"
+      $isFg = if ($h -eq $fg) { "1" } else { "0" }
+      $results += "$($r.L),$($r.T),$($r.R - $r.L),$($r.B - $r.T),$($isFg)"
     }
   }
 }
@@ -93,8 +96,10 @@ $results -join '|'
   execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { timeout: 4000 }, (err, stdout) => {
     if (err) { callback([]); return; }
     const rects = stdout.trim().split('|').filter(Boolean).map(s => {
-      const [x, y, w, h] = s.split(',').map(Number);
-      return { x, y, w, h };
+      const parts = s.split(',');
+      const [x, y, w, h] = parts.slice(0, 4).map(Number);
+      const isForeground = parts[4] === '1';
+      return { x, y, w, h, isForeground };
     }).filter(r => r.w > 0 && r.h > 0);
     callback(rects);
   });
@@ -117,6 +122,9 @@ function startAutoHideTimers() {
   const names = currentSettings.targetProcesses;
   if (!names || names.length === 0) {
     // Global mode: always show the overlay (nothing to do)
+    if (mainWindow && currentSettings.enabled) {
+      mainWindow.webContents.send('auto-hide-state', true);
+    }
     return;
   }
 
@@ -129,14 +137,22 @@ function startAutoHideTimers() {
   refreshRects(); // immediate first fetch
   slowTimer = setInterval(refreshRects, 2000);
 
-  // Fast timer: check mouse position every 100 ms
+  // Fast timer: check mouse position and foreground state every 100 ms
   fastTimer = setInterval(() => {
     if (!mainWindow) return;
     const { x, y } = screen.getCursorScreenPoint();
-    const inside = cachedWindowRects.some(r => pointInRect(x, y, r));
-    if (inside !== lastAutoHideState) {
-      lastAutoHideState = inside;
-      mainWindow.webContents.send('auto-hide-state', inside);
+    
+    // Find the target window that is both in foreground AND contains the mouse
+    const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
+    
+    // state is either the rect object or false
+    const state = activeRect || false;
+    
+    // We compare JSON string because objects are different instances
+    const stateStr = JSON.stringify(state);
+    if (stateStr !== lastAutoHideState) {
+      lastAutoHideState = stateStr;
+      mainWindow.webContents.send('auto-hide-state', state);
     }
   }, 100);
 }

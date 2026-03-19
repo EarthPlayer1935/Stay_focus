@@ -18,6 +18,15 @@
       height: 100vh;
       overflow: hidden;
     }
+    .stay-focus-mask-clip {
+      position: absolute;
+      overflow: hidden;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      transition: all 0.2s ease;
+    }
     .stay-focus-window {
       position: absolute;
       pointer-events: none;
@@ -26,14 +35,16 @@
       height: 50px;
       border-radius: 12px;
       box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
-      top: calc(50% - 25px);
-      left: calc(50% - 100px);
+      top: 0;
+      left: 0;
     }
   </style>
 </head>
 <body>
   <div class="stay-focus-overlay-container" id="overlay-container">
-    <div class="stay-focus-window" id="overlay-window"></div>
+    <div class="stay-focus-mask-clip" id="mask-clip">
+      <div class="stay-focus-window" id="overlay-window"></div>
+    </div>
   </div>
   <script src="overlay.js"></script>
 </body>

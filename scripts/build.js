@@ -60,6 +60,8 @@ const ignoreList = [
   '.gitignore',
   'task.md',
   'implementation_plan.md',
+  'stay_focus_desktop/**',
+  'docs/**',
   '.gemini/**'
 ];
 

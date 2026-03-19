@@ -1,5 +1,6 @@
 const overlayContainer = document.getElementById('overlay-container');
 const overlayWindow = document.getElementById('overlay-window');
+const maskClip = document.getElementById('mask-clip');
 
 let isEnabled = false;   // will be set from settings on init
 let isFullRow = false;
@@ -9,8 +10,12 @@ let windowWidth = 200;
 let currentBorderRadius = 12;
 let bgOpacity = 75;
 let bgColor = '#000000';
+
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
+
+// Track the current active mask rect
+let activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
 
 // Whether auto-hide has forced us to hide (separate from isEnabled)
 let autoHideVisible = true;
@@ -34,21 +39,21 @@ function applyVisibility() {
 function updateStyles() {
   overlayWindow.style.height = `${windowHeight}px`;
 
+  // Calculate local coordinates relative to mask-clip
+  let localX = currentX - activeRect.x;
+  let localY = currentY - activeRect.y;
+
   if (isFullRow) {
-    overlayWindow.style.width = '100vw';
-    overlayWindow.style.left = '0px';
+    overlayWindow.style.width = '100vw'; // Note: full-row might need special handling if clip is on
+    overlayWindow.style.left = `${-activeRect.x}px`;
     overlayWindow.style.borderRadius = '0px';
   } else {
     overlayWindow.style.width = `${windowWidth}px`;
     overlayWindow.style.borderRadius = `${currentBorderRadius}px`;
-    if (currentX + windowWidth > window.innerWidth) currentX = window.innerWidth - windowWidth;
-    if (currentX < 0) currentX = 0;
-    overlayWindow.style.left = `${currentX}px`;
+    overlayWindow.style.left = `${localX}px`;
   }
 
-  if (currentY + windowHeight > window.innerHeight) currentY = window.innerHeight - windowHeight;
-  if (currentY < 0) currentY = 0;
-  overlayWindow.style.top = `${currentY}px`;
+  overlayWindow.style.top = `${localY}px`;
 
   const rgb = hexToRgb(bgColor);
   const alpha = bgOpacity / 100;
@@ -66,15 +71,10 @@ function updateStyles() {
 document.addEventListener('mousemove', (e) => {
   if (!isEnabled) return;
 
-  let newY = e.clientY - (windowHeight / 2);
-  currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
-  overlayWindow.style.top = `${currentY}px`;
-
-  if (!isFullRow) {
-    let newX = e.clientX - (windowWidth / 2);
-    currentX = Math.max(0, Math.min(newX, window.innerWidth - windowWidth));
-    overlayWindow.style.left = `${currentX}px`;
-  }
+  currentY = e.clientY - (windowHeight / 2);
+  currentX = e.clientX - (windowWidth / 2);
+  
+  updateStyles();
 });
 
 // IPC settings sync
@@ -104,11 +104,30 @@ if (window.electronAPI) {
     updateStyles();
   });
 
-  // Auto-hide state from main process (target-window polling)
+  // Auto-hide state from main process: can be boolean (global) or rect object
   if (window.electronAPI.onAutoHideState) {
-    window.electronAPI.onAutoHideState((event, visible) => {
-      autoHideVisible = visible;
-      applyVisibility();
+    window.electronAPI.onAutoHideState((event, state) => {
+      if (typeof state === 'object' && state !== null) {
+        // Limited scope mode
+        activeRect = state;
+        maskClip.style.left = `${state.x}px`;
+        maskClip.style.top = `${state.y}px`;
+        maskClip.style.width = `${state.w}px`;
+        maskClip.style.height = `${state.h}px`;
+        autoHideVisible = true;
+      } else if (state === true) {
+        // Global mode
+        activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
+        maskClip.style.left = '0px';
+        maskClip.style.top = '0px';
+        maskClip.style.width = '100vw';
+        maskClip.style.height = '100vh';
+        autoHideVisible = true;
+      } else {
+        // Hidden
+        autoHideVisible = false;
+      }
+      updateStyles();
     });
   }
 

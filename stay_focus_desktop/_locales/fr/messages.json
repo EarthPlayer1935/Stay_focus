@@ -1,0 +1,20 @@
+{
+  "appName": { "message": "Focus Mode" },
+  "appDescription": { "message": "Un spotlight de lecture pour vous aider à rester concentré sur n'importe quelle page web." },
+  "fullRowMode": { "message": "Mode Ligne Entière" },
+  "colorHighlightMode": { "message": "Mode Surbrillance Colorée" },
+  "shapeSquare": { "message": "Carré" },
+  "shapeRounded": { "message": "Rectangle Arrondi" },
+  "shapeCircle": { "message": "Cercle" },
+  "linkDimensions": { "message": "Lier les Dimensions (1:1)" },
+  "spotlightHeight": { "message": "Hauteur du Cadre" },
+  "spotlightWidth": { "message": "Largeur du Cadre" },
+  "cornerRadius": { "message": "Rayon des Coins" },
+  "opacity": { "message": "Opacité" },
+  "color": { "message": "Couleur" },
+  "autoHideOnLeave": { "message": "Masquer auto. si la souris sort" },
+  "keyboardControl": { "message": "Contrôle Clavier" },
+  "supportKofi": { "message": "Soutenir sur Ko-fi" },
+  "supportGithub": { "message": "Étoile sur GitHub" },
+  "footerTip": { "message": "Utilisez la souris ou les touches fléchées pour déplacer." }
+}

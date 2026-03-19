@@ -1,0 +1,19 @@
+{
+  "appName": { "message": "포커스 모드" },
+  "appDescription": { "message": "모든 웹 페이지에서 집중력을 유지하는 데 도움이 되는 독서 스포트라이트입니다." },
+  "fullRowMode": { "message": "전체 행 모드" },
+  "colorHighlightMode": { "message": "컬러 하이라이트 모드" },
+  "shapeSquare": { "message": "정사각형" },
+  "shapeRounded": { "message": "둥근 사각형" },
+  "shapeCircle": { "message": "원형" },
+  "linkDimensions": { "message": "가로세로 연동 (1:1)" },
+  "spotlightHeight": { "message": "포커스 높이" },
+  "spotlightWidth": { "message": "포커스 너비" },
+  "cornerRadius": { "message": "모서리 반경" },
+  "opacity": { "message": "불투명도" },
+  "color": { "message": "색상" },
+  "keyboardControl": { "message": "키보드 제어" },
+  "supportKofi": { "message": "Ko-fi에서 지원" },
+  "supportGithub": { "message": "GitHub에서 스타" },
+  "footerTip": { "message": "마우스 또는 방향키로 포커스 프레임을 이동하세요." }
+}

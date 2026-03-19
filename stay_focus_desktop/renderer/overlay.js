@@ -80,6 +80,20 @@ if (window.electronAPI) {
     if (newSettings.color !== undefined) bgColor = newSettings.color;
     updateStyles();
   });
+  
+  if (window.electronAPI.onKeyboardMove) {
+    window.electronAPI.onKeyboardMove((event, key) => {
+      if (!isEnabled) return;
+      const step = 20;
+      if (key === 'Up') currentY = Math.max(0, currentY - step);
+      else if (key === 'Down') currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
+      else if (key === 'Left' && !isFullRow) currentX = Math.max(0, currentX - step);
+      else if (key === 'Right' && !isFullRow) currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
+      
+      overlayWindow.style.top = `${currentY}px`;
+      if (!isFullRow) overlayWindow.style.left = `${currentX}px`;
+    });
+  }
 }
 
 updateStyles();

@@ -1,0 +1,20 @@
+{
+  "appName": { "message": "集中モード" },
+  "appDescription": { "message": "どのウェブページでも集中力を維持するための読書スポットライトです。" },
+  "fullRowMode": { "message": "全行モード" },
+  "colorHighlightMode": { "message": "カラーハイライトモード" },
+  "shapeSquare": { "message": "正方形" },
+  "shapeRounded": { "message": "角丸矩形" },
+  "shapeCircle": { "message": "正円" },
+  "linkDimensions": { "message": "縦横連動 (1:1)" },
+  "spotlightHeight": { "message": "フォーカス枠の高さ" },
+  "spotlightWidth": { "message": "フォーカス枠の幅" },
+  "cornerRadius": { "message": "角の丸さ" },
+  "opacity": { "message": "不透明度" },
+  "color": { "message": "色" },
+  "autoHideOnLeave": { "message": "マウスが離れた時に自動非表示" },
+  "keyboardControl": { "message": "キーボード制御" },
+  "supportKofi": { "message": "Ko-fi でサポート" },
+  "supportGithub": { "message": "GitHub でスター" },
+  "footerTip": { "message": "マウスまたは矢印キーでフォーカス枠を移動できます。" }
+}

@@ -183,6 +183,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter') addProcess();
   });
 
+  async function refreshProcessList() {
+    if (!electron || !electron.getRunningProcesses) return;
+    const processes = await electron.getRunningProcesses();
+    const list = document.getElementById('processList');
+    if (!list) return;
+    
+    list.innerHTML = '';
+    processes.forEach(name => {
+      const option = document.createElement('option');
+      option.value = name;
+      list.appendChild(option);
+    });
+  }
+
+  processInput.addEventListener('focus', refreshProcessList);
+
   // Disable process group when auto-hide is off
   function setProcessGroupEnabled(enabled) {
     if (enabled) {

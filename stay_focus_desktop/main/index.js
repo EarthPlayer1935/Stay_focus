@@ -1,4 +1,6 @@
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, shell, screen } = require('electron');
+const electron = require('electron');
+const { app, BrowserWindow, Tray, Menu, globalShortcut, shell, screen } = electron;
+const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
 const { execFile } = require('child_process');
@@ -286,6 +288,20 @@ ipcMain.handle('get-locale', (e, lang) => {
 ipcMain.handle('get-system-locale', () => app.getLocale());
 
 ipcMain.on('open-external', (e, url) => shell.openExternal(url));
+
+ipcMain.handle('get-running-processes', async () => {
+  return new Promise((resolve) => {
+    const ps = `Get-Process | Where-Object { $_.MainWindowTitle } | Select-Object -Property ProcessName | Sort-Object -Property ProcessName -Unique | ForEach-Object { $_.ProcessName }`;
+    execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], (err, stdout) => {
+      if (err) {
+        resolve([]);
+        return;
+      }
+      const names = stdout.trim().split(/\r?\n/).filter(Boolean);
+      resolve(names);
+    });
+  });
+});
 
 ipcMain.on('close-settings', () => {
   if (settingsWindow) {

@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
     toggleLinkSize.checked = result.linkSize || false;
-    toggleAutoHide.checked = result.autoHide || false;
+    toggleAutoHide.checked = result.autoHide !== undefined ? result.autoHide : true;
     toggleKeyboardControl.checked = result.keyboardControl || false;
     heightRange.value = result.height || 50;
     widthRange.value = result.width || 200;

@@ -2,17 +2,12 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, shell } = requi
 const path = require('path');
 const fs = require('fs');
 
-let mainWindow;
-let settingsWindow;
-let tray;
-let isLayerVisible = true;
-
-let currentSettings = {
-  enabled: true,
+const DEFAULT_SETTINGS = {
+  enabled: false,
   fullRowMode: false,
   highlightMode: false,
   linkSize: false,
-  autoHide: false,
+  autoHide: true,
   keyboardControl: false,
   height: 50,
   width: 200,
@@ -22,6 +17,32 @@ let currentSettings = {
   userLang: null,
   nightMode: false
 };
+
+let configPath;
+
+function loadSettings() {
+  try {
+    const raw = fs.readFileSync(configPath, 'utf8');
+    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+  } catch {
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+function saveSettingsToFile(settings) {
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(settings, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Failed to save settings:', e);
+  }
+}
+
+let mainWindow;
+let settingsWindow;
+let tray;
+let isLayerVisible = true;
+
+let currentSettings = { ...DEFAULT_SETTINGS };
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -116,6 +137,7 @@ ipcMain.handle('get-settings', () => currentSettings);
 ipcMain.on('save-settings', (event, newSettings) => {
   const oldKbCtrl = currentSettings.keyboardControl;
   currentSettings = { ...currentSettings, ...newSettings };
+  saveSettingsToFile(currentSettings);
   if (mainWindow) {
     mainWindow.webContents.send('update-settings', currentSettings);
   }
@@ -145,6 +167,9 @@ ipcMain.on('close-settings', () => {
 });
 
 app.whenReady().then(() => {
+  configPath = path.join(app.getPath('userData'), 'config.json');
+  currentSettings = loadSettings();
+
   createWindow();
   createTray();
 

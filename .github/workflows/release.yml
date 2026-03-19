@@ -60,7 +60,12 @@ jobs:
         working-directory: ./main-repo/stay_focus_desktop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run dist
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Node version:" && node -v
+          echo "Building..."
+          npm run dist
+        shell: bash
 
       - name: Upload desktop installer
         uses: softprops/action-gh-release@v1

@@ -20,14 +20,25 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
 
       - name: Build extension zip
         run: npm run build
 
+      - name: Build desktop app
+        working-directory: ./stay_focus_desktop
+        run: |
+          npm install
+          npm run dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: release/*.zip
+          files: |
+            release/*.zip
+            stay_focus_desktop/build/*.exe
+            stay_focus_desktop/build/*.7z
           generate_release_notes: true

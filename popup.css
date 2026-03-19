@@ -13,6 +13,7 @@ body.dark-mode {
   --surface: #2d2d2d;
   --border-color: #444;
   --hover-bg: #3d3d3d;
+  --secondary-text: #aaa;
 }
 
 body {
@@ -67,7 +68,7 @@ body {
 
 .icon-btn:hover {
   background-color: var(--hover-bg);
-  border-color: #bbb;
+  border-color: var(--border-color);
 }
 
 .lang-menu {
@@ -120,6 +121,10 @@ body.dark-mode input[type=range]::-webkit-slider-runnable-track {
   background: #444;
 }
 
+body.dark-mode .switch-group {
+  border-color: var(--border-color);
+}
+
 h1 {
   margin: 0;
   font-size: 18px;
@@ -154,7 +159,8 @@ h1 {
 .control-group label {
   font-size: 13px;
   font-weight: 500;
-  color: #555;
+  color: var(--text-color);
+  opacity: 0.85;
 }
 
 .shape-presets {
@@ -174,12 +180,12 @@ h1 {
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s ease;
-  color: #555;
+  color: var(--text-color);
 }
 
 .preset-btn:hover {
-  background: #e4e6e9;
-  border-color: #bbb;
+  background: var(--hover-bg);
+  border-color: var(--border-color);
   transform: translateY(-1px);
 }
 
@@ -241,7 +247,7 @@ input[type="color"] {
   position: absolute;
   cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
+  background-color: var(--border-color);
   transition: .4s;
 }
 
@@ -279,7 +285,7 @@ input:checked + .slider:before {
 
 .footer {
   font-size: 11px;
-  color: #888;
+  color: var(--secondary-text);
   text-align: center;
   margin-top: 8px;
   display: flex;

@@ -38,6 +38,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          path: main-repo # Optional but often helps with path lengths
+
+      - name: Enable symlinks
+        run: |
+          git config --global core.symlinks true
+          git config --global core.autocrlf false
+        shell: bash
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,11 +53,11 @@ jobs:
           node-version: '20'
 
       - name: Install desktop dependencies
-        working-directory: ./stay_focus_desktop
+        working-directory: ./main-repo/stay_focus_desktop
         run: npm install
 
       - name: Build desktop installer
-        working-directory: ./stay_focus_desktop
+        working-directory: ./main-repo/stay_focus_desktop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dist
@@ -58,5 +66,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            stay_focus_desktop/build/*.exe
-            stay_focus_desktop/build/*.7z
+            main-repo/stay_focus_desktop/build/*.exe
+            main-repo/stay_focus_desktop/build/*.7z

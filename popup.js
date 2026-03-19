@@ -1,9 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // Connect a port so background.js can detect when popup opens and closes
   chrome.runtime.connect({ name: 'stay_focus_popup' });
 
-  // --- Internationalization (i18n) ---
-  // Fetch a locale's messages.json and return a translator function
   async function loadLocale(lang) {
     try {
       const url = chrome.runtime.getURL(`_locales/${lang}/messages.json`);
@@ -12,7 +9,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await resp.json();
       return (key) => (data[key] && data[key].message) || key;
     } catch {
-      // Fallback to Chrome's built-in i18n
       return (key) => chrome.i18n.getMessage(key) || key;
     }
   }
@@ -43,11 +39,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const langMenu = document.getElementById('langMenu');
   const pluginName = document.getElementById('pluginName');
 
-  // Detect initial language: user preference > browser UI language > 'en'
   const browserLang = chrome.i18n.getUILanguage().replace('-', '_');
-  
+
   chrome.storage.local.get(['userLang', 'nightMode'], async (result) => {
-    // Language logic
     const lang = result.userLang || browserLang || 'en';
     const normalized = lang.startsWith('zh') ? 'zh_CN' : lang.split('_')[0];
     const options = Array.from(document.querySelectorAll('.lang-option'));
@@ -57,7 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const t = await loadLocale(resolved);
     applyTranslations(t);
 
-    // Night mode logic
     if (result.nightMode) {
       document.body.classList.add('dark-mode');
       btnNightMode.textContent = '☀️';
@@ -103,7 +96,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.querySelectorAll('.switch-group').forEach(row => {
     row.addEventListener('click', (e) => {
-      // Don't double-fire if user clicks the input or its visual slider directly
       if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
         const checkbox = row.querySelector('input[type="checkbox"]');
         if (checkbox) checkbox.click();
@@ -127,7 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnRounded = document.getElementById('btnRounded');
   const btnCircle = document.getElementById('btnCircle');
 
-  // Load saved settings
   chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
@@ -140,8 +131,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
     opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
-    
-    // Initial binding state
+
     if (result.fullRowMode) {
       widthRange.disabled = true;
       toggleLinkSize.disabled = true;
@@ -161,8 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   toggleFullRow.addEventListener('change', (e) => {
     const isFull = e.target.checked;
     updateSettings({ fullRowMode: isFull });
-    
-    // Bind logic: if Full Row is ON, width slider and link toggle are useless
     widthRange.disabled = isFull;
     toggleLinkSize.disabled = isFull;
   });
@@ -182,19 +170,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   toggleLinkSize.addEventListener('change', (e) => {
     updateSettings({ linkSize: e.target.checked });
     if (e.target.checked) {
-      // Upon linking, immediately match height to width
       heightRange.value = widthRange.value;
       updateSettings({ height: parseInt(widthRange.value) });
     }
   });
 
-  // Preset Buttons Logic
   function applyPreset(width, height, radius, link) {
     widthRange.value = width;
     heightRange.value = height;
     borderRadiusRange.value = radius;
     toggleLinkSize.checked = link;
-    toggleFullRow.checked = false; // Disable full row when a shape is picked
+    toggleFullRow.checked = false;
     updateSettings({ 
       width: width, 
       height: height, 
@@ -202,21 +188,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       linkSize: link,
       fullRowMode: false 
     });
-    // Ensure controls are re-enabled when a preset is picked
     widthRange.disabled = false;
     toggleLinkSize.disabled = false;
   }
 
   btnSquare.addEventListener('click', () => {
-    applyPreset(200, 200, 0, true); // Square, link dimensions
+    applyPreset(200, 200, 0, true);
   });
 
   btnRounded.addEventListener('click', () => {
-    applyPreset(300, 50, 12, false); // Standard reading line, unlink dimensions
+    applyPreset(300, 50, 12, false);
   });
 
   btnCircle.addEventListener('click', () => {
-    applyPreset(150, 150, 150, true); // Circle, link dimensions
+    applyPreset(150, 150, 150, true);
   });
 
   heightRange.addEventListener('input', (e) => {

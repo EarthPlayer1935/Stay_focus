@@ -5,7 +5,7 @@ let isPopupOpen = false;
 let windowHeight = 50;
 let windowWidth = 200;
 let currentBorderRadius = 12;
-let bgOpacity = 75; // 0 to 100
+let bgOpacity = 75;
 let bgColor = '#000000';
 let isAutoHideEnabled = false;
 let isKeyboardControlEnabled = false;
@@ -24,20 +24,16 @@ function initOverlay() {
 
   overlayWindow = document.createElement('div');
   overlayWindow.className = 'stay-focus-window';
-  // Note: border-radius handles the rounded corners; it's dynamically set or hardcoded in CSS. We'll set it in JS or CSS.
   
   overlayContainer.appendChild(overlayWindow);
   document.body.appendChild(overlayContainer);
 
   updateStyles();
   
-  // Track mouse movement
   document.addEventListener('mousemove', onMouseMove);
   
-  // Track keyboard arrow keys for fine tuning
   document.addEventListener('keydown', onKeyDown);
 
-  // Auto-hide when mouse leaves window
   document.addEventListener('mouseleave', () => {
     if (isAutoHideEnabled) {
       isMouseOutside = true;
@@ -73,10 +69,10 @@ function updateStyles() {
   if (isFullRow) {
     overlayWindow.style.width = '100vw';
     overlayWindow.style.left = '0px';
-    overlayWindow.style.borderRadius = '0px'; // No corners for full row
+    overlayWindow.style.borderRadius = '0px';
   } else {
     overlayWindow.style.width = `${windowWidth}px`;
-    overlayWindow.style.borderRadius = `${currentBorderRadius}px`; // Configurable rounded corners
+    overlayWindow.style.borderRadius = `${currentBorderRadius}px`;
     if (currentX + windowWidth > window.innerWidth) {
       currentX = window.innerWidth - windowWidth;
     }
@@ -84,7 +80,6 @@ function updateStyles() {
     overlayWindow.style.left = `${currentX}px`;
   }
   
-  // Ensure window stays within bounds vertically (applies to both modes)
   if (currentY + windowHeight > window.innerHeight) {
     currentY = window.innerHeight - windowHeight;
   }
@@ -96,11 +91,9 @@ function updateStyles() {
   const alpha = bgOpacity / 100;
   
   if (isHighlightMode) {
-    // Color the focus area, no dimming background
     overlayWindow.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
     overlayWindow.style.boxShadow = 'none';
   } else {
-    // Dim background, transparent focus area
     overlayWindow.style.backgroundColor = 'transparent';
     overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
   }
@@ -111,7 +104,6 @@ function updateStyles() {
 function updateVisibility() {
   if (!overlayContainer) return;
 
-  // Override auto-hide if the popup is open so the user can see their adjustments
   const shouldBeVisible = isEnabled && (!(isAutoHideEnabled && isMouseOutside) || isPopupOpen);
   
   if (shouldBeVisible) {
@@ -124,7 +116,6 @@ function updateVisibility() {
 function onMouseMove(e) {
   if (!isEnabled || isPopupOpen) return;
   
-  // Center the window on the mouse cursor
   let newY = e.clientY - (windowHeight / 2);
   currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
   overlayWindow.style.top = `${currentY}px`;
@@ -167,8 +158,6 @@ function onKeyDown(e) {
     overlayWindow.style.top = `${currentY}px`;
     overlayWindow.style.left = `${currentX}px`;
 
-    // Only prevent default if we are NOT in an input field
-    // This allows the cursor to move normally in text boxes
     if (!isInput) {
       e.preventDefault();
     }
@@ -192,7 +181,6 @@ function applySettings(settings) {
   if (settings.isPopupOpen !== undefined) {
     isPopupOpen = settings.isPopupOpen;
     if (isPopupOpen) {
-      // Reposition to center so user can see it while popup is open
       currentY = window.innerHeight / 2 - windowHeight / 2;
       currentX = window.innerWidth / 2 - windowWidth / 2;
     }
@@ -205,9 +193,6 @@ function applySettings(settings) {
   updateStyles();
 }
 
-// Ensure manifest specifies "content_scripts" if we want it auto-injected.
-// Wait, manifest.json didn't have "content_scripts", let me check if we inject dynamically.
-// Actually, it's better to add it to manifest.json so it auto-loads on all pages.
 
 chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide', 'keyboardControl'], (result) => {
   applySettings(result);

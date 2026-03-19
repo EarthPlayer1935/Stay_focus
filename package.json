@@ -1,0 +1,25 @@
+{
+  "name": "stay_focus",
+  "version": "1.0.0",
+  "description": "[English](./README.md) | **中文**",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node scripts/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EarthPlayer1935/Stay_focus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/EarthPlayer1935/Stay_focus/issues"
+  },
+  "homepage": "https://github.com/EarthPlayer1935/Stay_focus#readme",
+  "devDependencies": {
+    "archiver": "^7.0.1"
+  }
+}

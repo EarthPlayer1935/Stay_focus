@@ -21,6 +21,16 @@
 2. 点击扩展图标打开控制面板
 3. 切换主开关以启用聚光灯
 
+## 开发与构建
+
+本项目使用 Node.js 来实现自动化构建和发布流程。
+
+1. 请确保已安装 [Node.js](https://nodejs.org/) 环境
+2. 安装依赖：`npm install`
+3. 打包扩展程序：`npm run build`
+
+打包好的 `.zip` 交付物将生成在 `release/` 目录下。
+
 ## 支持
 
 [![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)

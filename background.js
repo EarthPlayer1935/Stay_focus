@@ -16,9 +16,6 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-// The background service worker outlives the popup process.
-// onConnect fires when popup.js calls chrome.runtime.connect().
-// onDisconnect fires automatically when the popup is destroyed — reliably.
 chrome.runtime.onConnect.addListener((port) => {
   if (port.name === 'stay_focus_popup') {
     chrome.storage.local.set({ isPopupOpen: true });

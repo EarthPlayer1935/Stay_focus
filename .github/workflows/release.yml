@@ -6,11 +6,10 @@ on:
       - 'v*'
 
 jobs:
-  build-and-release:
+  build-extension:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,19 +25,38 @@ jobs:
       - name: Build extension zip
         run: npm run build
 
-      - name: Build desktop app
+      - name: Upload extension zip
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*.zip
+          generate_release_notes: true
+
+  build-desktop:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install desktop dependencies
         working-directory: ./stay_focus_desktop
-        run: |
-          npm install
-          npm run dist
+        run: npm install
+
+      - name: Build desktop installer
+        working-directory: ./stay_focus_desktop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run dist
 
-      - name: Create GitHub Release
+      - name: Upload desktop installer
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release/*.zip
             stay_focus_desktop/build/*.exe
             stay_focus_desktop/build/*.7z
-          generate_release_notes: true

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: transparent;
+    }
+    .stay-focus-overlay-container {
+      display: block;
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .stay-focus-window {
+      position: absolute;
+      pointer-events: none;
+      box-sizing: border-box;
+      width: 200px;
+      height: 50px;
+      border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+      top: calc(50% - 25px);
+      left: calc(50% - 100px);
+    }
+  </style>
+</head>
+<body>
+  <div class="stay-focus-overlay-container" id="overlay-container">
+    <div class="stay-focus-window" id="overlay-window"></div>
+  </div>
+  <script src="overlay.js"></script>
+</body>
+</html>

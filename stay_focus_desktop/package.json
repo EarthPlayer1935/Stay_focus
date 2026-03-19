@@ -1,0 +1,29 @@
+{
+  "name": "stay-focus-desktop",
+  "version": "1.0.0",
+  "description": "Stay Focus desktop application with click-through masking",
+  "main": "main/index.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.stayfocus.desktop",
+    "productName": "Stay Focus",
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "target": "dir"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    }
+  }
+}

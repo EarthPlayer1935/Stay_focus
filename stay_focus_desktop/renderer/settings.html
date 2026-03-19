@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stay Focus Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 id="pluginName">Stay Focus</h1>
+      <label class="switch">
+        <input type="checkbox" id="toggleFocus" checked />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div class="controls">
+      <div class="control-group switch-group">
+        <label for="toggleFullRow">Full Row Mode</label>
+        <label class="switch small-switch">
+          <input type="checkbox" id="toggleFullRow" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="control-group switch-group">
+        <label for="toggleHighlightMode">Color Highlight Mode</label>
+        <label class="switch small-switch">
+          <input type="checkbox" id="toggleHighlightMode" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="shape-presets">
+        <button id="btnSquare" class="preset-btn" title="Square">⬛</button>
+        <button id="btnRounded" class="preset-btn" title="Rounded Box">🔲</button>
+        <button id="btnCircle" class="preset-btn" title="Circle">⏺</button>
+      </div>
+
+      <div class="control-group">
+        <label for="heightRange">Spotlight Height</label>
+        <input type="range" id="heightRange" min="20" max="800" value="50" />
+      </div>
+
+      <div class="control-group">
+        <label for="widthRange">Spotlight Width</label>
+        <input type="range" id="widthRange" min="50" max="1000" value="200" />
+      </div>
+
+      <div class="control-group">
+        <label for="borderRadiusRange">Corner Radius</label>
+        <input type="range" id="borderRadiusRange" min="0" max="150" value="12" />
+      </div>
+
+      <div class="control-group">
+        <label for="opacityRange">Opacity</label>
+        <input type="range" id="opacityRange" min="10" max="95" value="75" />
+      </div>
+      
+      <div class="control-group">
+        <label for="colorPicker">Color</label>
+        <input type="color" id="colorPicker" value="#000000" />
+      </div>
+    </div>
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>

@@ -96,6 +96,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnRounded = document.getElementById('btnRounded');
   const btnCircle = document.getElementById('btnCircle');
 
+  // Process tag UI elements
+  const processGroup = document.getElementById('processGroup');
+  const processTags = document.getElementById('processTags');
+  const processInput = document.getElementById('processInput');
+  const btnAddProcess = document.getElementById('btnAddProcess');
+  const processHint = document.getElementById('processHint');
+
   document.getElementById('pluginName').addEventListener('click', () => {
     toggleFocus.click();
   });
@@ -121,15 +128,75 @@ document.addEventListener('DOMContentLoaded', async () => {
   opacityRange.value = settings.opacity;
   colorPicker.value = settings.color;
 
-  let isAutoHideActive = settings.autoHide;
-
   if (settings.fullRowMode) {
     widthRange.disabled = true;
     toggleLinkSize.disabled = true;
   }
 
+  // ── Process tag management ───────────────────────────────────────────────
+  let targetProcesses = Array.isArray(settings.targetProcesses) ? [...settings.targetProcesses] : [];
+
+  function renderTags() {
+    processTags.innerHTML = '';
+    if (targetProcesses.length === 0) {
+      processHint.style.display = 'block';
+    } else {
+      processHint.style.display = 'none';
+      targetProcesses.forEach((name, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'process-tag';
+        tag.textContent = name;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'tag-remove';
+        removeBtn.textContent = '×';
+        removeBtn.title = 'Remove';
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          targetProcesses.splice(idx, 1);
+          renderTags();
+          updateSettings({ targetProcesses: [...targetProcesses] });
+        });
+        tag.appendChild(removeBtn);
+        processTags.appendChild(tag);
+      });
+    }
+  }
+
+  function addProcess() {
+    const raw = processInput.value.trim();
+    if (!raw) return;
+    // Normalize: strip .exe suffix for comparison but keep it for storage as-is
+    const name = raw.replace(/\.exe$/i, '').toLowerCase();
+    if (!name) return;
+    // Avoid duplicates (case-insensitive)
+    if (!targetProcesses.some(p => p.toLowerCase().replace(/\.exe$/i, '') === name)) {
+      targetProcesses.push(raw);
+      renderTags();
+      updateSettings({ targetProcesses: [...targetProcesses] });
+    }
+    processInput.value = '';
+    processInput.focus();
+  }
+
+  btnAddProcess.addEventListener('click', addProcess);
+  processInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addProcess();
+  });
+
+  // Disable process group when auto-hide is off
+  function setProcessGroupEnabled(enabled) {
+    if (enabled) {
+      processGroup.classList.remove('disabled');
+    } else {
+      processGroup.classList.add('disabled');
+    }
+  }
+
+  setProcessGroupEnabled(settings.autoHide);
+  renderTags();
+  // ────────────────────────────────────────────────────────────────────────
+
   function updateSettings(updates) {
-    if (updates.autoHide !== undefined) isAutoHideActive = updates.autoHide;
     electron.saveSettings(updates);
   }
 
@@ -143,7 +210,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   toggleHighlightMode.addEventListener('change', (e) => updateSettings({ highlightMode: e.target.checked }));
-  toggleAutoHide.addEventListener('change', (e) => updateSettings({ autoHide: e.target.checked }));
+
+  toggleAutoHide.addEventListener('change', (e) => {
+    updateSettings({ autoHide: e.target.checked });
+    setProcessGroupEnabled(e.target.checked);
+  });
+
   toggleKeyboardControl.addEventListener('change', (e) => updateSettings({ keyboardControl: e.target.checked }));
   
   toggleLinkSize.addEventListener('change', (e) => {
@@ -199,11 +271,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   opacityRange.addEventListener('input', (e) => updateSettings({ opacity: parseInt(e.target.value) }));
   colorPicker.addEventListener('input', (e) => updateSettings({ color: e.target.value }));
   colorPicker.addEventListener('change', (e) => updateSettings({ color: e.target.value }));
-
-  // Auto-hide settings window on mouse leave
-  document.addEventListener('mouseleave', () => {
-    if (isAutoHideActive) {
-      electron.closeSettings();
-    }
-  });
 });

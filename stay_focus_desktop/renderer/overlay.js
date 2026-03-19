@@ -1,6 +1,7 @@
+const overlayContainer = document.getElementById('overlay-container');
 const overlayWindow = document.getElementById('overlay-window');
 
-let isEnabled = true;
+let isEnabled = false;   // will be set from settings on init
 let isFullRow = false;
 let isHighlightMode = false;
 let windowHeight = 50;
@@ -10,6 +11,9 @@ let bgOpacity = 75;
 let bgColor = '#000000';
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
+
+// Whether auto-hide has forced us to hide (separate from isEnabled)
+let autoHideVisible = true;
 
 function hexToRgb(hex) {
   let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -22,9 +26,14 @@ function hexToRgb(hex) {
   } : { r: 0, g: 0, b: 0 };
 }
 
+function applyVisibility() {
+  // Visible only when enabled AND auto-hide allows it
+  overlayContainer.style.display = (isEnabled && autoHideVisible) ? 'block' : 'none';
+}
+
 function updateStyles() {
   overlayWindow.style.height = `${windowHeight}px`;
-  
+
   if (isFullRow) {
     overlayWindow.style.width = '100vw';
     overlayWindow.style.left = '0px';
@@ -36,14 +45,14 @@ function updateStyles() {
     if (currentX < 0) currentX = 0;
     overlayWindow.style.left = `${currentX}px`;
   }
-  
+
   if (currentY + windowHeight > window.innerHeight) currentY = window.innerHeight - windowHeight;
   if (currentY < 0) currentY = 0;
   overlayWindow.style.top = `${currentY}px`;
 
   const rgb = hexToRgb(bgColor);
   const alpha = bgOpacity / 100;
-  
+
   if (isHighlightMode) {
     overlayWindow.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
     overlayWindow.style.boxShadow = 'none';
@@ -51,11 +60,12 @@ function updateStyles() {
     overlayWindow.style.backgroundColor = 'transparent';
     overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
   }
+  applyVisibility();
 }
 
 document.addEventListener('mousemove', (e) => {
   if (!isEnabled) return;
-  
+
   let newY = e.clientY - (windowHeight / 2);
   currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
   overlayWindow.style.top = `${currentY}px`;
@@ -69,6 +79,19 @@ document.addEventListener('mousemove', (e) => {
 
 // IPC settings sync
 if (window.electronAPI) {
+  // Initialize from saved settings on load
+  window.electronAPI.getSettings().then((settings) => {
+    if (settings.enabled !== undefined) isEnabled = settings.enabled;
+    if (settings.fullRowMode !== undefined) isFullRow = settings.fullRowMode;
+    if (settings.highlightMode !== undefined) isHighlightMode = settings.highlightMode;
+    if (settings.height !== undefined) windowHeight = settings.height;
+    if (settings.width !== undefined) windowWidth = settings.width;
+    if (settings.borderRadius !== undefined) currentBorderRadius = settings.borderRadius;
+    if (settings.opacity !== undefined) bgOpacity = settings.opacity;
+    if (settings.color !== undefined) bgColor = settings.color;
+    updateStyles();
+  });
+
   window.electronAPI.onUpdateSettings((event, newSettings) => {
     if (newSettings.enabled !== undefined) isEnabled = newSettings.enabled;
     if (newSettings.fullRowMode !== undefined) isFullRow = newSettings.fullRowMode;
@@ -80,7 +103,15 @@ if (window.electronAPI) {
     if (newSettings.color !== undefined) bgColor = newSettings.color;
     updateStyles();
   });
-  
+
+  // Auto-hide state from main process (target-window polling)
+  if (window.electronAPI.onAutoHideState) {
+    window.electronAPI.onAutoHideState((event, visible) => {
+      autoHideVisible = visible;
+      applyVisibility();
+    });
+  }
+
   if (window.electronAPI.onKeyboardMove) {
     window.electronAPI.onKeyboardMove((event, key) => {
       if (!isEnabled) return;
@@ -89,7 +120,7 @@ if (window.electronAPI) {
       else if (key === 'Down') currentY = Math.min(window.innerHeight - windowHeight, currentY + step);
       else if (key === 'Left' && !isFullRow) currentX = Math.max(0, currentX - step);
       else if (key === 'Right' && !isFullRow) currentX = Math.min(window.innerWidth - windowWidth, currentX + step);
-      
+
       overlayWindow.style.top = `${currentY}px`;
       if (!isFullRow) overlayWindow.style.left = `${currentX}px`;
     });

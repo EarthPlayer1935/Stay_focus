@@ -8,5 +8,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (url) => ipcRenderer.send('open-external', url),
   closeSettings: () => ipcRenderer.send('close-settings'),
   getSystemLocale: () => ipcRenderer.invoke('get-system-locale'),
-  onKeyboardMove: (callback) => ipcRenderer.on('keyboard-move', callback)
+  onKeyboardMove: (callback) => ipcRenderer.on('keyboard-move', callback),
+  onAutoHideState: (callback) => ipcRenderer.on('auto-hide-state', callback)
 });

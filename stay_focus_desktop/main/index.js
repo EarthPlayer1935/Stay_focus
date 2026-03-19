@@ -1,6 +1,7 @@
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, shell, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { execFile } = require('child_process');
 
 const DEFAULT_SETTINGS = {
   enabled: false,
@@ -8,6 +9,7 @@ const DEFAULT_SETTINGS = {
   highlightMode: false,
   linkSize: false,
   autoHide: true,
+  targetProcesses: [],
   keyboardControl: false,
   height: 50,
   width: 200,
@@ -44,6 +46,112 @@ let isLayerVisible = true;
 
 let currentSettings = { ...DEFAULT_SETTINGS };
 
+// ── Auto-hide: two-tier polling ──────────────────────────────────────────────
+let cachedWindowRects = [];   // [{x, y, w, h}]
+let lastAutoHideState = null; // null = never sent yet
+let slowTimer = null;
+let fastTimer = null;
+
+/**
+ * Query window bounds for all target processes via PowerShell.
+ * Returns an array of {x, y, w, h} rectangles.
+ */
+function queryWindowRects(processNames, callback) {
+  // Build a PS filter expression: processname -in @('notepad','chrome', ...)
+  const nameList = processNames
+    .map(n => n.replace(/'/g, '').replace(/\.exe$/i, ''))
+    .map(n => `'${n}'`)
+    .join(',');
+
+  const ps = `
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class WinHelper {
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+  public struct RECT { public int L, T, R, B; }
+}
+"@
+$names = @(${nameList})
+$procs = Get-Process | Where-Object { $names -contains $_.ProcessName }
+$results = @()
+foreach ($p in $procs) {
+  foreach ($h in $p.MainWindowHandle) {
+    if ($h -eq [IntPtr]::Zero) { continue }
+    $r = New-Object WinHelper+RECT
+    if ([WinHelper]::GetWindowRect($h, [ref]$r) -and [WinHelper]::IsWindowVisible($h)) {
+      $results += "$($r.L),$($r.T),$($r.R - $r.L),$($r.B - $r.T)"
+    }
+  }
+}
+$results -join '|'
+`.trim();
+
+  execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { timeout: 4000 }, (err, stdout) => {
+    if (err) { callback([]); return; }
+    const rects = stdout.trim().split('|').filter(Boolean).map(s => {
+      const [x, y, w, h] = s.split(',').map(Number);
+      return { x, y, w, h };
+    }).filter(r => r.w > 0 && r.h > 0);
+    callback(rects);
+  });
+}
+
+function pointInRect(px, py, { x, y, w, h }) {
+  return px >= x && px <= x + w && py >= y && py <= y + h;
+}
+
+function stopAutoHideTimers() {
+  if (slowTimer) { clearInterval(slowTimer); slowTimer = null; }
+  if (fastTimer) { clearInterval(fastTimer); fastTimer = null; }
+  cachedWindowRects = [];
+  lastAutoHideState = null;
+}
+
+function startAutoHideTimers() {
+  stopAutoHideTimers();
+
+  const names = currentSettings.targetProcesses;
+  if (!names || names.length === 0) {
+    // Global mode: always show the overlay (nothing to do)
+    return;
+  }
+
+  // Slow timer: refresh window rects every 2 s
+  function refreshRects() {
+    queryWindowRects(names, (rects) => {
+      cachedWindowRects = rects;
+    });
+  }
+  refreshRects(); // immediate first fetch
+  slowTimer = setInterval(refreshRects, 2000);
+
+  // Fast timer: check mouse position every 100 ms
+  fastTimer = setInterval(() => {
+    if (!mainWindow) return;
+    const { x, y } = screen.getCursorScreenPoint();
+    const inside = cachedWindowRects.some(r => pointInRect(x, y, r));
+    if (inside !== lastAutoHideState) {
+      lastAutoHideState = inside;
+      mainWindow.webContents.send('auto-hide-state', inside);
+    }
+  }, 100);
+}
+
+function refreshAutoHide() {
+  if (currentSettings.autoHide && currentSettings.enabled) {
+    startAutoHideTimers();
+  } else {
+    stopAutoHideTimers();
+    // If auto-hide is off (or overlay disabled), ensure overlay knows to show
+    if (mainWindow && currentSettings.enabled) {
+      mainWindow.webContents.send('auto-hide-state', true);
+    }
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     transparent: true,
@@ -58,17 +166,21 @@ function createWindow() {
     }
   });
 
-  // Ignore mouse events to allow click-through, but capture mousemove if hardware supports forward: true
-  // Note: On Windows and macOS this should forward mouse events properly so the app can still track hover for the hole
+  // Ignore mouse events to allow click-through, forward: true lets us still
+  // track mousemove for the spotlight position
   mainWindow.setIgnoreMouseEvents(true, { forward: true });
 
   mainWindow.maximize();
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/overlay.html'));
+
+  mainWindow.webContents.once('did-finish-load', () => {
+    // Start auto-hide timers after renderer is ready
+    refreshAutoHide();
+  });
 }
 
 function createTray() {
-  // Use a placeholder icon for now, later replaced by the actual one
   tray = new Tray(path.join(__dirname, '../assets/tray-icon.png'));
   const contextMenu = Menu.buildFromTemplate([
     { label: 'Toggle Stay Focus', click: toggleLayer },
@@ -79,7 +191,7 @@ function createTray() {
   ]);
   tray.setToolTip('Stay Focus');
   tray.setContextMenu(contextMenu);
-  
+
   tray.on('click', () => {
     openSettings();
   });
@@ -101,7 +213,7 @@ function openSettings() {
   }
   settingsWindow = new BrowserWindow({
     width: 350,
-    height: 650,
+    height: 680,
     resizable: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, '../assets/icon.png'),
@@ -136,13 +248,28 @@ ipcMain.handle('get-settings', () => currentSettings);
 
 ipcMain.on('save-settings', (event, newSettings) => {
   const oldKbCtrl = currentSettings.keyboardControl;
+  const oldAutoHide = currentSettings.autoHide;
+  const oldProcesses = JSON.stringify(currentSettings.targetProcesses);
+  const oldEnabled = currentSettings.enabled;
+
   currentSettings = { ...currentSettings, ...newSettings };
   saveSettingsToFile(currentSettings);
+
   if (mainWindow) {
     mainWindow.webContents.send('update-settings', currentSettings);
   }
+
   if (oldKbCtrl !== currentSettings.keyboardControl) {
     registerKeyboardControl(currentSettings.keyboardControl);
+  }
+
+  // Restart auto-hide timers if relevant settings changed
+  if (
+    oldAutoHide !== currentSettings.autoHide ||
+    oldEnabled !== currentSettings.enabled ||
+    oldProcesses !== JSON.stringify(currentSettings.targetProcesses)
+  ) {
+    refreshAutoHide();
   }
 });
 
@@ -185,6 +312,7 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  stopAutoHideTimers();
   if (process.platform !== 'darwin') {
     app.quit();
   }

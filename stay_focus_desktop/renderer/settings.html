@@ -46,12 +46,23 @@
         </label>
       </div>
       
-      <div class="control-group switch-group">
+      <!-- Auto-hide -->
+      <div class="control-group switch-group" style="border-bottom: none; padding-bottom: 4px;">
         <label for="toggleAutoHide">Auto-hide on Mouse Leave</label>
         <label class="switch small-switch">
           <input type="checkbox" id="toggleAutoHide" />
           <span class="slider round"></span>
         </label>
+      </div>
+
+      <!-- Target process list (shown when auto-hide is on) -->
+      <div class="control-group process-group" id="processGroup">
+        <div class="process-hint" id="processHint">No target window — global mode</div>
+        <div class="process-tags" id="processTags"></div>
+        <div class="process-input-row">
+          <input type="text" id="processInput" placeholder="e.g. notepad or chrome.exe" />
+          <button id="btnAddProcess" class="add-btn">+</button>
+        </div>
       </div>
 
       <div class="control-group switch-group" title="Shortcut: Shift+Alt+Arrow">

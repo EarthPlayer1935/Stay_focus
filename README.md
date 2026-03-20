@@ -2,7 +2,7 @@
 
 # Stay Focus
 
-A Chrome extension that adds a focus spotlight to any webpage — helping you concentrate on what you're reading.
+A lightweight tool that adds a focus spotlight to any webpage or your entire screen (Desktop version) — helping you concentrate on what you're reading.
 
 ## Features
 
@@ -11,25 +11,47 @@ A Chrome extension that adds a focus spotlight to any webpage — helping you co
 - 📄 **Full Row Mode** — highlight spans the entire screen width, like a reading ruler
 - ⬛ 🔲 ⏺ **Shape Presets** — one-click switch between Square, Rounded Box, and Circle
 - 🔗 **Link Dimensions (1:1)** — lock width and height together for perfect circles/squares
+- 🌙 **Night Mode** — toggle between light and dark UI themes (☀️/🌙)
+- ⌨️ **Keyboard Control** — move or resize the focus area using shortcuts (`Shift+Alt+Arrow`)
+- 👻 **Auto-hide** — automatically hide the focus area when the mouse leaves the window (Desktop version supports specific process filtering)
 - ↕️ **Adjustable size, opacity, color, and corner radius**
-- 💾 **Settings are remembered** across browser restarts
+- 💾 **Settings are remembered** across sessions
 - ⚡ **Hot updates** — changes apply instantly without reloading pages
+- 🖱️ **Premium UI** — improved hover effects and full-row click support for a better experience
+
+## Desktop Version (Windows)
+
+The desktop application (built with Electron) brings Stay Focus to your entire system, not just the browser!
+
+### Additional Desktop Features:
+- **Global Overlay** — works on any application, desktop, or window
+- **Process Target List** — automatically hide/show when specific applications are in focus
+- **System Tray** — quick access and control from the tray
 
 ## Usage
 
+### Browser Extension
 1. Install the extension in Chrome (`chrome://extensions/` → Load unpacked)
 2. Click the extension icon to open the control panel
 3. Toggle the main switch to enable the spotlight
+
+### Desktop Application
+1. Download the [latest installer](https://github.com/EarthPlayer1935/Stay_focus/releases)
+2. Run `Stay Focus Setup x.x.x.exe`
+3. Launch from the desktop or system tray
 
 ## Development & Build
 
 This project uses Node.js to automate the build and release process.
 
-1. Ensure you have [Node.js](https://nodejs.org/) installed
-2. Install dependencies: `npm install`
-3. Build the extension package: `npm run build`
+### Extension
+1. `npm install`
+2. `npm run build` (Packaged `.zip` in `release/`)
 
-The packaged `.zip` file will be generated in the `release/` directory.
+### Desktop (Electron)
+1. `cd stay_focus_desktop`
+2. `npm install`
+3. `npm run dist` (Installer in `dist/`)
 
 ## Support
 
@@ -43,4 +65,4 @@ This project is licensed under the **Creative Commons Attribution-NonCommercial-
 - ✅ Derivative works must use the **same license**
 - ❌ **Commercial use is not permitted**
 
-See the [LICENSE](./LICENSE) file for details, or visit [creativecommons.org/licenses/by-nc-sa/4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+See the [LICENSE](./LICENSE) file for details.

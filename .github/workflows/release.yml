@@ -63,17 +63,8 @@ jobs:
           echo "npm: $(npm -v)"
           echo "Starting electron-builder..."
           
-          npx electron-builder --win > build.log 2>&1 || {
-            echo "Build failed with exit code $?. Creating issue with log..."
-            tail -n 100 build.log > issue_tail.log
-            
-            echo -e "CI Desktop Build Failed. Action Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n\`\`\`text" > issue.md
-            cat issue_tail.log >> issue.md
-            echo -e "\n\`\`\`" >> issue.md
-            
-            gh issue create --title "CI Desktop Build Failure (Auto-Report)" --body-file issue.md
-            exit 1
-          }
+          # explicitly disable publish since we upload with softprops/action-gh-release
+          npx electron-builder --win -p never
         shell: bash
 
       - name: Upload desktop installer

@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "कोने का त्रिज्या" },
   "opacity": { "message": "पारदर्शिता" },
   "color": { "message": "रंग" },
-  "autoHideOnLeave": { "message": "माउस हटाने पर ऑटो-हाइड" },
+  "autoHideOnLeave": { "message": "केवल निर्दिष्ट कार्यक्रमों के लिए सक्षम करें" },
   "keyboardControl": { "message": "कीबोर्ड कंट्रोल" },
   "supportKofi": { "message": "Ko-fi पर समर्थन करें" },
   "supportGithub": { "message": "GitHub पर स्टार करें" },

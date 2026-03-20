@@ -36,7 +36,7 @@
     "message": "Opacity"
   },
   "color": { "message": "Color" },
-  "autoHideOnLeave": { "message": "Auto-hide on Mouse Leave" },
+  "autoHideOnLeave": { "message": "Only Enable for Specified Programs" },
   "keyboardControl": { "message": "Keyboard Control" },
   "supportKofi": { "message": "Support on Ko-fi" },
   "supportGithub": { "message": "Star on GitHub" },

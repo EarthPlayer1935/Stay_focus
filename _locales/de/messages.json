@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "Eckenradius" },
   "opacity": { "message": "Deckkraft" },
   "color": { "message": "Farbe" },
-  "autoHideOnLeave": { "message": "Auto-Ausblenden beim Verlassen" },
+  "autoHideOnLeave": { "message": "Nur für bestimmte Programme aktivieren" },
   "keyboardControl": { "message": "Tastatursteuerung" },
   "supportKofi": { "message": "Auf Ko-fi unterstützen" },
   "supportGithub": { "message": "GitHub-Projektseite" },

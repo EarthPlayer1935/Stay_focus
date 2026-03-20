@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "角の丸さ" },
   "opacity": { "message": "不透明度" },
   "color": { "message": "色" },
-  "autoHideOnLeave": { "message": "マウスが離れた時に自動非表示" },
+  "autoHideOnLeave": { "message": "指定したプログラムのみ有効" },
   "keyboardControl": { "message": "キーボード制御" },
   "supportKofi": { "message": "Ko-fi でサポート" },
   "supportGithub": { "message": "GitHub でスター" },

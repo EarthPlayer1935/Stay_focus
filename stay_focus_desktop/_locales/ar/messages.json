@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "نصف قطر الزوايا" },
   "opacity": { "message": "الشفافية" },
   "color": { "message": "اللون" },
-  "autoHideOnLeave": { "message": "إخفاء تلقائي عند مغادرة الماوس" },
+  "autoHideOnLeave": { "message": "التفعيل للبرامج المحددة فقط" },
   "keyboardControl": { "message": "التحكم بلوحة المفاتيح" },
   "supportKofi": { "message": "دعم على Ko-fi" },
   "supportGithub": { "message": "نجمة على GitHub" },

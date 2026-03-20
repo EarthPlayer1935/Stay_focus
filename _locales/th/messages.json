@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "รัศมีมุม" },
   "opacity": { "message": "ความทึบ" },
   "color": { "message": "สี" },
-  "autoHideOnLeave": { "message": "ซ่อนอัตโนมัติเมื่อเมาส์ออก" },
+  "autoHideOnLeave": { "message": "เปิดใช้งานเฉพาะโปรแกรมที่กำหนดเท่านั้น" },
   "keyboardControl": { "message": "การควบคุมด้วยคีย์บอร์ด" },
   "supportKofi": { "message": "สนับสนุนบน Ko-fi" },
   "supportGithub": { "message": "ดาวบน GitHub" },

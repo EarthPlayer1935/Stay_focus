@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "Raio dos Cantos" },
   "opacity": { "message": "Opacidade" },
   "color": { "message": "Cor" },
-  "autoHideOnLeave": { "message": "Auto-ocultar ao sair o mouse" },
+  "autoHideOnLeave": { "message": "Ativar apenas para programas especificados" },
   "keyboardControl": { "message": "Controle do teclado" },
   "supportKofi": { "message": "Apoie-me no Ko-fi" },
   "supportGithub": { "message": "Estrela no GitHub" },

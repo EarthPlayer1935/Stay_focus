@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "Радиус углов" },
   "opacity": { "message": "Прозрачность" },
   "color": { "message": "Цвет" },
-  "autoHideOnLeave": { "message": "Автоматически скрывать при уходе курсора" },
+  "autoHideOnLeave": { "message": "Включать только для указанных программ" },
   "keyboardControl": { "message": "Управление клавиатурой" },
   "supportKofi": { "message": "Поддержать на Ko-fi" },
   "supportGithub": { "message": "Звезда на GitHub" },

@@ -39,7 +39,7 @@
     "message": "颜色"
   },
   "autoHideOnLeave": {
-    "message": "鼠标移出时自动隐藏"
+    "message": "仅指定程序启用"
   },
   "keyboardControl": {
     "message": "键盘控制"

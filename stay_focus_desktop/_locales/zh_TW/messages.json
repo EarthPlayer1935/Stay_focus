@@ -39,7 +39,7 @@
     "message": "顏色"
   },
   "autoHideOnLeave": {
-    "message": "滑鼠移出時自動隱藏"
+    "message": "僅限指定程式啟用"
   },
   "keyboardControl": {
     "message": "鍵盤控制"

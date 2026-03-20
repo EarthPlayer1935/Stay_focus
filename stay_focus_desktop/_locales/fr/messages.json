@@ -12,7 +12,7 @@
   "cornerRadius": { "message": "Rayon des Coins" },
   "opacity": { "message": "Opacité" },
   "color": { "message": "Couleur" },
-  "autoHideOnLeave": { "message": "Masquer auto. si la souris sort" },
+  "autoHideOnLeave": { "message": "Activer uniquement pour les programmes spécifiés" },
   "keyboardControl": { "message": "Contrôle Clavier" },
   "supportKofi": { "message": "Soutenir sur Ko-fi" },
   "supportGithub": { "message": "Étoile sur GitHub" },

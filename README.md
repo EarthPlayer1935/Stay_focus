@@ -13,7 +13,7 @@ A lightweight tool that adds a focus spotlight to any webpage or your entire scr
 - 🔗 **Link Dimensions (1:1)** — lock width and height together for perfect circles/squares
 - 🌙 **Night Mode** — toggle between light and dark UI themes (☀️/🌙)
 - ⌨️ **Keyboard Control** — move or resize the focus area using shortcuts (`Shift+Alt+Arrow`)
-- 👻 **Auto-hide** — automatically hide the focus area when the mouse leaves the window (Desktop version supports specific process filtering)
+- 👻 **Only Enable for Specified Programs** — automatically hide the focus area when the mouse leaves the window (Desktop version supports specific process filtering)
 - ↕️ **Adjustable size, opacity, color, and corner radius**
 - 💾 **Settings are remembered** across sessions
 - ⚡ **Hot updates** — changes apply instantly without reloading pages

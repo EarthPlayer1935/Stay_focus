@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +36,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,17 +51,6 @@ jobs:
         run: npm install
         shell: pwsh
 
-      - name: Debug - list files
-        working-directory: stay_focus_desktop
-        run: |
-          Write-Host "=== package.json content ==="
-          Get-Content package.json
-          Write-Host "=== assets directory ==="
-          Get-ChildItem assets
-          Write-Host "=== node_modules/.bin/electron-builder exists? ==="
-          Test-Path "node_modules/.bin/electron-builder.cmd"
-        shell: pwsh
-
       - name: Build desktop installer
         working-directory: stay_focus_desktop
         env:
@@ -71,8 +62,22 @@ jobs:
           Write-Host "Node: $(node -v)"
           Write-Host "npm: $(npm -v)"
           Write-Host "Starting electron-builder..."
-          npx electron-builder --win 2>&1
-          Write-Host "Exit code: $LASTEXITCODE"
+          
+          # Run builder and pipe output to file
+          npx electron-builder --win 2>&1 | Tee-Object -FilePath build.log
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Build failed with exit code $LASTEXITCODE. Creating issue with log..."
+            # Create an issue with the last 100 lines of the log to avoid being too large
+            $logTail = (Get-Content build.log | Select-Object -Last 100) -join "`n"
+            $issueBody = "CI Desktop Build Failed. Action Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`n`n\`\`\`text`n$logTail`n\`\`\`"
+            
+            # Send issue
+            $issueBody | Out-File issue.md
+            gh issue create --title "CI Desktop Build Failure (Auto-Report)" --body-file issue.md
+            
+            exit 1
+          }
         shell: pwsh
 
       - name: Upload desktop installer

@@ -3,7 +3,7 @@ const { app, BrowserWindow, Tray, Menu, globalShortcut, shell, screen } = electr
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
-const { execFile } = require('child_process');
+const { execFile, spawn } = require('child_process');
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -54,55 +54,136 @@ let lastAutoHideState = null; // null = never sent yet
 let slowTimer = null;
 let fastTimer = null;
 
-/**
- * Query window bounds for all target processes via PowerShell.
- * Returns an array of {x, y, w, h} rectangles.
- */
-function queryWindowRects(processNames, callback) {
-  // Build a PS filter expression: processname -in @('notepad','chrome', ...)
-  const nameList = processNames
-    .map(n => n.replace(/'/g, '').replace(/\.exe$/i, ''))
-    .map(n => `'${n}'`)
-    .join(',');
+let psQueryProcess = null;
+let psQueryCallback = null;
+let psProcessesCallback = null;
 
-  const ps = `
-Add-Type @"
+function ensurePsChild() {
+  if (psQueryProcess) return;
+  fs.appendFileSync("debug.txt", "Spawning powershell\\n");
+  psQueryProcess = spawn('powershell', ['-NoProfile', '-NonInteractive']);
+  
+  // Initialize the C# helper once
+  psQueryProcess.stdin.write(`
+Add-Type @'
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 public class WinHelper {
+  public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+  [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
   public struct RECT { public int L, T, R, B; }
-}
-"@
-$fg = [WinHelper]::GetForegroundWindow()
-$names = @(${nameList})
-$procs = Get-Process | Where-Object { $names -contains $_.ProcessName }
-$results = @()
-foreach ($p in $procs) {
-  foreach ($h in $p.MainWindowHandle) {
-    if ($h -eq [IntPtr]::Zero) { continue }
-    $r = New-Object WinHelper+RECT
-    if ([WinHelper]::GetWindowRect($h, [ref]$r) -and [WinHelper]::IsWindowVisible($h)) {
-      $isFg = if ($h -eq $fg) { "1" } else { "0" }
-      $results += "$($r.L),$($r.T),$($r.R - $r.L),$($r.B - $r.T),$($isFg)"
-    }
+
+  public static string GetWindows(int[] pids) {
+    IntPtr fg = GetForegroundWindow();
+    List<int> pidList = new List<int>(pids);
+    List<string> results = new List<string>();
+    EnumWindows((hWnd, lParam) => {
+      if (IsWindowVisible(hWnd)) {
+        uint pid;
+        GetWindowThreadProcessId(hWnd, out pid);
+        if (pidList.Contains((int)pid)) {
+          RECT r;
+          if (GetWindowRect(hWnd, out r)) {
+            int isFg = (hWnd == fg) ? 1 : 0;
+            results.Add(r.L + "," + r.T + "," + (r.R - r.L) + "," + (r.B - r.T) + "," + isFg);
+          }
+        }
+      }
+      return true;
+    }, IntPtr.Zero);
+    return string.Join("|", results.ToArray());
+  }
+
+  public static int[] GetVisibleProcessIds() {
+    List<int> pids = new List<int>();
+    EnumWindows((hWnd, lParam) => {
+      if (IsWindowVisible(hWnd)) {
+        uint pid;
+        GetWindowThreadProcessId(hWnd, out pid);
+        if (!pids.Contains((int)pid)) {
+          pids.Add((int)pid);
+        }
+      }
+      return true;
+    }, IntPtr.Zero);
+    return pids.ToArray();
   }
 }
-$results -join '|'
-`.trim();
+'@
+\r\n`);
 
-  execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { timeout: 4000 }, (err, stdout) => {
-    if (err) { callback([]); return; }
-    const rects = stdout.trim().split('|').filter(Boolean).map(s => {
-      const parts = s.split(',');
-      const [x, y, w, h] = parts.slice(0, 4).map(Number);
-      const isForeground = parts[4] === '1';
-      return { x, y, w, h, isForeground };
-    }).filter(r => r.w > 0 && r.h > 0);
-    callback(rects);
+  let buffer = '';
+  psQueryProcess.stdout.on('data', (data) => {
+    fs.appendFileSync("debug.txt", "STDOUT: " + data.toString() + "\\n");
+    buffer += data.toString();
+    const lines = buffer.split('\n');
+    while (lines.length > 1) {
+      const line = lines.shift().trim();
+      if (line.startsWith('RESULT:')) {
+        fs.appendFileSync("debug.txt", "PARSED RESULT\\n");
+        const payload = line.substring(7);
+        if (psQueryCallback) {
+          const rects = payload.split('|').filter(Boolean).map(s => {
+            const parts = s.split(',');
+            const x = parseInt(parts[0], 10);
+            const y = parseInt(parts[1], 10);
+            const w = parseInt(parts[2], 10);
+            const h = parseInt(parts[3], 10);
+            const isForeground = parts[4] === '1';
+            return { x, y, w, h, isForeground };
+          }).filter(r => r.w > 0 && r.h > 0);
+          psQueryCallback(rects);
+          psQueryCallback = null;
+        }
+      } else if (line.startsWith('PROCESSES_RESULT:')) {
+        fs.appendFileSync("debug.txt", "PARSED PROCESSES_RESULT\\n");
+        const payload = line.substring(17);
+        if (psProcessesCallback) {
+          const names = payload.split('|').filter(Boolean);
+          psProcessesCallback(names);
+          psProcessesCallback = null;
+        }
+      }
+    }
+    buffer = lines[0];
   });
+  
+  psQueryProcess.stderr.on('data', (data) => {
+    fs.appendFileSync("debug.txt", "STDERR: " + data.toString() + "\\n");
+  });
+
+  psQueryProcess.on('exit', (code) => {
+    fs.appendFileSync("debug.txt", "EXIT: " + code + "\\n");
+    psQueryProcess = null;
+  });
+}
+
+function queryWindowRects(processNames, callback) {
+  ensurePsChild();
+  if (psQueryCallback) {
+    // Drop previous if still pending
+    psQueryCallback([]);
+  }
+  psQueryCallback = callback;
+
+  let names = processNames.map(n => n.replace(/'/g, '').replace(/\\.exe$/i, ''));
+  const namesStr = names.map(n => `'${n}'`).join(',');
+
+  const psCmd = `
+$names = @(${namesStr})
+$pids = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $names -contains $_.ProcessName } | Select-Object -ExpandProperty Id)
+$res = ""
+if ($pids.Count -gt 0) {
+  $res = [WinHelper]::GetWindows([int[]]$pids)
+}
+Write-Output "RESULT:$res"
+`;
+  psQueryProcess.stdin.write(psCmd + "\r\n");
 }
 
 function pointInRect(px, py, { x, y, w, h }) {
@@ -184,9 +265,14 @@ function createWindow() {
     }
   });
 
-  // Ignore mouse events to allow click-through, forward: true lets us still
-  // track mousemove for the spotlight position
   mainWindow.setIgnoreMouseEvents(true, { forward: true });
+  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+
+  setInterval(() => {
+    if (mainWindow && isLayerVisible) {
+      mainWindow.moveTop();
+    }
+  }, 500);
 
   mainWindow.maximize();
 
@@ -307,15 +393,21 @@ ipcMain.on('open-external', (e, url) => shell.openExternal(url));
 
 ipcMain.handle('get-running-processes', async () => {
   return new Promise((resolve) => {
-    const ps = `Get-Process | Where-Object { $_.MainWindowTitle } | Select-Object -Property ProcessName | Sort-Object -Property ProcessName -Unique | ForEach-Object { $_.ProcessName }`;
-    execFile('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], (err, stdout) => {
-      if (err) {
-        resolve([]);
-        return;
-      }
-      const names = stdout.trim().split(/\r?\n/).filter(Boolean);
-      resolve(names);
-    });
+    ensurePsChild();
+    if (psProcessesCallback) {
+      psProcessesCallback([]);
+    }
+    psProcessesCallback = resolve;
+    const psCmd = `
+$pids = [WinHelper]::GetVisibleProcessIds()
+$res = ""
+if ($pids.Count -gt 0) {
+  $names = Get-Process -Id $pids -ErrorAction SilentlyContinue | Select-Object -Property ProcessName -Unique | Sort-Object -Property ProcessName | ForEach-Object { $_.ProcessName }
+  $res = $names -join '|'
+}
+Write-Output "PROCESSES_RESULT:$res"
+`;
+    psQueryProcess.stdin.write(psCmd + "\r\n");
   });
 });
 

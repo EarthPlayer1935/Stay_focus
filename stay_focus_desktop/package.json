@@ -16,15 +16,23 @@
   "build": {
     "appId": "com.stayfocus.desktop",
     "productName": "Stay Focus",
+    "icon": "assets/icon.png",
     "directories": {
-      "output": "build"
+      "output": "dist",
+      "buildResources": "assets"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "unicode": true,
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     },
     "mac": {
       "target": "dmg",
-      "icon": "assets/icon.icns"
+      "icon": "assets/icon.png"
     }
   }
 }

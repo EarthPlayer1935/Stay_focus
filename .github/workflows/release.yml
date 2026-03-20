@@ -59,26 +59,22 @@ jobs:
           ELECTRON_BUILDER_HTTP_TIMEOUT: 120000
           DEBUG: electron-builder
         run: |
-          Write-Host "Node: $(node -v)"
-          Write-Host "npm: $(npm -v)"
-          Write-Host "Starting electron-builder..."
+          echo "Node: $(node -v)"
+          echo "npm: $(npm -v)"
+          echo "Starting electron-builder..."
           
-          # Run builder and pipe output to file
-          npx electron-builder --win 2>&1 | Tee-Object -FilePath build.log
-          
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "Build failed with exit code $LASTEXITCODE. Creating issue with log..."
-            # Create an issue with the last 100 lines of the log to avoid being too large
-            $logTail = (Get-Content build.log | Select-Object -Last 100) -join "`n"
-            $issueBody = "CI Desktop Build Failed. Action Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}`n`n\`\`\`text`n$logTail`n\`\`\`"
+          npx electron-builder --win > build.log 2>&1 || {
+            echo "Build failed with exit code $?. Creating issue with log..."
+            tail -n 100 build.log > issue_tail.log
             
-            # Send issue
-            $issueBody | Out-File issue.md
+            echo -e "CI Desktop Build Failed. Action Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n\`\`\`text" > issue.md
+            cat issue_tail.log >> issue.md
+            echo -e "\n\`\`\`" >> issue.md
+            
             gh issue create --title "CI Desktop Build Failure (Auto-Report)" --body-file issue.md
-            
             exit 1
           }
-        shell: pwsh
+        shell: bash
 
       - name: Upload desktop installer
         uses: softprops/action-gh-release@v1

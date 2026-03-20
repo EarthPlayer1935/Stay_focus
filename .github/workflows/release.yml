@@ -49,17 +49,30 @@ jobs:
         run: npm install
         shell: pwsh
 
+      - name: Debug - list files
+        working-directory: stay_focus_desktop
+        run: |
+          Write-Host "=== package.json content ==="
+          Get-Content package.json
+          Write-Host "=== assets directory ==="
+          Get-ChildItem assets
+          Write-Host "=== node_modules/.bin/electron-builder exists? ==="
+          Test-Path "node_modules/.bin/electron-builder.cmd"
+        shell: pwsh
+
       - name: Build desktop installer
         working-directory: stay_focus_desktop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ELECTRON_BUILDER_HTTP_TIMEOUT: 120000
+          DEBUG: electron-builder
         run: |
-          Write-Host "Node version: $(node -v)"
-          Write-Host "npm version: $(npm -v)"
-          Write-Host "Building desktop installer..."
-          npm run dist
+          Write-Host "Node: $(node -v)"
+          Write-Host "npm: $(npm -v)"
+          Write-Host "Starting electron-builder..."
+          npx electron-builder --win 2>&1
+          Write-Host "Exit code: $LASTEXITCODE"
         shell: pwsh
 
       - name: Upload desktop installer

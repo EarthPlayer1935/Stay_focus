@@ -16,5 +16,6 @@
   "keyboardControl": { "message": "التحكم بلوحة المفاتيح" },
   "supportKofi": { "message": "دعم على Ko-fi" },
   "supportGithub": { "message": "نجمة على GitHub" },
+  "uipiWarning": { "message": "قد يتجمد الضوء فوق النوافذ ذات الامมتيازات العالية (مثل مدير المهام). قم بتشغيله كمسؤول لإصلاح ذلك." },
   "footerTip": { "message": "استخدم الماوس أو مفاتيح الأسهم للتحريك." }
 }

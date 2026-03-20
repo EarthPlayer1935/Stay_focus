@@ -16,5 +16,6 @@
   "keyboardControl": { "message": "การควบคุมด้วยคีย์บอร์ด" },
   "supportKofi": { "message": "สนับสนุนบน Ko-fi" },
   "supportGithub": { "message": "ดาวบน GitHub" },
+  "uipiWarning": { "message": "สปอตไลท์อาจค้างเมื่ออยู่เหนือหน้าต่างที่มีสิทธิ์สูง (เช่น Task Manager) โปรดเรียกใช้ในฐานะผู้ดูแลระบบเพื่อแก้ไขปัญหานี้" },
   "footerTip": { "message": "ใช้เมาส์หรือปุ่มลูกศรเพื่อย้ายเฟรม" }
 }

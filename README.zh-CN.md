@@ -53,6 +53,14 @@
 2. `npm install`
 3. `npm run dist` (安装程序位于 `dist/` 目录)
 
+## 常见问题 (FAQ)
+
+### ❓ 为什么在 Windows 任务管理器（或其他高权限窗口）上方聚光灯会卡住？
+
+这是由于 Windows 的 **用户界面权限隔离 (UIPI)** 安全机制导致的。
+- **原理**：任务管理器（尤其是开启“总在最前”时）以高完整性级别（管理员权限）运行。为了安全，Windows 不允许普通权限的程序（如 Stay Focus）获取高权限窗口上方的鼠标事件。
+- **解决方法**：请尝试**以管理员身份运行 Stay Focus**，这样它将拥有足够的权限在这些窗口上方正常工作。
+
 ## 支持
 
 [![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)

@@ -16,5 +16,6 @@
   "keyboardControl": { "message": "キーボード制御" },
   "supportKofi": { "message": "Ko-fi でサポート" },
   "supportGithub": { "message": "GitHub でスター" },
+  "uipiWarning": { "message": "タスクマネージャーなどの高い権限を持つウィンドウの上では、スポットライトがフリーズすることがあります。これを修正するには管理者として実行してください。" },
   "footerTip": { "message": "マウスまたは矢印キーでフォーカス枠を移動できます。" }
 }

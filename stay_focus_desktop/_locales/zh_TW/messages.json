@@ -1,0 +1,59 @@
+{
+  "appName": {
+    "message": "保持專注"
+  },
+  "appDescription": {
+    "message": "一個閱讀聚光燈，幫助你在任何網頁上保持專注。"
+  },
+  "fullRowMode": {
+    "message": "整行模式"
+  },
+  "colorHighlightMode": {
+    "message": "彩色高亮模式"
+  },
+  "shapeSquare": {
+    "message": "正方形"
+  },
+  "shapeRounded": {
+    "message": "圓角矩形"
+  },
+  "shapeCircle": {
+    "message": "正圓形"
+  },
+  "linkDimensions": {
+    "message": "聯動寬高 (1:1)"
+  },
+  "spotlightHeight": {
+    "message": "聚焦框高度"
+  },
+  "spotlightWidth": {
+    "message": "聚焦框寬度"
+  },
+  "cornerRadius": {
+    "message": "圓角程度"
+  },
+  "opacity": {
+    "message": "透明度"
+  },
+  "color": {
+    "message": "顏色"
+  },
+  "autoHideOnLeave": {
+    "message": "滑鼠移出時自動隱藏"
+  },
+  "keyboardControl": {
+    "message": "鍵盤控制"
+  },
+  "supportKofi": {
+    "message": "請我喝杯咖啡"
+  },
+  "supportGithub": {
+    "message": "在 GitHub 上點個 Star"
+  },
+  "uipiWarning": {
+    "message": "在工作管理員等高權限視窗上方聚光燈可能會卡死。請嘗試以管理員身份執行以解決此問題。"
+  },
+  "footerTip": {
+    "message": "移動滑鼠或按方向鍵來移動聚焦框。"
+  }
+}

@@ -16,5 +16,6 @@
   "keyboardControl": { "message": "Controle do teclado" },
   "supportKofi": { "message": "Apoie-me no Ko-fi" },
   "supportGithub": { "message": "Estrela no GitHub" },
+  "uipiWarning": { "message": "O destaque pode travar em janelas de altos privilégios (como o Gerenciador de Tarefas). Execute como administrador para corrigir isso." },
   "footerTip": { "message": "Use o mouse ou as setas para mover a moldura." }
 }

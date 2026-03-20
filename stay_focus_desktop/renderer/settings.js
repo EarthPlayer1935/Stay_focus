@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btnCircle').title                        = t('shapeCircle');
     document.getElementById('btnKofi').title                          = t('supportKofi');
     document.getElementById('btnGithub').title                        = t('supportGithub');
+    document.getElementById('uipiWarningText').textContent            = t('uipiWarning') || 'The spotlight may freeze over high-privilege windows (like Task Manager). Run as Administrator to fix this.';
   }
 
   const btnLanguage = document.getElementById('btnLanguage');
@@ -39,7 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const browserLang = sysLang ? sysLang.replace('-', '_') : 'en';
   
   const lang = settings.userLang || browserLang || 'en';
-  const normalized = lang.startsWith('zh') ? 'zh_CN' : lang.split('_')[0];
+  let normalized = lang.split('_')[0];
+  if (lang.startsWith('zh')) {
+    normalized = (lang.includes('TW') || lang.includes('HK') || lang.includes('Hant')) ? 'zh_TW' : 'zh_CN';
+  }
   const options = Array.from(document.querySelectorAll('.lang-option'));
   const resolved = options.find(opt => opt.dataset.value === lang) ? lang :
                    options.find(opt => opt.dataset.value === normalized) ? normalized : 'en';

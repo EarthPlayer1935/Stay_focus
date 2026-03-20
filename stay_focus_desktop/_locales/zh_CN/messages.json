@@ -50,6 +50,9 @@
   "supportGithub": {
     "message": "在 GitHub 上点个 Star"
   },
+  "uipiWarning": {
+    "message": "在任务管理器等高权限窗口上方聚光灯可能会卡死。请尝试以管理员身份运行以解决此问题。"
+  },
   "footerTip": {
     "message": "移动鼠标或按方向键来移动聚焦框。"
   }

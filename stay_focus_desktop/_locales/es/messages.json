@@ -16,5 +16,6 @@
   "keyboardControl": { "message": "Control de teclado" },
   "supportKofi": { "message": "Apóyanos en Ko-fi" },
   "supportGithub": { "message": "Estrella en GitHub" },
+  "uipiWarning": { "message": "El foco puede congelarse sobre ventanas de altos privilegios (como el Administrador de tareas). Ejecútelo como administrador para solucionar esto." },
   "footerTip": { "message": "Resaltar el texto usando el ratón o las teclas de dirección." }
 }

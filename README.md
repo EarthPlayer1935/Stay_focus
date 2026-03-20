@@ -53,6 +53,14 @@ This project uses Node.js to automate the build and release process.
 2. `npm install`
 3. `npm run dist` (Installer in `dist/`)
 
+## FAQ
+
+### ❓ Why does the spotlight freeze over Windows Task Manager (or other high-privilege windows)?
+
+This is due to the Windows **User Interface Privilege Isolation (UIPI)** security mechanism.
+- **Why**: Task Manager (especially with "Always on Top" enabled) runs at a High Integrity Level (Administrator privileges). For security, Windows prevents standard-privilege programs (like Stay Focus) from receiving mouse events occurring over high-privilege windows.
+- **Solution**: Try **running Stay Focus as Administrator**. This will give it sufficient privileges to function correctly over those windows.
+
 ## Support
 
 [![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)

@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnGithub = document.getElementById('btnGithub');
   const btnNightMode = document.getElementById('btnNightMode');
   const langMenu = document.getElementById('langMenu');
+  const appVersion = document.getElementById('appVersion');
+
+  if (electron.getVersion) {
+    electron.getVersion().then(v => {
+      if (appVersion) appVersion.textContent = 'v' + v;
+    });
+  }
 
   let settings = await electron.getSettings();
   

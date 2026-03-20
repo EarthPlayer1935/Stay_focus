@@ -79,6 +79,15 @@ body {
   border-color: var(--border-color);
 }
 
+.app-version {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  color: var(--secondary-text);
+  margin-left: 4px;
+  user-select: none;
+}
+
 .lang-menu {
   position: absolute;
   bottom: 45px;

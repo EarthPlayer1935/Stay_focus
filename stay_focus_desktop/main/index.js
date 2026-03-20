@@ -325,27 +325,45 @@ ipcMain.on('close-settings', () => {
   }
 });
 
-app.whenReady().then(() => {
-  configPath = path.join(app.getPath('userData'), 'config.json');
-  currentSettings = loadSettings();
+ipcMain.handle('get-version', () => app.getVersion());
 
-  createWindow();
-  createTray();
+const gotTheLock = app.requestSingleInstanceLock();
 
-  globalShortcut.register('CommandOrControl+Shift+L', () => {
-    toggleLayer();
-  });
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Focus settings window if user tries to open a second instance
+    if (settingsWindow) {
+      if (settingsWindow.isMinimized()) settingsWindow.restore();
+      settingsWindow.focus();
+    } else {
+      openSettings();
     }
   });
-});
 
-app.on('window-all-closed', () => {
-  stopAutoHideTimers();
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+  app.whenReady().then(() => {
+    configPath = path.join(app.getPath('userData'), 'config.json');
+    currentSettings = loadSettings();
+
+    createWindow();
+    createTray();
+
+    globalShortcut.register('CommandOrControl+Shift+L', () => {
+      toggleLayer();
+    });
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
+  });
+
+  app.on('window-all-closed', () => {
+    stopAutoHideTimers();
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+}

@@ -90,8 +90,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     chrome.tabs.create({ url: 'https://github.com/EarthPlayer1935/Stay_focus' });
   });
 
-  pluginName.addEventListener('click', () => {
-    toggleFocus.click();
+  document.querySelector('.header').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
+      const toggleFocus = document.getElementById('toggleFocus');
+      if (toggleFocus) toggleFocus.click();
+    }
   });
 
   document.querySelectorAll('.switch-group').forEach(row => {

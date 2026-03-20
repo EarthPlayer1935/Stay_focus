@@ -103,8 +103,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnAddProcess = document.getElementById('btnAddProcess');
   const processHint = document.getElementById('processHint');
 
-  document.getElementById('pluginName').addEventListener('click', () => {
-    toggleFocus.click();
+  document.querySelector('.header').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
+      const toggleFocus = document.getElementById('toggleFocus');
+      if (toggleFocus) toggleFocus.click();
+    }
   });
 
   document.querySelectorAll('.switch-group').forEach(row => {

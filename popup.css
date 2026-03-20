@@ -37,7 +37,16 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 12px;
+  padding: 8px 10px 12px 10px;
+  margin: -8px -10px 0 -10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  border-radius: 8px 8px 0 0;
+}
+
+.header:hover {
+  background-color: var(--hover-bg);
 }
 
 .header-right {
@@ -150,10 +159,17 @@ h1 {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
+  padding: 8px 10px;
+  margin: 0 -10px;
   border-bottom: 1px dotted #e0e0e0;
   cursor: pointer;
   user-select: none;
+  transition: background-color 0.2s ease;
+  border-radius: 6px;
+}
+
+.switch-group:hover {
+  background-color: var(--hover-bg);
 }
 
 .control-group label {

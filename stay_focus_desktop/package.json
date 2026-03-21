@@ -8,7 +8,8 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder --win"
+    "dist": "electron-builder --win",
+    "dist:mac": "electron-builder --mac"
   },
   "devDependencies": {
     "electron": "^29.1.5",
@@ -25,6 +26,14 @@
         "provider": "github"
       }
     ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "assets/icon.png",
+      "category": "public.app-category.productivity"
+    },
     "win": {
       "target": "nsis",
       "icon": "assets/icon.ico"

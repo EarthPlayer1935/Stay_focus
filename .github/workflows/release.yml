@@ -77,3 +77,46 @@ jobs:
             stay_focus_desktop/dist/*.7z
             stay_focus_desktop/dist/latest.yml
             stay_focus_desktop/dist/*.blockmap
+
+  build-mac-desktop:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install desktop dependencies
+        working-directory: stay_focus_desktop
+        run: npm install
+
+      - name: Build desktop app for macOS
+        working-directory: stay_focus_desktop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ELECTRON_BUILDER_HTTP_TIMEOUT: 120000
+          DEBUG: electron-builder
+        run: |
+          echo "Node: $(node -v)"
+          echo "npm: $(npm -v)"
+          echo "Starting electron-builder..."
+          
+          # explicitly disable publish since we upload with softprops/action-gh-release
+          npx electron-builder --mac -p never
+
+      - name: Upload desktop installer
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            stay_focus_desktop/dist/*.dmg
+            stay_focus_desktop/dist/*.zip
+            stay_focus_desktop/dist/latest-mac.yml
+            stay_focus_desktop/dist/*.blockmap

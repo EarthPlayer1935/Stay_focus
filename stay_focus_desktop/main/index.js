@@ -183,6 +183,50 @@ public class WinHelper {
 }
 
 function queryWindowRects(processNames, callback) {
+  if (process.platform === 'darwin') {
+    const script = `
+      try
+        tell application "System Events"
+          set frontApp to name of first application process whose frontmost is true
+          set frontWindow to (first window of (first application process whose frontmost is true))
+          set boundsList to properties of frontWindow as record
+          set {p1, p2} to position of boundsList
+          set {s1, s2} to size of boundsList
+          return frontApp & "|" & p1 & "," & p2 & "," & s1 & "," & s2 & "|1"
+        end tell
+      on error
+        return ""
+      end try
+    `;
+    require('child_process').execFile('osascript', ['-e', script], (error, stdout) => {
+      if (error || !stdout || !stdout.trim()) {
+        callback([]);
+        return;
+      }
+      const res = stdout.trim();
+      const parts = res.split('|');
+      const frontApp = parts[0];
+      
+      let match = false;
+      const targetLower = processNames.map(n => n.replace(/'/g, '').replace(/\.exe$/i, '').toLowerCase());
+      if (targetLower.includes(frontApp.toLowerCase())) {
+        match = true;
+      }
+      
+      if (match && parts[1]) {
+        const bounds = parts[1].split(',');
+        const x = parseInt(bounds[0], 10);
+        const y = parseInt(bounds[1], 10);
+        const w = parseInt(bounds[2], 10);
+        const h = parseInt(bounds[3], 10);
+        callback([{ x, y, w, h, isForeground: true }]);
+      } else {
+        callback([]);
+      }
+    });
+    return;
+  }
+
   ensurePsChild();
   psQueryCallback = callback;
 
@@ -428,6 +472,24 @@ ipcMain.on('open-external', (e, url) => shell.openExternal(url));
 
 ipcMain.handle('get-running-processes', async () => {
   return new Promise((resolve) => {
+    if (process.platform === 'darwin') {
+      const script = `
+        tell application "System Events"
+          set apps to name of every application process whose background only is false
+          set AppleScript's text item delimiters to "|"
+          return apps as string
+        end tell
+      `;
+      require('child_process').execFile('osascript', ['-e', script], (error, stdout) => {
+        if (error || !stdout || !stdout.trim()) {
+          resolve([]);
+          return;
+        }
+        resolve(stdout.trim().split('|').filter(Boolean));
+      });
+      return;
+    }
+
     ensurePsChild();
     if (psProcessesCallback) {
       psProcessesCallback([]);

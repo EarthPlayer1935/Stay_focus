@@ -44,6 +44,7 @@ function saveSettingsToFile(settings) {
 
 let mainWindow;
 let settingsWindow;
+let progressWindow;
 let tray;
 let isLayerVisible = true;
 
@@ -516,28 +517,47 @@ ipcMain.on('close-settings', () => {
 
 ipcMain.handle('get-version', () => app.getVersion());
 
+function createProgressWindow() {
+  if (progressWindow) return;
+  progressWindow = new BrowserWindow({
+    width: 400,
+    height: 150,
+    resizable: false,
+    frame: false,
+    alwaysOnTop: true,
+    icon: path.join(__dirname, '../assets/icon.png'),
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true
+    }
+  });
+  progressWindow.loadFile(path.join(__dirname, '../renderer/update.html'));
+  progressWindow.on('closed', () => {
+    progressWindow = null;
+  });
+}
+
 autoUpdater.autoDownload = false;
 autoUpdater.on('update-available', (info) => {
   pendingUpdateInfo = info;
   if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-available', info);
 });
+autoUpdater.on('error', (err) => {
+  const msg = err == null ? "Unknown error" : (err.message || err.toString());
+  if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-error', msg);
+  if (progressWindow && !progressWindow.isDestroyed()) progressWindow.webContents.send('update-error', msg);
+});
 autoUpdater.on('download-progress', (progressObj) => {
   if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-progress', progressObj);
+  if (progressWindow && !progressWindow.isDestroyed()) progressWindow.webContents.send('update-progress', progressObj);
 });
 autoUpdater.on('update-downloaded', (info) => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Ready',
-    message: 'The update has been downloaded. Restart the application to apply the updates.',
-    buttons: ['Restart', 'Later']
-  }).then((result) => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
+  autoUpdater.quitAndInstall();
 });
 
 ipcMain.on('download-update', () => {
+  createProgressWindow();
   autoUpdater.downloadUpdate();
 });
 ipcMain.handle('check-for-updates', () => {

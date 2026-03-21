@@ -65,6 +65,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  if (electron.onUpdateError) {
+    electron.onUpdateError((event, msg) => {
+      if (btnUpdate) {
+        btnUpdate.textContent = '❌ Error';
+        btnUpdate.title = 'Error: ' + msg;
+      }
+    });
+  }
+
   if (btnUpdate && electron.downloadUpdate) {
     btnUpdate.addEventListener('click', () => {
       btnUpdate.textContent = '⏳ ...';

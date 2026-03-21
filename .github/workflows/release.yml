@@ -79,7 +79,7 @@ jobs:
             stay_focus_desktop/dist/*.blockmap
 
   build-mac-desktop:
-    runs-on: macos-latest
+    runs-on: macos-13
     permissions:
       contents: write
       issues: write

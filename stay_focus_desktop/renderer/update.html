@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stay Focus - Downloading Update</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      padding: 24px;
+      margin: 0;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100vh;
+      box-sizing: border-box;
+      border: 1px solid #333;
+      border-radius: 8px;
+      -webkit-app-region: drag;
+    }
+    h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 500;
+      font-size: 16px;
+      color: #fff;
+    }
+    .progress-container {
+      background: #333;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 14px;
+      width: 100%;
+      margin-bottom: 12px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4caf50, #81c784);
+      width: 0%;
+      height: 100%;
+      transition: width 0.2s ease;
+    }
+    .status-text {
+      font-size: 13px;
+      color: #aaa;
+      display: flex;
+      justify-content: space-between;
+    }
+    .error-text {
+      color: #ff5252;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <h3 id="title">Downloading Update... / 下载更新中...</h3>
+  
+  <div class="progress-container">
+    <div id="bar" class="progress-bar"></div>
+  </div>
+  
+  <div class="status-text">
+    <span id="speed">Calculating...</span>
+    <span id="percent">0%</span>
+  </div>
+
+  <div id="error" class="error-text"></div>
+
+  <script>
+    const electron = window.electronAPI;
+    
+    if (electron && electron.onUpdateProgress) {
+      electron.onUpdateProgress((e, progressObj) => {
+        const percent = progressObj.percent || 0;
+        const speed = progressObj.bytesPerSecond || 0;
+        
+        document.getElementById('bar').style.width = percent + '%';
+        document.getElementById('percent').textContent = Math.round(percent) + '%';
+        
+        let speedText = '';
+        if (speed > 1024 * 1024) {
+          speedText = (speed / (1024 * 1024)).toFixed(2) + ' MB/s';
+        } else {
+          speedText = (speed / 1024).toFixed(2) + ' KB/s';
+        }
+        document.getElementById('speed').textContent = speedText;
+      });
+    }
+
+    if (electron && electron.onUpdateError) {
+      electron.onUpdateError((e, msg) => {
+        const errorEl = document.getElementById('error');
+        errorEl.textContent = 'Error: ' + msg;
+        errorEl.style.display = 'block';
+        document.getElementById('speed').textContent = 'Failed / 下载失败';
+        document.getElementById('bar').style.background = '#ff5252';
+      });
+    }
+  </script>
+</body>
+</html>

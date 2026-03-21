@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.0](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.4.1...v2.5.0) (2026-03-21)
+
+
+### 🌟 Features
+
+* adapt macOS platform and add mac build pipeline ([e041e6d](https://github.com/EarthPlayer1935/Stay_focus/commit/e041e6df2f0bb2c75ab18e75f7151565dd90545a))
+* Auto-adapt mask bounds and borders for Windows and optimize tracking loop ([88ca5c4](https://github.com/EarthPlayer1935/Stay_focus/commit/88ca5c44bad2c428368296d5f1f36bd77a6deaf2))
+
 ## [2.4.1](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.4.0...v2.4.1) (2026-03-21)
 
 

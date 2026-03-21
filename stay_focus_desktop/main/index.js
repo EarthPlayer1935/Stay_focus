@@ -204,7 +204,7 @@ function startAutoHideTimers() {
   const names = currentSettings.targetProcesses;
   if (!names || names.length === 0) {
     // Global mode: always show the overlay (nothing to do)
-    if (mainWindow && currentSettings.enabled) {
+    if (mainWindow && !mainWindow.isDestroyed() && currentSettings.enabled) {
       mainWindow.webContents.send('auto-hide-state', true);
     }
     return;
@@ -221,7 +221,7 @@ function startAutoHideTimers() {
 
   // Fast timer: check mouse position and foreground state every 100 ms
   fastTimer = setInterval(() => {
-    if (!mainWindow) return;
+    if (!mainWindow || mainWindow.isDestroyed()) return;
     const { x, y } = screen.getCursorScreenPoint();
     
     // Find the target window that is both in foreground AND contains the mouse
@@ -245,7 +245,7 @@ function refreshAutoHide() {
   } else {
     stopAutoHideTimers();
     // If auto-hide is off (or overlay disabled), ensure overlay knows to show
-    if (mainWindow && currentSettings.enabled) {
+    if (mainWindow && !mainWindow.isDestroyed() && currentSettings.enabled) {
       mainWindow.webContents.send('auto-hide-state', true);
     }
   }
@@ -269,11 +269,16 @@ function createWindow() {
   mainWindow.setIgnoreMouseEvents(true, { forward: true });
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
 
-  setInterval(() => {
-    if (mainWindow && isLayerVisible) {
+  const topTimer = setInterval(() => {
+    if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible) {
       mainWindow.moveTop();
     }
   }, 500);
+
+  mainWindow.on('closed', () => {
+    clearInterval(topTimer);
+    mainWindow = null;
+  });
 
   mainWindow.maximize();
 
@@ -350,7 +355,7 @@ function registerKeyboardControl(enable) {
     if (enable) {
       globalShortcut.register(combo, () => {
         if (!isLayerVisible) return;
-        if (mainWindow) mainWindow.webContents.send('keyboard-move', key);
+        if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('keyboard-move', key);
       });
     } else {
       globalShortcut.unregister(combo);
@@ -369,7 +374,7 @@ ipcMain.on('save-settings', (event, newSettings) => {
   currentSettings = { ...currentSettings, ...newSettings };
   saveSettingsToFile(currentSettings);
 
-  if (mainWindow) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('update-settings', currentSettings);
   }
 
@@ -431,10 +436,10 @@ ipcMain.handle('get-version', () => app.getVersion());
 
 autoUpdater.autoDownload = false;
 autoUpdater.on('update-available', (info) => {
-  if (settingsWindow) settingsWindow.webContents.send('update-available', info);
+  if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-available', info);
 });
 autoUpdater.on('download-progress', (progressObj) => {
-  if (settingsWindow) settingsWindow.webContents.send('update-progress', progressObj);
+  if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-progress', progressObj);
 });
 autoUpdater.on('update-downloaded', (info) => {
   dialog.showMessageBox({

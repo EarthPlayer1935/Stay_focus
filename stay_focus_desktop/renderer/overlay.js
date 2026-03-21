@@ -3,6 +3,7 @@ const overlayWindow = document.getElementById('overlay-window');
 const maskClip = document.getElementById('mask-clip');
 
 let isEnabled = false;   // will be set from settings on init
+let isWin11 = false;
 let isFullRow = false;
 let isHighlightMode = false;
 let windowHeight = 50;
@@ -79,6 +80,13 @@ document.addEventListener('mousemove', (e) => {
 
 // IPC settings sync
 if (window.electronAPI) {
+  if (window.electronAPI.getOsInfo) {
+    window.electronAPI.getOsInfo().then(info => {
+      isWin11 = info.isWin11;
+      updateStyles();
+    });
+  }
+
   // Initialize from saved settings on load
   window.electronAPI.getSettings().then((settings) => {
     if (settings.enabled !== undefined) isEnabled = settings.enabled;
@@ -114,6 +122,7 @@ if (window.electronAPI) {
         maskClip.style.top = `${state.y}px`;
         maskClip.style.width = `${state.w}px`;
         maskClip.style.height = `${state.h}px`;
+        maskClip.style.borderRadius = isWin11 ? '8px' : '0px';
         autoHideVisible = true;
       } else if (state === true) {
         // Global mode
@@ -122,6 +131,7 @@ if (window.electronAPI) {
         maskClip.style.top = '0px';
         maskClip.style.width = '100vw';
         maskClip.style.height = '100vh';
+        maskClip.style.borderRadius = '0px';
         autoHideVisible = true;
       } else {
         // Hidden

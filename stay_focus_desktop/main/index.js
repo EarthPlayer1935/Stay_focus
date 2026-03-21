@@ -71,26 +71,43 @@ Add-Type @'
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Diagnostics;
 public class WinHelper {
   public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
   [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
   [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
   public struct RECT { public int L, T, R, B; }
 
-  public static string GetWindows(int[] pids) {
+  public static string GetWindows(string[] names) {
     IntPtr fg = GetForegroundWindow();
-    List<int> pidList = new List<int>(pids);
     List<string> results = new List<string>();
     EnumWindows((hWnd, lParam) => {
       if (IsWindowVisible(hWnd)) {
         uint pid;
         GetWindowThreadProcessId(hWnd, out pid);
-        if (pidList.Contains((int)pid)) {
-          RECT r;
-          if (GetWindowRect(hWnd, out r)) {
+        string procName = null;
+        try {
+          procName = Process.GetProcessById((int)pid).ProcessName;
+        } catch { }
+
+        if (procName != null) {
+          bool match = false;
+          foreach (string n in names) {
+            if (string.Equals(n, procName, StringComparison.OrdinalIgnoreCase)) {
+              match = true;
+              break;
+            }
+          }
+          if (match) {
+            RECT r;
+            int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+            if (DwmGetWindowAttribute(hWnd, DWMWA_EXTENDED_FRAME_BOUNDS, out r, Marshal.SizeOf(typeof(RECT))) != 0) {
+              GetWindowRect(hWnd, out r);
+            }
             int isFg = (hWnd == fg) ? 1 : 0;
             results.Add(r.L + "," + r.T + "," + (r.R - r.L) + "," + (r.B - r.T) + "," + isFg);
           }
@@ -167,22 +184,14 @@ public class WinHelper {
 
 function queryWindowRects(processNames, callback) {
   ensurePsChild();
-  if (psQueryCallback) {
-    // Drop previous if still pending
-    psQueryCallback([]);
-  }
   psQueryCallback = callback;
 
-  let names = processNames.map(n => n.replace(/'/g, '').replace(/\\.exe$/i, ''));
-  const namesStr = names.map(n => `'${n}'`).join(',');
+  let names = processNames.map(n => n.replace(/'/g, '').replace(/\.exe$/i, ''));
+  let namesStr = names.map(n => `'${n.replace(/'/g, "''")}'`).join(',');
 
   const psCmd = `
 $names = @(${namesStr})
-$pids = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $names -contains $_.ProcessName } | Select-Object -ExpandProperty Id)
-$res = ""
-if ($pids.Count -gt 0) {
-  $res = [WinHelper]::GetWindows([int[]]$pids)
-}
+$res = [WinHelper]::GetWindows([string[]]$names)
 Write-Output "RESULT:$res"
 `;
   psQueryProcess.stdin.write(psCmd + "\r\n");
@@ -193,8 +202,9 @@ function pointInRect(px, py, { x, y, w, h }) {
 }
 
 function stopAutoHideTimers() {
-  if (slowTimer) { clearInterval(slowTimer); slowTimer = null; }
+  if (slowTimer) { clearTimeout(slowTimer); slowTimer = null; }
   if (fastTimer) { clearInterval(fastTimer); fastTimer = null; }
+  psQueryCallback = null;
   cachedWindowRects = [];
   lastAutoHideState = null;
 }
@@ -211,33 +221,28 @@ function startAutoHideTimers() {
     return;
   }
 
-  // Slow timer: refresh window rects every 2 s
-  function refreshRects() {
+  function loop() {
+    if (!currentSettings.autoHide || !currentSettings.enabled || (mainWindow && mainWindow.isDestroyed())) return;
     queryWindowRects(names, (rects) => {
       cachedWindowRects = rects;
+      
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        const { x, y } = screen.getCursorScreenPoint();
+        const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
+        
+        const state = activeRect || false;
+        const stateStr = JSON.stringify(state);
+        if (stateStr !== lastAutoHideState) {
+          lastAutoHideState = stateStr;
+          mainWindow.webContents.send('auto-hide-state', state);
+        }
+      }
+      
+      slowTimer = setTimeout(loop, 30);
     });
   }
-  refreshRects(); // immediate first fetch
-  slowTimer = setInterval(refreshRects, 2000);
-
-  // Fast timer: check mouse position and foreground state every 100 ms
-  fastTimer = setInterval(() => {
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    const { x, y } = screen.getCursorScreenPoint();
-    
-    // Find the target window that is both in foreground AND contains the mouse
-    const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
-    
-    // state is either the rect object or false
-    const state = activeRect || false;
-    
-    // We compare JSON string because objects are different instances
-    const stateStr = JSON.stringify(state);
-    if (stateStr !== lastAutoHideState) {
-      lastAutoHideState = stateStr;
-      mainWindow.webContents.send('auto-hide-state', state);
-    }
-  }, 100);
+  
+  loop();
 }
 
 function refreshAutoHide() {
@@ -369,6 +374,14 @@ function registerKeyboardControl(enable) {
     }
   });
 }
+
+ipcMain.handle('get-os-info', () => {
+  const os = require('os');
+  const release = os.release().split('.');
+  const build = parseInt(release[2] || '0', 10);
+  const isWin11 = process.platform === 'win32' && build >= 22000;
+  return { isWin11 };
+});
 
 ipcMain.handle('get-settings', () => currentSettings);
 

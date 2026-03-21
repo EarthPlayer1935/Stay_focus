@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.1](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.0...v2.5.1) (2026-03-21)
+
 ## [2.5.0](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.4.1...v2.5.0) (2026-03-21)
 
 

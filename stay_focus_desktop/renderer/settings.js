@@ -42,6 +42,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  if (electron.checkForUpdates) {
+    electron.checkForUpdates().catch(err => console.error(err));
+  }
+
   if (electron.onUpdateAvailable) {
     electron.onUpdateAvailable((event, info) => {
       if (btnUpdate) {

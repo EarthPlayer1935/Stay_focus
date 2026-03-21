@@ -48,6 +48,7 @@ let tray;
 let isLayerVisible = true;
 
 let currentSettings = { ...DEFAULT_SETTINGS };
+let pendingUpdateInfo = null;
 
 // ── Auto-hide: two-tier polling ──────────────────────────────────────────────
 let cachedWindowRects = [];   // [{x, y, w, h}]
@@ -297,6 +298,7 @@ function createTray() {
     { label: `Toggle ${appName}`, click: toggleLayer },
     { type: 'separator' },
     { label: 'Settings', click: openSettings },
+    { label: 'Restart', click: () => { app.relaunch(); app.quit(); } },
     { type: 'separator' },
     { label: 'Quit', role: 'quit' }
   ]);
@@ -336,12 +338,17 @@ function openSettings() {
   });
   settingsWindow.loadFile(path.join(__dirname, '../renderer/settings.html'));
 
-  if (!app.isPackaged) {
-    settingsWindow.webContents.on('did-finish-load', () => {
-      settingsWindow.webContents.executeJavaScript(`document.title = document.title + ' (Dev)';`);
-      settingsWindow.webContents.insertCSS(`#pluginName::after { content: ' (Dev)'; }`);
-    });
-  }
+  settingsWindow.webContents.on('did-finish-load', () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+      if (!app.isPackaged) {
+        settingsWindow.webContents.executeJavaScript(`document.title = document.title + ' (Dev)';`);
+        settingsWindow.webContents.insertCSS(`#pluginName::after { content: ' (Dev)'; }`);
+      }
+      if (pendingUpdateInfo) {
+        settingsWindow.webContents.send('update-available', pendingUpdateInfo);
+      }
+    }
+  });
 
   settingsWindow.on('closed', () => {
     settingsWindow = null;
@@ -436,6 +443,7 @@ ipcMain.handle('get-version', () => app.getVersion());
 
 autoUpdater.autoDownload = false;
 autoUpdater.on('update-available', (info) => {
+  pendingUpdateInfo = info;
   if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.webContents.send('update-available', info);
 });
 autoUpdater.on('download-progress', (progressObj) => {
@@ -493,10 +501,13 @@ if (!gotTheLock) {
       }
     });
     
-    // Check for updates shortly after startup
+    // Check for updates shortly after startup and periodically
     setTimeout(() => {
       autoUpdater.checkForUpdates();
     }, 3000);
+    setInterval(() => {
+      autoUpdater.checkForUpdates();
+    }, 3600000); // Check every 1 hour
   });
 
   app.on('window-all-closed', () => {

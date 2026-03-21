@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnNightMode.textContent = isDark ? '☀️' : '🌙';
   });
 
-  btnKofi.addEventListener('click', () => electron.openExternal('https://ko-fi.com/EarthPlayer1935'));
+  btnKofi.addEventListener('click', () => electron.openExternal('https://ko-fi.com/playerearth'));
   btnGithub.addEventListener('click', () => electron.openExternal('https://github.com/EarthPlayer1935/Stay_focus'));
 
   const toggleFocus = document.getElementById('toggleFocus');

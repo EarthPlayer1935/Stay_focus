@@ -55,7 +55,7 @@ Dieses Projekt verwendet Node.js, um den Erstellungs- und Veröffentlichungsproz
 
 ## Unterstützung
 
-[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+[![ko-fi](https://img.shields.io/badge/Auf%20Ko--fi%20unterstützen-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/playerearth)
 
 ## Lizenz
 

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   btnKofi.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://ko-fi.com/EarthPlayer1935' });
+    chrome.tabs.create({ url: 'https://ko-fi.com/playerearth' });
   });
 
   btnGithub.addEventListener('click', () => {

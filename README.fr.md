@@ -55,7 +55,7 @@ Ce projet utilise Node.js pour automatiser le processus de construction et de pu
 
 ## Soutien
 
-[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/EarthPlayer1935)
+[![ko-fi](https://img.shields.io/badge/Soutenir%20sur%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/playerearth)
 
 ## Licence
 

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.4.0](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.3.0...v2.4.0) (2026-03-21)
+
+
+### 🌟 Features
+
+* auto-select process from datalist without pressing enter ([c4b1340](https://github.com/EarthPlayer1935/Stay_focus/commit/c4b134072cf5c57b62412eedb55dd12c8acad751))
+
+
+### 🐛 Bug Fixes
+
+* **desktop:** resolve Object has been destroyed error when app closes ([1bf246d](https://github.com/EarthPlayer1935/Stay_focus/commit/1bf246d879d84852517f72a2647ae8bd4510e91f))
+
 ## [2.3.0](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.2.0...v2.3.0) (2026-03-21)
 
 

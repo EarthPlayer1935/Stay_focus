@@ -1,6 +1,6 @@
 {
   "name": "stay_focus",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "[English](./README.md) | **中文**",
   "main": "background.js",
   "scripts": {

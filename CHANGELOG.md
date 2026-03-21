@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.4.1](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.4.0...v2.4.1) (2026-03-21)
+
+
+### 🐛 Bug Fixes
+
+* **desktop:** fix auto-updater prompt visibility and add tray restart option ([36261d2](https://github.com/EarthPlayer1935/Stay_focus/commit/36261d2499dab2fd1557bad7a14b5818e54c691b))
+
 ## [2.4.0](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.3.0...v2.4.0) (2026-03-21)
 
 

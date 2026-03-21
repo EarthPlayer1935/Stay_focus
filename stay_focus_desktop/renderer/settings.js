@@ -34,10 +34,38 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnNightMode = document.getElementById('btnNightMode');
   const langMenu = document.getElementById('langMenu');
   const appVersion = document.getElementById('appVersion');
+  const btnUpdate = document.getElementById('btnUpdate');
 
   if (electron.getVersion) {
     electron.getVersion().then(v => {
       if (appVersion) appVersion.textContent = 'v' + v;
+    });
+  }
+
+  if (electron.onUpdateAvailable) {
+    electron.onUpdateAvailable((event, info) => {
+      if (btnUpdate) {
+        btnUpdate.style.display = 'inline-block';
+        btnUpdate.textContent = '🚀 New';
+        btnUpdate.title = `Update available: ${info?.version || 'New version'}. Click to download.`;
+      }
+    });
+  }
+
+  if (electron.onUpdateProgress) {
+    electron.onUpdateProgress((event, progressObj) => {
+      if (btnUpdate) {
+        btnUpdate.textContent = `⏳ ${Math.round(progressObj.percent)}%`;
+        btnUpdate.title = 'Downloading update...';
+      }
+    });
+  }
+
+  if (btnUpdate && electron.downloadUpdate) {
+    btnUpdate.addEventListener('click', () => {
+      btnUpdate.textContent = '⏳ ...';
+      btnUpdate.title = 'Starting download...';
+      electron.downloadUpdate();
     });
   }
 

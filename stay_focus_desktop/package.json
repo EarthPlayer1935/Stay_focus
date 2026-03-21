@@ -20,6 +20,11 @@
     "directories": {
       "output": "dist"
     },
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
     "win": {
       "target": "nsis",
       "icon": "assets/icon.ico"
@@ -29,5 +34,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.3"
   }
 }

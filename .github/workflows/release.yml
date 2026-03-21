@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install root dependencies
         run: npm install
@@ -45,6 +46,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install desktop dependencies
         working-directory: stay_focus_desktop
@@ -73,3 +75,5 @@ jobs:
           files: |
             stay_focus_desktop/dist/*.exe
             stay_focus_desktop/dist/*.7z
+            stay_focus_desktop/dist/latest.yml
+            stay_focus_desktop/dist/*.blockmap

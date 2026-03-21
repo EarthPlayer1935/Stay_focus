@@ -30,6 +30,9 @@ output.on('close', function() {
   console.log('\x1b[32m%s\x1b[0m', `\n✅ 打包成功！`);
   console.log('\x1b[32m%s\x1b[0m', `📦 交付物路径: ${outputZipPath}`);
   console.log('\x1b[32m%s\x1b[0m', `🗜️ 文件大小: ${(archive.pointer() / 1024).toFixed(2)} KB`);
+  console.log('\x1b[36m%s\x1b[0m', `\n🚀 [Release Assets] 后续请将以下构建物一并附加到 GitHub Release 中：`);
+  console.log('\x1b[36m%s\x1b[0m', `  - 浏览器扩展：${outputZipPath}`);
+  console.log('\x1b[36m%s\x1b[0m', `  - 桌面客户端：stay_focus_desktop/dist/*.exe 和 *.7z 版本`);
 });
 
 archive.on('warning', function(err) {

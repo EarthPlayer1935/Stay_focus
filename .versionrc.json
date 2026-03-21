@@ -1,0 +1,26 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "manifest.json",
+      "type": "json"
+    },
+    {
+      "filename": "stay_focus_desktop/package.json",
+      "type": "json"
+    }
+  ],
+  "types": [
+    {"type": "feat", "section": "🌟 Features"},
+    {"type": "fix", "section": "🐛 Bug Fixes"},
+    {"type": "chore", "section": "🔧 Chores", "hidden": false},
+    {"type": "docs", "hidden": true},
+    {"type": "style", "hidden": true},
+    {"type": "refactor", "section": "🔨 Refactoring"},
+    {"type": "perf", "section": "⚡️ Performance Improvements", "hidden": false},
+    {"type": "test", "hidden": true}
+  ]
+}

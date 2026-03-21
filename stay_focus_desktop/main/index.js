@@ -1,5 +1,6 @@
 const electron = require('electron');
-const { app, BrowserWindow, Tray, Menu, globalShortcut, shell, screen } = electron;
+const { app, BrowserWindow, Tray, Menu, globalShortcut, shell, screen, dialog } = electron;
+const { autoUpdater } = require('electron-updater');
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
@@ -9,14 +10,14 @@ const DEFAULT_SETTINGS = {
   enabled: true,
   fullRowMode: false,
   highlightMode: false,
-  linkSize: false,
+  linkSize: true,
   autoHide: true,
   targetProcesses: [],
   keyboardControl: false,
-  height: 50,
-  width: 200,
-  borderRadius: 12,
-  opacity: 75,
+  height: 79,
+  width: 79,
+  borderRadius: 150,
+  opacity: 10,
   color: '#000000',
   userLang: null,
   nightMode: false
@@ -286,14 +287,15 @@ function createWindow() {
 
 function createTray() {
   tray = new Tray(path.join(__dirname, '../assets/tray-icon.png'));
+  const appName = app.isPackaged ? 'Stay Focus' : 'Stay Focus (Dev)';
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Toggle Stay Focus', click: toggleLayer },
+    { label: `Toggle ${appName}`, click: toggleLayer },
     { type: 'separator' },
     { label: 'Settings', click: openSettings },
     { type: 'separator' },
     { label: 'Quit', role: 'quit' }
   ]);
-  tray.setToolTip('Stay Focus');
+  tray.setToolTip(appName);
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {
@@ -328,6 +330,14 @@ function openSettings() {
     }
   });
   settingsWindow.loadFile(path.join(__dirname, '../renderer/settings.html'));
+
+  if (!app.isPackaged) {
+    settingsWindow.webContents.on('did-finish-load', () => {
+      settingsWindow.webContents.executeJavaScript(`document.title = document.title + ' (Dev)';`);
+      settingsWindow.webContents.insertCSS(`#pluginName::after { content: ' (Dev)'; }`);
+    });
+  }
+
   settingsWindow.on('closed', () => {
     settingsWindow = null;
   });
@@ -419,6 +429,33 @@ ipcMain.on('close-settings', () => {
 
 ipcMain.handle('get-version', () => app.getVersion());
 
+autoUpdater.autoDownload = false;
+autoUpdater.on('update-available', (info) => {
+  if (settingsWindow) settingsWindow.webContents.send('update-available', info);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  if (settingsWindow) settingsWindow.webContents.send('update-progress', progressObj);
+});
+autoUpdater.on('update-downloaded', (info) => {
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Update Ready',
+    message: 'The update has been downloaded. Restart the application to apply the updates.',
+    buttons: ['Restart', 'Later']
+  }).then((result) => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+ipcMain.on('download-update', () => {
+  autoUpdater.downloadUpdate();
+});
+ipcMain.handle('check-for-updates', () => {
+  return autoUpdater.checkForUpdates();
+});
+
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -450,6 +487,11 @@ if (!gotTheLock) {
         createWindow();
       }
     });
+    
+    // Check for updates shortly after startup
+    setTimeout(() => {
+      autoUpdater.checkForUpdates();
+    }, 3000);
   });
 
   app.on('window-all-closed', () => {

@@ -560,6 +560,11 @@ ipcMain.on('download-update', () => {
   createProgressWindow();
   autoUpdater.downloadUpdate();
 });
+ipcMain.on('close-update-window', () => {
+  if (progressWindow) {
+    progressWindow.close();
+  }
+});
 ipcMain.handle('check-for-updates', () => {
   return autoUpdater.checkForUpdates();
 });

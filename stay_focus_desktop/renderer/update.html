@@ -54,9 +54,29 @@
       display: none;
       word-break: break-all;
     }
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+      color: #aaa;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .close-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
   </style>
 </head>
 <body>
+  <div class="close-btn" id="closeBtn" style="display: none;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </div>
   <h3 id="title">Downloading Update... / 下载更新中...</h3>
   
   <div class="progress-container">
@@ -98,8 +118,15 @@
         errorEl.style.display = 'block';
         document.getElementById('speed').textContent = 'Failed / 下载失败';
         document.getElementById('bar').style.background = '#ff5252';
+        document.getElementById('closeBtn').style.display = 'block';
       });
     }
+
+    document.getElementById('closeBtn').addEventListener('click', () => {
+      if (electron && electron.closeUpdateWindow) {
+        electron.closeUpdateWindow();
+      }
+    });
   </script>
 </body>
 </html>

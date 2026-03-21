@@ -1,6 +1,6 @@
 {
   "name": "stay-focus-desktop",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "author": "EarthPlayer1935",
   "description": "Stay Focus desktop application with click-through masking",
   "repository": "EarthPlayer1935/Stay_focus",
@@ -32,11 +32,13 @@
         "zip"
       ],
       "icon": "assets/icon.png",
-      "category": "public.app-category.productivity"
+      "category": "public.app-category.productivity",
+      "artifactName": "Stay-Focus-${version}.${ext}"
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/icon.ico"
+      "icon": "assets/icon.ico",
+      "artifactName": "Stay-Focus-Setup-${version}.${ext}"
     },
     "nsis": {
       "unicode": true,

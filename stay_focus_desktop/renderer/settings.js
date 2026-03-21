@@ -224,6 +224,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   processInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addProcess();
   });
+  processInput.addEventListener('input', (e) => {
+    const list = document.getElementById('processList');
+    if (e.inputType === 'insertReplacementText' || 
+        (list && Array.from(list.options).some(opt => opt.value === processInput.value))) {
+      addProcess();
+    }
+  });
 
   async function refreshProcessList() {
     if (!electron || !electron.getRunningProcesses) return;

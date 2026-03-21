@@ -112,9 +112,6 @@ jobs:
           # explicitly disable publish since we upload with softprops/action-gh-release
           npx electron-builder --mac -p never
 
-      - name: Setup upterm session for debugging
-        if: failure()
-        uses: lhotari/action-upterm@v1
 
       - name: Upload desktop installer
         uses: softprops/action-gh-release@v1

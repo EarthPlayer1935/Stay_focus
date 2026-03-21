@@ -63,7 +63,7 @@
 
 ## 支持
 
-[![ko-fi](https://img.shields.io/badge/在%20Ko--fi%20上支持我-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/playerearth)
+[![ko-fi](https://img.shields.io/badge/在%20Ko--fi%20上支持我-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/earthplayer)
 
 ## 开源协议
 

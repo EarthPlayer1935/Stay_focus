@@ -63,7 +63,7 @@ This is due to the Windows **User Interface Privilege Isolation (UIPI)** securit
 
 ## Support
 
-[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/playerearth)
+[![ko-fi](https://img.shields.io/badge/Support%20me%20on%20Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/earthplayer)
 
 ## License
 

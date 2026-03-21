@@ -112,6 +112,10 @@ jobs:
           # explicitly disable publish since we upload with softprops/action-gh-release
           npx electron-builder --mac -p never
 
+      - name: Setup tmate session for debugging
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
+
       - name: Upload desktop installer
         uses: softprops/action-gh-release@v1
         with:

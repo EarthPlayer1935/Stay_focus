@@ -160,7 +160,8 @@ function onKeyDown(e) {
   const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
   const isArrowKey = arrowKeys.includes(e.key);
   
-  if (isArrowKey && !isKeyboardControlEnabled) return;
+  // 必须同时按下 Shift + Alt + 方向键才触发，防止干扰正常滚动
+  if (isArrowKey && (!isKeyboardControlEnabled || !e.shiftKey || !e.altKey)) return;
 
   const activeElem = document.activeElement;
   const isInput = activeElem && (
@@ -183,7 +184,9 @@ function onKeyDown(e) {
     }
     
     overlayWindow.style.top = `${currentY}px`;
-    overlayWindow.style.left = `${currentX}px`;
+    if (!isFullRow) {
+      overlayWindow.style.left = `${currentX}px`;
+    }
 
     if (!isInput) {
       e.preventDefault();
@@ -218,7 +221,7 @@ function applySettings(settings) {
   if (settings.antiScreenshot !== undefined) isAntiScreenshotEnabled = settings.antiScreenshot;
   if (settings.autoHide !== undefined) isAutoHideEnabled = settings.autoHide;
   if (settings.targetTabs !== undefined) targetTabs = settings.targetTabs || [];
-  if (settings.keyboardControl !== undefined) isKeyboardControlEnabled = settings.keyboardControl;
+  isKeyboardControlEnabled = settings.keyboardControl !== undefined ? settings.keyboardControl : isKeyboardControlEnabled;
   
   if (settings.isPopupOpen !== undefined) {
     isPopupOpen = settings.isPopupOpen;

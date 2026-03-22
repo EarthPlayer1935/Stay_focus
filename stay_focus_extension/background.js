@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener(() => {
       opacity: result.opacity !== undefined ? result.opacity : 10,
       color: result.color !== undefined ? result.color : '#000000',
       autoHide: result.autoHide !== undefined ? result.autoHide : true,
+      keyboardControl: result.keyboardControl !== undefined ? result.keyboardControl : false,
       isPopupOpen: false
     });
   });

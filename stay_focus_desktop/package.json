@@ -1,6 +1,6 @@
 {
   "name": "stay-focus-desktop",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "author": "EarthPlayer1935",
   "description": "Stay Focus desktop application with click-through masking",
   "repository": "EarthPlayer1935/Stay_focus",
@@ -44,14 +44,7 @@
       "unicode": true,
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
-    },
-    "extraResources": [
-      {
-        "from": "../stay_focus_extension/_locales",
-        "to": "_locales",
-        "filter": ["**/*"]
-      }
-    ]
+    }
   },
   "dependencies": {
     "electron-updater": "^6.8.3"

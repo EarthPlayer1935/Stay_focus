@@ -51,7 +51,7 @@
     "message": "Star on GitHub"
   },
   "uipiWarning": {
-    "message": "The spotlight may freeze over high-privilege windows (like Task Manager). Run as Administrator to fix this."
+    "message": "Tip: The spotlight may freeze over high-privilege windows (like Task Manager). This is due to the Windows UIPI (User Interface Privilege Isolation) mechanism blocking mouse events for normal apps. Please run Stay Focus as Administrator to fix this."
   },
   "footerTip": {
     "message": "Use Mouse or Up/Down arrows to move."

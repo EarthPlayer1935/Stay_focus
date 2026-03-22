@@ -51,7 +51,7 @@
     "message": "Estrela no GitHub"
   },
   "uipiWarning": {
-    "message": "O destaque pode travar em janelas de altos privilégios (como o Gerenciador de Tarefas). Execute como administrador para corrigir isso."
+    "message": "Dica: O destaque pode travar em janelas de altos privilégios (como o Gerenciador de Tarefas). Isso se deve ao mecanismo UIPI (Isolamento de Privilégios de Interface do Usuário) do Windows, que bloqueia eventos de mouse para aplicativos normais. Por favor, execute o Stay Focus como administrador para corrigir isso."
   },
   "footerTip": {
     "message": "Use o mouse ou as setas para mover a moldura."

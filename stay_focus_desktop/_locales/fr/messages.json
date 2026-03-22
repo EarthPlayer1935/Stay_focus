@@ -51,7 +51,7 @@
     "message": "Étoile sur GitHub"
   },
   "uipiWarning": {
-    "message": "Le projecteur peut se figer sur les fenêtres à privilèges élevés (comme le Gestionnaire des tâches). Exécutez en tant qu'administrateur pour corriger cela."
+    "message": "Astuce : Le projecteur peut se figer au-dessus des fenêtres à privilèges élevés (comme le Gestionnaire des tâches). Cela est dû au mécanisme UIPI (Isolation des privilèges de l'interface utilisateur) de Windows qui bloque les événements de souris pour les applications normales. Veuillez exécuter Stay Focus en tant qu'administrateur pour corriger cela."
   },
   "footerTip": {
     "message": "Utilisez la souris ou les touches fléchées pour déplacer."

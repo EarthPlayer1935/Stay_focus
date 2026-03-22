@@ -39,7 +39,7 @@
     "message": "Color"
   },
   "autoHideOnLeave": {
-    "message": "Only Enable for Specified Programs"
+    "message": "Only for Specific Processes"
   },
   "keyboardControl": {
     "message": "Keyboard Control"

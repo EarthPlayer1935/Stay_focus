@@ -100,6 +100,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const t = await loadLocale(resolved);
   applyTranslations(t);
 
+  // Hide UIPI warning if not on Windows or if running as admin
+  const osInfo = await electron.getOsInfo();
+  if (osInfo.platform !== 'win32' || osInfo.isAdmin) {
+    const uipiWarning = document.getElementById('uipiWarning');
+    if (uipiWarning) uipiWarning.style.display = 'none';
+  }
+
   if (settings.nightMode) {
     document.body.classList.add('dark-mode');
     btnNightMode.textContent = '☀️';

@@ -4,7 +4,7 @@ const { autoUpdater } = require('electron-updater');
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
-const { execFile, spawn } = require('child_process');
+const { execFile, spawn, execSync } = require('child_process');
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -468,7 +468,22 @@ ipcMain.handle('get-os-info', () => {
   const release = os.release().split('.');
   const build = parseInt(release[2] || '0', 10);
   const isWin11 = process.platform === 'win32' && build >= 22000;
-  return { isWin11 };
+  
+  let isAdmin = false;
+  if (process.platform === 'win32') {
+    try {
+      execSync('net session', { stdio: 'ignore' });
+      isAdmin = true;
+    } catch (e) {
+      isAdmin = false;
+    }
+  }
+
+  return { 
+    isWin11, 
+    isAdmin, 
+    platform: process.platform 
+  };
 });
 
 ipcMain.handle('get-settings', () => currentSettings);

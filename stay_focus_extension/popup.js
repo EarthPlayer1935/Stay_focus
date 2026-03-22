@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="toggleFullRow"]').textContent       = t('fullRowMode');
     document.querySelector('[for="toggleHighlightMode"]').textContent = t('colorHighlightMode');
     document.querySelector('[for="toggleLinkSize"]').textContent      = t('linkDimensions');
+    document.querySelector('[for="heightRange"]').textContent         = t('spotlightHeight');
+    document.querySelector('[for="widthRange"]').textContent          = t('spotlightWidth');
+    document.querySelector('[for="borderRadiusRange"]').textContent   = t('cornerRadius');
+    document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
     document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
@@ -302,39 +306,81 @@ document.addEventListener('DOMContentLoaded', async () => {
   tabInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addTab();
   });
-  tabInput.addEventListener('input', (e) => {
-    const list = document.getElementById('tabList');
-    if (e.inputType === 'insertReplacementText' || 
-        (list && Array.from(list.options).some(opt => opt.value === tabInput.value))) {
-      addTab();
-    }
-  });
 
-  async function refreshTabList() {
+
+  // ── 自定义 dropdown：点击输入框即弹出所有已打开标签页 ───────────────
+  const tabDropdown = document.getElementById('tabDropdown');
+
+  function showTabDropdown(hostnames) {
+    tabDropdown.innerHTML = '';
+    if (hostnames.length === 0) {
+      tabDropdown.classList.add('hidden');
+      return;
+    }
+    hostnames.forEach(hostname => {
+      const item = document.createElement('div');
+      item.className = 'tab-dropdown-item';
+      item.textContent = hostname;
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // 防止 input blur 先触发
+        tabInput.value = hostname;
+        tabDropdown.classList.add('hidden');
+        addTab();
+      });
+      tabDropdown.appendChild(item);
+    });
+    tabDropdown.classList.remove('hidden');
+  }
+
+  function refreshTabDropdown() {
     chrome.tabs.query({}, (tabs) => {
-      const list = document.getElementById('tabList');
-      if (!list) return;
-      list.innerHTML = '';
-      
-      const hostnames = new Set();
+      const hostnames = [];
+      const seen = new Set();
       tabs.forEach(tab => {
         try {
           const url = new URL(tab.url);
-          if (url.protocol.startsWith('http')) {
-            hostnames.add(url.hostname);
+          if (url.protocol.startsWith('http') && !seen.has(url.hostname)) {
+            seen.add(url.hostname);
+            // 排除已经在 targetTabs 里的
+            if (!targetTabs.includes(url.hostname)) {
+              hostnames.push(url.hostname);
+            }
           }
         } catch(e) {}
       });
-      
-      hostnames.forEach(hostname => {
-        const option = document.createElement('option');
-        option.value = hostname;
-        list.appendChild(option);
-      });
+      showTabDropdown(hostnames);
     });
   }
 
-  tabInput.addEventListener('focus', refreshTabList);
+  tabInput.addEventListener('focus', refreshTabDropdown);
+
+  tabInput.addEventListener('input', () => {
+    const val = tabInput.value.trim().toLowerCase();
+    if (!val) {
+      refreshTabDropdown();
+      return;
+    }
+    // 过滤匹配的
+    const items = Array.from(tabDropdown.querySelectorAll('.tab-dropdown-item'));
+    let any = false;
+    items.forEach(item => {
+      const match = item.textContent.includes(val);
+      item.style.display = match ? '' : 'none';
+      if (match) any = true;
+    });
+    tabDropdown.classList.toggle('hidden', !any);
+  });
+
+  tabInput.addEventListener('blur', () => {
+    // 稍微延迟，让 mousedown 事件先处理
+    setTimeout(() => tabDropdown.classList.add('hidden'), 150);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!tabDropdown.contains(e.target) && e.target !== tabInput) {
+      tabDropdown.classList.add('hidden');
+    }
+  });
 
   function setTabGroupEnabled(enabled) {
     if (enabled) {

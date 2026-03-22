@@ -98,10 +98,10 @@
       <div class="control-group process-group" id="tabGroup">
         <div class="process-hint" id="tabHint">No target tab — global mode</div>
         <div class="process-tags" id="tabTags"></div>
-        <div class="process-input-row" style="margin-top:0;">
-          <input type="text" id="tabInput" placeholder="e.g. github.com" list="tabList" />
-          <datalist id="tabList"></datalist>
+        <div class="process-input-row" style="margin-top:0; position: relative;">
+          <input type="text" id="tabInput" placeholder="e.g. github.com" autocomplete="off" />
           <button id="btnAddTab" class="add-btn">+</button>
+          <div id="tabDropdown" class="tab-dropdown hidden"></div>
         </div>
       </div>
 

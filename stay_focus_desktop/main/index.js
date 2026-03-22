@@ -513,7 +513,10 @@ ipcMain.on('save-settings', (event, newSettings) => {
 
 ipcMain.handle('get-locale', (e, lang) => {
   try {
-    const file = path.join(__dirname, `../_locales/${lang}/messages.json`);
+    const localesDir = app.isPackaged
+      ? path.join(process.resourcesPath, '_locales')
+      : path.join(__dirname, '../../stay_focus_extension/_locales');
+    const file = path.join(localesDir, `${lang}/messages.json`);
     const data = fs.readFileSync(file, 'utf8');
     return JSON.parse(data);
   } catch (err) {

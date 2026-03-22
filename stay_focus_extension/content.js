@@ -116,7 +116,7 @@ function updateVisibility() {
   if (!overlayContainer) return;
 
   let tabMatch = true;
-  if (isAutoHideEnabled) {
+  if (isAutoHideEnabled && targetTabs && targetTabs.length > 0) {
     const currentHost = window.location.hostname.toLowerCase();
     tabMatch = targetTabs.includes(currentHost);
   }

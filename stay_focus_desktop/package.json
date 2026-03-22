@@ -44,7 +44,14 @@
       "unicode": true,
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
-    }
+    },
+    "extraResources": [
+      {
+        "from": "../stay_focus_extension/_locales",
+        "to": "_locales",
+        "filter": ["**/*"]
+      }
+    ]
   },
   "dependencies": {
     "electron-updater": "^6.8.3"

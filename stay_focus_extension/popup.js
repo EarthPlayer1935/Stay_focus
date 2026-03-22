@@ -18,10 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="toggleFullRow"]').textContent       = t('fullRowMode');
     document.querySelector('[for="toggleHighlightMode"]').textContent = t('colorHighlightMode');
     document.querySelector('[for="toggleLinkSize"]').textContent      = t('linkDimensions');
-    document.querySelector('[for="heightRange"]').textContent         = t('spotlightHeight');
-    document.querySelector('[for="widthRange"]').textContent          = t('spotlightWidth');
-    document.querySelector('[for="borderRadiusRange"]').textContent   = t('cornerRadius');
-    document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
     document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
@@ -114,10 +110,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toggleAutoHide = document.getElementById('toggleAutoHide');
   const toggleAntiScreenshot = document.getElementById('toggleAntiScreenshot');
   const toggleKeyboardControl = document.getElementById('toggleKeyboardControl');
-  const heightRange = document.getElementById('heightRange');
-  const widthRange = document.getElementById('widthRange');
-  const borderRadiusRange = document.getElementById('borderRadiusRange');
-  const opacityRange = document.getElementById('opacityRange');
   const colorPicker = document.getElementById('colorPicker');
 
   const btnSquare = document.getElementById('btnSquare');
@@ -132,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let targetTabs = [];
 
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color', 'targetTabs'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'color', 'targetTabs'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
@@ -140,17 +132,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleAutoHide.checked = result.autoHide !== undefined ? result.autoHide : true;
     toggleAntiScreenshot.checked = result.antiScreenshot !== undefined ? result.antiScreenshot : true;
     toggleKeyboardControl.checked = result.keyboardControl || false;
-    heightRange.value = result.height || 50;
-    widthRange.value = result.width || 200;
-    borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
-    opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
     if (Array.isArray(result.targetTabs)) {
       targetTabs = result.targetTabs;
     }
 
     if (result.fullRowMode) {
-      widthRange.disabled = true;
       toggleLinkSize.disabled = true;
     }
     
@@ -171,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   toggleFullRow.addEventListener('change', (e) => {
     const isFull = e.target.checked;
     updateSettings({ fullRowMode: isFull });
-    widthRange.disabled = isFull;
     toggleLinkSize.disabled = isFull;
   });
 
@@ -194,16 +180,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   toggleLinkSize.addEventListener('change', (e) => {
     updateSettings({ linkSize: e.target.checked });
-    if (e.target.checked) {
-      heightRange.value = widthRange.value;
-      updateSettings({ height: parseInt(widthRange.value) });
-    }
   });
 
   function applyPreset(width, height, radius, link) {
-    widthRange.value = width;
-    heightRange.value = height;
-    borderRadiusRange.value = radius;
     toggleLinkSize.checked = link;
     toggleFullRow.checked = false;
     updateSettings({ 
@@ -213,7 +192,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       linkSize: link,
       fullRowMode: false 
     });
-    widthRange.disabled = false;
     toggleLinkSize.disabled = false;
   }
 
@@ -227,34 +205,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   btnCircle.addEventListener('click', () => {
     applyPreset(150, 150, 150, true);
-  });
-
-  heightRange.addEventListener('input', (e) => {
-    let val = parseInt(e.target.value);
-    let updates = { height: val };
-    if (toggleLinkSize.checked) {
-      widthRange.value = val;
-      updates.width = val;
-    }
-    updateSettings(updates);
-  });
-
-  widthRange.addEventListener('input', (e) => {
-    let val = parseInt(e.target.value);
-    let updates = { width: val };
-    if (toggleLinkSize.checked) {
-      heightRange.value = val;
-      updates.height = val;
-    }
-    updateSettings(updates);
-  });
-
-  borderRadiusRange.addEventListener('input', (e) => {
-    updateSettings({ borderRadius: parseInt(e.target.value) });
-  });
-
-  opacityRange.addEventListener('input', (e) => {
-    updateSettings({ opacity: parseInt(e.target.value) });
   });
 
   colorPicker.addEventListener('input', (e) => {

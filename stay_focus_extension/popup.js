@@ -24,10 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
-    document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
-    document.getElementById('labelShortcutMove').textContent = t('shortcutMove');
-    document.getElementById('labelShortcutExit').textContent = t('shortcutExit');
-    document.querySelector('[for="toggleKeyboardControl"]').textContent = t('keyboardControl');
+    document.getElementById('labelAntiScreenshot').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
+    document.querySelector('[for="toggleKeyboardControl"]').textContent = (t('keyboardControl') || 'Keyboard Control') + ' (Shift+Alt+Arrows)';
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');
     document.getElementById('btnCircle').title                        = t('shapeCircle');

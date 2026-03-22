@@ -52,9 +52,9 @@ function initOverlay() {
 
   updateStyles();
   
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('keydown', onKeyDown);
-  document.addEventListener('keyup', onKeyUp);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('keydown', onKeyDown, { capture: true });
+  window.addEventListener('keyup', onKeyUp, { capture: true });
   window.addEventListener('focus', restoreOverlayOpacity);
 }
 
@@ -146,6 +146,11 @@ function onMouseMove(e) {
 
 function onKeyDown(e) {
   if (!isEnabled) return;
+  
+  // Debug log for troubleshooting
+  if (isKeyboardControlEnabled && (e.key.startsWith('Arrow') || e.key === 'Escape')) {
+    console.log('[Stay Focus] Key pressed:', e.key, 'Modifiers:', e.shiftKey, e.altKey);
+  }
 
   if (isAntiScreenshotEnabled) {
     if (e.metaKey && e.shiftKey) {

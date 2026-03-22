@@ -528,13 +528,33 @@ ipcMain.on('save-settings', (event, newSettings) => {
 
 ipcMain.handle('get-locale', (e, lang) => {
   try {
+    const appPath = app.getAppPath();
     const localesDir = app.isPackaged
       ? path.join(process.resourcesPath, '_locales')
-      : path.join(__dirname, '../_locales');
-    const file = path.join(localesDir, `${lang}/messages.json`);
+      : path.join(appPath, '_locales');
+    
+    // Normalize lang format (support both zh-CN and zh_CN)
+    const normalizedLang = lang.replace('-', '_');
+    let file = path.join(localesDir, normalizedLang, 'messages.json');
+    
+    console.log(`[Locale] Loading ${normalizedLang} from: ${file}`);
+    
+    if (!fs.existsSync(file)) {
+      console.warn(`[Locale] File not found: ${file}. Trying alternative folder names.`);
+      // Try lowercase just in case
+      file = path.join(localesDir, normalizedLang.toLowerCase(), 'messages.json');
+      if (!fs.existsSync(file)) {
+        console.error(`[Locale] No locale file found for ${lang} at ${localesDir}`);
+        return null;
+      }
+    }
+    
     const data = fs.readFileSync(file, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    console.log(`[Locale] Successfully loaded ${normalizedLang}`);
+    return parsed;
   } catch (err) {
+    console.error('[Locale] Failed to load locale:', err);
     return null;
   }
 });

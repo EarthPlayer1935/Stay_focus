@@ -16,37 +16,75 @@
     </div>
 
     <div class="controls">
-      <div class="control-group switch-group">
-        <label for="toggleFullRow">Full Row Mode</label>
-        <label class="switch small-switch">
-          <input type="checkbox" id="toggleFullRow" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div class="control-group switch-group">
-        <label for="toggleHighlightMode">Color Highlight Mode</label>
-        <label class="switch small-switch">
-          <input type="checkbox" id="toggleHighlightMode" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div class="shape-presets">
+      <!-- 1. 形状选择 -->
+      <div class="shape-presets" style="margin-top: 0; margin-bottom: 4px;">
         <button id="btnSquare" class="preset-btn" title="Square">⬛</button>
         <button id="btnRounded" class="preset-btn" title="Rounded Box">🔲</button>
         <button id="btnCircle" class="preset-btn" title="Circle">⏺</button>
       </div>
-      
-      <div class="control-group switch-group" style="border-bottom: none; padding-bottom: 2px;">
+
+      <!-- 2. 联动宽高 -->
+      <div class="control-group switch-group" style="padding-top: 2px; padding-bottom: 6px;">
         <label for="toggleLinkSize">Link Dimensions (1:1)</label>
         <label class="switch small-switch">
           <input type="checkbox" id="toggleLinkSize" />
           <span class="slider round"></span>
         </label>
       </div>
-      
-      <!-- Auto-hide -->
+
+      <!-- 3. 宽高圆角参数自调滑块 -->
+      <div class="control-group">
+        <label for="heightRange">Spotlight Height</label>
+        <input type="range" id="heightRange" min="20" max="800" value="50" />
+      </div>
+      <div class="control-group">
+        <label for="widthRange">Spotlight Width</label>
+        <input type="range" id="widthRange" min="50" max="1000" value="200" />
+      </div>
+      <div class="control-group">
+        <label for="borderRadiusRange">Corner Radius</label>
+        <input type="range" id="borderRadiusRange" min="0" max="150" value="12" />
+      </div>
+      <div class="control-group" style="margin-bottom: 6px;">
+        <label for="opacityRange">Opacity</label>
+        <input type="range" id="opacityRange" min="10" max="95" value="75" />
+      </div>
+
+      <!-- 4. 截图规避，整行模式，色彩高亮（放一行） -->
+      <div class="multi-switch-row">
+        <div class="mini-switch" title="Screenshot Avoidance">
+          <label for="toggleAntiScreenshot">Screenshot Avoidance</label>
+          <label class="switch small-switch">
+            <input type="checkbox" id="toggleAntiScreenshot" checked />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="mini-switch" title="Full Row Mode">
+          <label for="toggleFullRow">Full Row Mode</label>
+          <label class="switch small-switch">
+            <input type="checkbox" id="toggleFullRow" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="mini-switch" title="Color Highlight Mode">
+          <label for="toggleHighlightMode">Color Highlight Mode</label>
+          <label class="switch small-switch">
+            <input type="checkbox" id="toggleHighlightMode" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Keyboard Control -->
+      <div class="control-group switch-group" title="Shortcut: Shift+Alt+Arrow">
+        <label for="toggleKeyboardControl">Keyboard Control (Shift+Alt+Arrow)</label>
+        <label class="switch small-switch">
+          <input type="checkbox" id="toggleKeyboardControl" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <!-- 5. 指定进程开关 -->
       <div class="control-group switch-group" style="border-bottom: none; padding-bottom: 4px;">
         <label for="toggleAutoHide">Auto-hide on Mouse Leave</label>
         <label class="switch small-switch">
@@ -55,11 +93,11 @@
         </label>
       </div>
 
-      <!-- Target process list (shown when auto-hide is on) -->
+      <!-- 6. 进程选择 -->
       <div class="control-group process-group" id="processGroup">
         <div class="process-hint" id="processHint">No target window — global mode</div>
         <div class="process-tags" id="processTags"></div>
-        <div class="process-input-row">
+        <div class="process-input-row" style="margin-top:0;">
           <input type="text" id="processInput" placeholder="e.g. notepad or chrome.exe" list="processList" />
           <datalist id="processList"></datalist>
           <button id="btnAddProcess" class="add-btn">+</button>
@@ -71,35 +109,8 @@
         <i>💡</i> <span id="uipiWarningText">Tip: The spotlight may freeze over high-privilege windows (like Task Manager). Please run as Administrator to fix this.</span>
       </div>
 
-      <div class="control-group switch-group" title="Shortcut: Shift+Alt+Arrow">
-        <label for="toggleKeyboardControl">Keyboard Control (Shift+Alt+Arrow)</label>
-        <label class="switch small-switch">
-          <input type="checkbox" id="toggleKeyboardControl" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div class="control-group">
-        <label for="heightRange">Spotlight Height</label>
-        <input type="range" id="heightRange" min="20" max="800" value="50" />
-      </div>
-
-      <div class="control-group">
-        <label for="widthRange">Spotlight Width</label>
-        <input type="range" id="widthRange" min="50" max="1000" value="200" />
-      </div>
-
-      <div class="control-group">
-        <label for="borderRadiusRange">Corner Radius</label>
-        <input type="range" id="borderRadiusRange" min="0" max="150" value="12" />
-      </div>
-
-      <div class="control-group">
-        <label for="opacityRange">Opacity</label>
-        <input type="range" id="opacityRange" min="10" max="95" value="75" />
-      </div>
-      
-      <div class="control-group">
+      <!-- 7. 颜色选择 -->
+      <div class="control-group" style="margin-top: 8px;">
         <label for="colorPicker">Color</label>
         <input type="color" id="colorPicker" value="#000000" />
       </div>

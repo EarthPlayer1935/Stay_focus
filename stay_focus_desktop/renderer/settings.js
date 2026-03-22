@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
+    document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
     document.querySelector('[for="toggleKeyboardControl"]').textContent = (t('keyboardControl') || 'Keyboard Control') + ' (Shift+Alt+Arrow)';
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');
@@ -137,6 +138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
   const toggleLinkSize = document.getElementById('toggleLinkSize');
   const toggleAutoHide = document.getElementById('toggleAutoHide');
+  const toggleAntiScreenshot = document.getElementById('toggleAntiScreenshot');
   const toggleKeyboardControl = document.getElementById('toggleKeyboardControl');
   const heightRange = document.getElementById('heightRange');
   const widthRange = document.getElementById('widthRange');
@@ -162,9 +164,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  document.querySelectorAll('.switch-group').forEach(row => {
+  document.querySelectorAll('.switch-group, .mini-switch').forEach(row => {
     row.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'LABEL') {
         const checkbox = row.querySelector('input[type="checkbox"]');
         if (checkbox) checkbox.click();
       }
@@ -176,6 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   toggleHighlightMode.checked = settings.highlightMode;
   toggleLinkSize.checked = settings.linkSize;
   toggleAutoHide.checked = settings.autoHide;
+  toggleAntiScreenshot.checked = settings.antiScreenshot;
   toggleKeyboardControl.checked = settings.keyboardControl;
   heightRange.value = settings.height;
   widthRange.value = settings.width;
@@ -293,6 +296,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateSettings({ autoHide: e.target.checked });
     setProcessGroupEnabled(e.target.checked);
   });
+
+  toggleAntiScreenshot.addEventListener('change', (e) => updateSettings({ antiScreenshot: e.target.checked }));
 
   toggleKeyboardControl.addEventListener('change', (e) => updateSettings({ keyboardControl: e.target.checked }));
   

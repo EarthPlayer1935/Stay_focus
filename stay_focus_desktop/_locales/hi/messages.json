@@ -1,21 +1,62 @@
 {
-  "appName": { "message": "फ़ोकस मोड" },
-  "appDescription": { "message": "किसी भी वेबपेज पर ध्यान केंद्रित रखने में मदद करने के लिए एक रीडिंग स्पॉटलाइट।" },
-  "fullRowMode": { "message": "पूरी पंक्ति मोड" },
-  "colorHighlightMode": { "message": "रंगीन हाइलाइट मोड" },
-  "shapeSquare": { "message": "वर्ग" },
-  "shapeRounded": { "message": "गोल आयत" },
-  "shapeCircle": { "message": "वृत्त" },
-  "linkDimensions": { "message": "आयाम जोड़ें (1:1)" },
-  "spotlightHeight": { "message": "फ़ोकस फ्रेम ऊँचाई" },
-  "spotlightWidth": { "message": "फ़ोकस फ्रेम चौड़ाई" },
-  "cornerRadius": { "message": "कोने का त्रिज्या" },
-  "opacity": { "message": "पारदर्शिता" },
-  "color": { "message": "रंग" },
-  "autoHideOnLeave": { "message": "केवल निर्दिष्ट कार्यक्रमों के लिए सक्षम करें" },
-  "keyboardControl": { "message": "कीबोर्ड कंट्रोल" },
-  "supportKofi": { "message": "Ko-fi पर समर्थन करें" },
-  "supportGithub": { "message": "GitHub पर स्टार करें" },
-  "uipiWarning": { "message": "हाई-प्रिविलेज विंडो (जैसे टास्क मैनेजर) पर स्पॉटलाइट फ्रीज हो सकता है। इसे ठीक करने के लिए एडमिनिस्ट्रेटर के रूप में चलाएँ।" },
-  "footerTip": { "message": "फ्रेम को स्थानांतरित करने के लिए मा우스 या तीर कुंजियों का उपयोग करें।" }
+  "appName": {
+    "message": "फ़ोकस मोड"
+  },
+  "appDescription": {
+    "message": "किसी भी वेबपेज पर ध्यान केंद्रित रखने में मदद करने के लिए एक रीडिंग स्पॉटलाइट।"
+  },
+  "fullRowMode": {
+    "message": "पूरी पंक्ति मोड"
+  },
+  "colorHighlightMode": {
+    "message": "रंगीन हाइलाइट मोड"
+  },
+  "shapeSquare": {
+    "message": "वर्ग"
+  },
+  "shapeRounded": {
+    "message": "गोल आयत"
+  },
+  "shapeCircle": {
+    "message": "वृत्त"
+  },
+  "linkDimensions": {
+    "message": "आयाम जोड़ें (1:1)"
+  },
+  "spotlightHeight": {
+    "message": "फ़ोकस फ्रेम ऊँचाई"
+  },
+  "spotlightWidth": {
+    "message": "फ़ोकस फ्रेम चौड़ाई"
+  },
+  "cornerRadius": {
+    "message": "कोने का त्रिज्या"
+  },
+  "opacity": {
+    "message": "पारदर्शिता"
+  },
+  "color": {
+    "message": "रंग"
+  },
+  "autoHideOnLeave": {
+    "message": "केवल निर्दिष्ट कार्यक्रमों के लिए सक्षम करें"
+  },
+  "keyboardControl": {
+    "message": "कीबोर्ड कंट्रोल"
+  },
+  "supportKofi": {
+    "message": "Ko-fi पर समर्थन करें"
+  },
+  "supportGithub": {
+    "message": "GitHub पर स्टार करें"
+  },
+  "uipiWarning": {
+    "message": "हाई-प्रिविलेज विंडो (जैसे टास्क मैनेजर) पर स्पॉटलाइट फ्रीज हो सकता है। इसे ठीक करने के लिए एडमिनिस्ट्रेटर के रूप में चलाएँ।"
+  },
+  "footerTip": {
+    "message": "फ्रेम को स्थानांतरित करने के लिए मा우스 या तीर कुंजियों का उपयोग करें।"
+  },
+  "antiScreenshot": {
+    "message": "स्क्रीनशॉट बचाव"
+  }
 }

@@ -139,6 +139,7 @@ body.dark-mode input[type=range]::-webkit-slider-runnable-track {
 }
 
 body.dark-mode .switch-group,
+body.dark-mode .multi-switch-row,
 body.dark-mode .process-group {
   border-color: var(--border-color);
 }
@@ -183,6 +184,47 @@ h1 {
 
 .switch-group:hover {
   background-color: var(--hover-bg);
+}
+
+.multi-switch-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 10px;
+  margin: 0 -10px;
+  border-bottom: 1px dotted #e0e0e0;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  gap: 4px;
+}
+
+.multi-switch-row:hover {
+  background-color: var(--hover-bg);
+}
+
+.mini-switch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.mini-switch label[for] {
+  font-size: 11px;
+  text-align: center;
+  color: var(--text-color);
+  opacity: 0.85;
+  cursor: pointer;
+  line-height: 1.25;
+  word-break: break-word;
+  white-space: normal;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 28px;
 }
 
 .control-group label {

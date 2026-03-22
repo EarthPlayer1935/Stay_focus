@@ -35,11 +35,28 @@
   "opacity": {
     "message": "Opacity"
   },
-  "color": { "message": "Color" },
-  "autoHideOnLeave": { "message": "Only Enable for Specified Programs" },
-  "keyboardControl": { "message": "Keyboard Control" },
-  "supportKofi": { "message": "Support on Ko-fi" },
-  "supportGithub": { "message": "Star on GitHub" },
-  "uipiWarning": { "message": "The spotlight may freeze over high-privilege windows (like Task Manager). Run as Administrator to fix this." },
-  "footerTip": { "message": "Use Mouse or Up/Down arrows to move." }
+  "color": {
+    "message": "Color"
+  },
+  "autoHideOnLeave": {
+    "message": "Only Enable for Specified Programs"
+  },
+  "keyboardControl": {
+    "message": "Keyboard Control"
+  },
+  "supportKofi": {
+    "message": "Support on Ko-fi"
+  },
+  "supportGithub": {
+    "message": "Star on GitHub"
+  },
+  "uipiWarning": {
+    "message": "The spotlight may freeze over high-privilege windows (like Task Manager). Run as Administrator to fix this."
+  },
+  "footerTip": {
+    "message": "Use Mouse or Up/Down arrows to move."
+  },
+  "antiScreenshot": {
+    "message": "Screenshot Avoidance"
+  }
 }

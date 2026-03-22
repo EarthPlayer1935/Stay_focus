@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   borderRadius: 150,
   opacity: 10,
   color: '#000000',
+  antiScreenshot: true,
   userLang: null,
   nightMode: false
 };
@@ -335,6 +336,8 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/overlay.html'));
 
+  mainWindow.setContentProtection(currentSettings.antiScreenshot);
+
   mainWindow.webContents.once('did-finish-load', () => {
     // Start auto-hide timers after renderer is ready
     refreshAutoHide();
@@ -435,6 +438,7 @@ ipcMain.on('save-settings', (event, newSettings) => {
   const oldAutoHide = currentSettings.autoHide;
   const oldProcesses = JSON.stringify(currentSettings.targetProcesses);
   const oldEnabled = currentSettings.enabled;
+  const oldAntiScreenshot = currentSettings.antiScreenshot;
 
   currentSettings = { ...currentSettings, ...newSettings };
   saveSettingsToFile(currentSettings);
@@ -445,6 +449,12 @@ ipcMain.on('save-settings', (event, newSettings) => {
 
   if (oldKbCtrl !== currentSettings.keyboardControl) {
     registerKeyboardControl(currentSettings.keyboardControl);
+  }
+
+  if (oldAntiScreenshot !== currentSettings.antiScreenshot) {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.setContentProtection(currentSettings.antiScreenshot);
+    }
   }
 
   // Restart auto-hide timers if relevant settings changed

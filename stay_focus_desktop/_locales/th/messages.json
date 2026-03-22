@@ -1,21 +1,62 @@
 {
-  "appName": { "message": "โหมดโฟกัส" },
-  "appDescription": { "message": "สปอตไลต์การอ่านเพื่อช่วยให้คุณจดจ่อกับทุกหน้าเว็บ" },
-  "fullRowMode": { "message": "โหมดแถวเต็ม" },
-  "colorHighlightMode": { "message": "โหมดไฮไลต์สี" },
-  "shapeSquare": { "message": "สี่เหลี่ยมจัตุรัส" },
-  "shapeRounded": { "message": "สี่เหลี่ยมมุมมน" },
-  "shapeCircle": { "message": "วงกลม" },
-  "linkDimensions": { "message": "ล็อกสัดส่วน (1:1)" },
-  "spotlightHeight": { "message": "ความสูงกรอบโฟกัส" },
-  "spotlightWidth": { "message": "ความกว้างกรอบโฟกัส" },
-  "cornerRadius": { "message": "รัศมีมุม" },
-  "opacity": { "message": "ความทึบ" },
-  "color": { "message": "สี" },
-  "autoHideOnLeave": { "message": "เปิดใช้งานเฉพาะโปรแกรมที่กำหนดเท่านั้น" },
-  "keyboardControl": { "message": "การควบคุมด้วยคีย์บอร์ด" },
-  "supportKofi": { "message": "สนับสนุนบน Ko-fi" },
-  "supportGithub": { "message": "ดาวบน GitHub" },
-  "uipiWarning": { "message": "สปอตไลท์อาจค้างเมื่ออยู่เหนือหน้าต่างที่มีสิทธิ์สูง (เช่น Task Manager) โปรดเรียกใช้ในฐานะผู้ดูแลระบบเพื่อแก้ไขปัญหานี้" },
-  "footerTip": { "message": "ใช้เมาส์หรือปุ่มลูกศรเพื่อย้ายเฟรม" }
+  "appName": {
+    "message": "โหมดโฟกัส"
+  },
+  "appDescription": {
+    "message": "สปอตไลต์การอ่านเพื่อช่วยให้คุณจดจ่อกับทุกหน้าเว็บ"
+  },
+  "fullRowMode": {
+    "message": "โหมดแถวเต็ม"
+  },
+  "colorHighlightMode": {
+    "message": "โหมดไฮไลต์สี"
+  },
+  "shapeSquare": {
+    "message": "สี่เหลี่ยมจัตุรัส"
+  },
+  "shapeRounded": {
+    "message": "สี่เหลี่ยมมุมมน"
+  },
+  "shapeCircle": {
+    "message": "วงกลม"
+  },
+  "linkDimensions": {
+    "message": "ล็อกสัดส่วน (1:1)"
+  },
+  "spotlightHeight": {
+    "message": "ความสูงกรอบโฟกัส"
+  },
+  "spotlightWidth": {
+    "message": "ความกว้างกรอบโฟกัส"
+  },
+  "cornerRadius": {
+    "message": "รัศมีมุม"
+  },
+  "opacity": {
+    "message": "ความทึบ"
+  },
+  "color": {
+    "message": "สี"
+  },
+  "autoHideOnLeave": {
+    "message": "เปิดใช้งานเฉพาะโปรแกรมที่กำหนดเท่านั้น"
+  },
+  "keyboardControl": {
+    "message": "การควบคุมด้วยคีย์บอร์ด"
+  },
+  "supportKofi": {
+    "message": "สนับสนุนบน Ko-fi"
+  },
+  "supportGithub": {
+    "message": "ดาวบน GitHub"
+  },
+  "uipiWarning": {
+    "message": "สปอตไลท์อาจค้างเมื่ออยู่เหนือหน้าต่างที่มีสิทธิ์สูง (เช่น Task Manager) โปรดเรียกใช้ในฐานะผู้ดูแลระบบเพื่อแก้ไขปัญหานี้"
+  },
+  "footerTip": {
+    "message": "ใช้เมาส์หรือปุ่มลูกศรเพื่อย้ายเฟรม"
+  },
+  "antiScreenshot": {
+    "message": "หลีกเลี่ยงภาพหน้าจอ"
+  }
 }

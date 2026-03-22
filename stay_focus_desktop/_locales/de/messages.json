@@ -1,21 +1,62 @@
 {
-  "appName": { "message": "Fokusmodus" },
-  "appDescription": { "message": "Ein Lese-Spotlight, das Ihnen hilft, auf jeder Webseite konzentriert zu bleiben." },
-  "fullRowMode": { "message": "Gesamte Zeile" },
-  "colorHighlightMode": { "message": "Farb-Hervorhebungsmodus" },
-  "shapeSquare": { "message": "Quadrat" },
-  "shapeRounded": { "message": "Abgerundetes Rechteck" },
-  "shapeCircle": { "message": "Kreis" },
-  "linkDimensions": { "message": "Maße koppeln (1:1)" },
-  "spotlightHeight": { "message": "Fokusrahmen-Höhe" },
-  "spotlightWidth": { "message": "Fokusrahmen-Breite" },
-  "cornerRadius": { "message": "Eckenradius" },
-  "opacity": { "message": "Deckkraft" },
-  "color": { "message": "Farbe" },
-  "autoHideOnLeave": { "message": "Nur für bestimmte Programme aktivieren" },
-  "keyboardControl": { "message": "Tastatursteuerung" },
-  "supportKofi": { "message": "Auf Ko-fi unterstützen" },
-  "supportGithub": { "message": "GitHub-Projektseite" },
-  "uipiWarning": { "message": "Das Rampenlicht kann über Fenstern mit hohen Berechtigungen (wie dem Task-Manager) einfrieren. Als Administrator ausführen, um dies zu beheben." },
-  "footerTip": { "message": "Maus oder Pfeiltasten zum Verschieben des Rahmens nutzen." }
+  "appName": {
+    "message": "Fokusmodus"
+  },
+  "appDescription": {
+    "message": "Ein Lese-Spotlight, das Ihnen hilft, auf jeder Webseite konzentriert zu bleiben."
+  },
+  "fullRowMode": {
+    "message": "Gesamte Zeile"
+  },
+  "colorHighlightMode": {
+    "message": "Farb-Hervorhebungsmodus"
+  },
+  "shapeSquare": {
+    "message": "Quadrat"
+  },
+  "shapeRounded": {
+    "message": "Abgerundetes Rechteck"
+  },
+  "shapeCircle": {
+    "message": "Kreis"
+  },
+  "linkDimensions": {
+    "message": "Maße koppeln (1:1)"
+  },
+  "spotlightHeight": {
+    "message": "Fokusrahmen-Höhe"
+  },
+  "spotlightWidth": {
+    "message": "Fokusrahmen-Breite"
+  },
+  "cornerRadius": {
+    "message": "Eckenradius"
+  },
+  "opacity": {
+    "message": "Deckkraft"
+  },
+  "color": {
+    "message": "Farbe"
+  },
+  "autoHideOnLeave": {
+    "message": "Nur für bestimmte Programme aktivieren"
+  },
+  "keyboardControl": {
+    "message": "Tastatursteuerung"
+  },
+  "supportKofi": {
+    "message": "Auf Ko-fi unterstützen"
+  },
+  "supportGithub": {
+    "message": "GitHub-Projektseite"
+  },
+  "uipiWarning": {
+    "message": "Das Rampenlicht kann über Fenstern mit hohen Berechtigungen (wie dem Task-Manager) einfrieren. Als Administrator ausführen, um dies zu beheben."
+  },
+  "footerTip": {
+    "message": "Maus oder Pfeiltasten zum Verschieben des Rahmens nutzen."
+  },
+  "antiScreenshot": {
+    "message": "Screenshot-Vermeidung"
+  }
 }

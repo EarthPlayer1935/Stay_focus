@@ -515,7 +515,7 @@ ipcMain.handle('get-locale', (e, lang) => {
   try {
     const localesDir = app.isPackaged
       ? path.join(process.resourcesPath, '_locales')
-      : path.join(__dirname, '../../stay_focus_extension/_locales');
+      : path.join(__dirname, '../_locales');
     const file = path.join(localesDir, `${lang}/messages.json`);
     const data = fs.readFileSync(file, 'utf8');
     return JSON.parse(data);

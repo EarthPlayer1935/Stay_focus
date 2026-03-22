@@ -37,6 +37,9 @@ function restoreOverlayOpacity() {
 
 let overlayContainer = null;
 let overlayWindow = null;
+let rafId = null;
+let cachedRgb = null;
+let lastBgColor = '';
 
 function initOverlay() {
   if (overlayContainer) return;
@@ -72,6 +75,14 @@ function hexToRgb(hex) {
   } : { r: 0, g: 0, b: 0 };
 }
 
+function getCachedRgb(hex) {
+  if (hex !== lastBgColor) {
+    lastBgColor = hex;
+    cachedRgb = hexToRgb(hex);
+  }
+  return cachedRgb;
+}
+
 function updateStyles() {
   if (!overlayWindow) return;
 
@@ -98,15 +109,16 @@ function updateStyles() {
   
   overlayWindow.style.top = `${currentY}px`;
 
-  const rgb = hexToRgb(bgColor);
+  const rgb = getCachedRgb(bgColor);
   const alpha = bgOpacity / 100;
+  const colorValue = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
   
   if (isHighlightMode) {
-    overlayWindow.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    overlayWindow.style.backgroundColor = colorValue;
     overlayWindow.style.boxShadow = 'none';
   } else {
     overlayWindow.style.backgroundColor = 'transparent';
-    overlayWindow.style.boxShadow = `0 0 0 9999px rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
+    overlayWindow.style.boxShadow = `0 0 0 9999px ${colorValue}`;
   }
 
   updateVisibility();
@@ -135,22 +147,25 @@ function onMouseMove(e) {
   
   let newY = e.clientY - (windowHeight / 2);
   currentY = Math.max(0, Math.min(newY, window.innerHeight - windowHeight));
-  overlayWindow.style.top = `${currentY}px`;
 
   if (!isFullRow) {
     let newX = e.clientX - (windowWidth / 2);
     currentX = Math.max(0, Math.min(newX, window.innerWidth - windowWidth));
-    overlayWindow.style.left = `${currentX}px`;
+  }
+
+  if (!rafId) {
+    rafId = requestAnimationFrame(() => {
+      overlayWindow.style.top = `${currentY}px`;
+      if (!isFullRow) {
+        overlayWindow.style.left = `${currentX}px`;
+      }
+      rafId = null;
+    });
   }
 }
 
 function onKeyDown(e) {
   if (!isEnabled) return;
-  
-  // Debug log for troubleshooting
-  if (isKeyboardControlEnabled && (e.key.startsWith('Arrow') || e.key === 'Escape')) {
-    console.log('[Stay Focus] Key pressed:', e.key, 'Modifiers:', e.shiftKey, e.altKey);
-  }
 
   if (isAntiScreenshotEnabled) {
     if (e.metaKey && e.shiftKey) {

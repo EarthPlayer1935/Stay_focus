@@ -157,8 +157,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderTags();
   });
 
+  let settingsTimer = null;
+  let pendingUpdates = {};
+
   function updateSettings(updates) {
-    chrome.storage.local.set(updates);
+    Object.assign(pendingUpdates, updates);
+    clearTimeout(settingsTimer);
+    settingsTimer = setTimeout(() => {
+      chrome.storage.local.set(pendingUpdates);
+      pendingUpdates = {};
+    }, 16);
   }
 
 
@@ -230,22 +238,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (heightRange) {
     heightRange.addEventListener('input', (e) => {
       const val = parseInt(e.target.value, 10);
-      updateSettings({ height: val });
+      const updates = { height: val };
       if (toggleLinkSize.checked && widthRange) {
         widthRange.value = val;
-        updateSettings({ width: val });
+        updates.width = val;
       }
+      updateSettings(updates);
     });
   }
 
   if (widthRange) {
     widthRange.addEventListener('input', (e) => {
       const val = parseInt(e.target.value, 10);
-      updateSettings({ width: val });
+      const updates = { width: val };
       if (toggleLinkSize.checked && heightRange) {
         heightRange.value = val;
-        updateSettings({ height: val });
+        updates.height = val;
       }
+      updateSettings(updates);
     });
   }
 
@@ -264,11 +274,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Tab tag management ───────────────────────────────────────────────
 
   function renderTags() {
-    tabTags.innerHTML = '';
+    tabTags.textContent = '';
     if (targetTabs.length === 0) {
       tabHint.style.display = 'block';
     } else {
       tabHint.style.display = 'none';
+      const fragment = document.createDocumentFragment();
       targetTabs.forEach((domain, idx) => {
         const tag = document.createElement('span');
         tag.className = 'process-tag';
@@ -277,17 +288,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         removeBtn.className = 'tag-remove';
         removeBtn.textContent = '×';
         removeBtn.title = 'Remove';
-        removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          targetTabs.splice(idx, 1);
-          renderTags();
-          updateSettings({ targetTabs: [...targetTabs] });
-        });
+        removeBtn.dataset.index = idx;
         tag.appendChild(removeBtn);
-        tabTags.appendChild(tag);
+        fragment.appendChild(tag);
       });
+      tabTags.appendChild(fragment);
     }
   }
+
+  // Event delegation for tag removal
+  tabTags.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.tag-remove');
+    if (removeBtn) {
+      e.stopPropagation();
+      const idx = parseInt(removeBtn.dataset.index, 10);
+      targetTabs.splice(idx, 1);
+      renderTags();
+      updateSettings({ targetTabs: [...targetTabs] });
+    }
+  });
 
   function addTab() {
     const raw = tabInput.value.trim();
@@ -333,21 +352,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function refreshTabDropdown() {
-    chrome.tabs.query({}, (tabs) => {
-      const hostnames = [];
+    chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] }, (tabs) => {
+      const targetSet = new Set(targetTabs);
       const seen = new Set();
-      tabs.forEach(tab => {
+      const hostnames = [];
+      for (const tab of tabs) {
         try {
-          const url = new URL(tab.url);
-          if (url.protocol.startsWith('http') && !seen.has(url.hostname)) {
-            seen.add(url.hostname);
-            // 排除已经在 targetTabs 里的
-            if (!targetTabs.includes(url.hostname)) {
-              hostnames.push(url.hostname);
-            }
+          const hostname = new URL(tab.url).hostname;
+          if (!seen.has(hostname) && !targetSet.has(hostname)) {
+            seen.add(hostname);
+            hostnames.push(hostname);
           }
         } catch(e) {}
-      });
+      }
       showTabDropdown(hostnames);
     });
   }

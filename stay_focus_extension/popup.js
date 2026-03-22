@@ -124,7 +124,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnRounded = document.getElementById('btnRounded');
   const btnCircle = document.getElementById('btnCircle');
 
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
+  const tabGroup = document.getElementById('tabGroup');
+  const tabTags = document.getElementById('tabTags');
+  const tabInput = document.getElementById('tabInput');
+  const btnAddTab = document.getElementById('btnAddTab');
+  const tabHint = document.getElementById('tabHint');
+
+  let targetTabs = [];
+
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color', 'targetTabs'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
@@ -137,11 +145,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     borderRadiusRange.value = result.borderRadius !== undefined ? result.borderRadius : 12;
     opacityRange.value = result.opacity || 75;
     colorPicker.value = result.color || '#000000';
+    if (Array.isArray(result.targetTabs)) {
+      targetTabs = result.targetTabs;
+    }
 
     if (result.fullRowMode) {
       widthRange.disabled = true;
       toggleLinkSize.disabled = true;
     }
+    
+    setTabGroupEnabled(toggleAutoHide.checked);
+    renderTags();
   });
 
   function updateSettings(updates) {
@@ -167,6 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   toggleAutoHide.addEventListener('change', (e) => {
     updateSettings({ autoHide: e.target.checked });
+    setTabGroupEnabled(e.target.checked);
   });
 
   toggleAntiScreenshot.addEventListener('change', (e) => {
@@ -249,4 +264,91 @@ document.addEventListener('DOMContentLoaded', async () => {
   colorPicker.addEventListener('change', (e) => {
     updateSettings({ color: e.target.value });
   });
+
+  // ── Tab tag management ───────────────────────────────────────────────
+
+  function renderTags() {
+    tabTags.innerHTML = '';
+    if (targetTabs.length === 0) {
+      tabHint.style.display = 'block';
+    } else {
+      tabHint.style.display = 'none';
+      targetTabs.forEach((domain, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'process-tag';
+        tag.textContent = domain;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'tag-remove';
+        removeBtn.textContent = '×';
+        removeBtn.title = 'Remove';
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          targetTabs.splice(idx, 1);
+          renderTags();
+          updateSettings({ targetTabs: [...targetTabs] });
+        });
+        tag.appendChild(removeBtn);
+        tabTags.appendChild(tag);
+      });
+    }
+  }
+
+  function addTab() {
+    const raw = tabInput.value.trim();
+    if (!raw) return;
+    const name = raw.toLowerCase();
+    if (!targetTabs.includes(name)) {
+      targetTabs.push(name);
+      renderTags();
+      updateSettings({ targetTabs: [...targetTabs] });
+    }
+    tabInput.value = '';
+    tabInput.focus();
+  }
+
+  btnAddTab.addEventListener('click', addTab);
+  tabInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addTab();
+  });
+  tabInput.addEventListener('input', (e) => {
+    const list = document.getElementById('tabList');
+    if (e.inputType === 'insertReplacementText' || 
+        (list && Array.from(list.options).some(opt => opt.value === tabInput.value))) {
+      addTab();
+    }
+  });
+
+  async function refreshTabList() {
+    chrome.tabs.query({}, (tabs) => {
+      const list = document.getElementById('tabList');
+      if (!list) return;
+      list.innerHTML = '';
+      
+      const hostnames = new Set();
+      tabs.forEach(tab => {
+        try {
+          const url = new URL(tab.url);
+          if (url.protocol.startsWith('http')) {
+            hostnames.add(url.hostname);
+          }
+        } catch(e) {}
+      });
+      
+      hostnames.forEach(hostname => {
+        const option = document.createElement('option');
+        option.value = hostname;
+        list.appendChild(option);
+      });
+    });
+  }
+
+  tabInput.addEventListener('focus', refreshTabList);
+
+  function setTabGroupEnabled(enabled) {
+    if (enabled) {
+      tabGroup.classList.remove('disabled');
+    } else {
+      tabGroup.classList.add('disabled');
+    }
+  }
 });

@@ -94,27 +94,18 @@
         </label>
       </div>
 
-      <div class="control-group">
-        <label for="heightRange">Spotlight Height</label>
-        <input type="range" id="heightRange" min="20" max="300" value="50" />
+      <!-- 6. 标签选择 -->
+      <div class="control-group process-group" id="tabGroup">
+        <div class="process-hint" id="tabHint">No target tab — global mode</div>
+        <div class="process-tags" id="tabTags"></div>
+        <div class="process-input-row" style="margin-top:0;">
+          <input type="text" id="tabInput" placeholder="e.g. github.com" list="tabList" />
+          <datalist id="tabList"></datalist>
+          <button id="btnAddTab" class="add-btn">+</button>
+        </div>
       </div>
 
-      <div class="control-group">
-        <label for="widthRange">Spotlight Width</label>
-        <input type="range" id="widthRange" min="50" max="800" value="200" />
-      </div>
-
-      <div class="control-group">
-        <label for="borderRadiusRange">Corner Radius</label>
-        <input type="range" id="borderRadiusRange" min="0" max="150" value="12" />
-      </div>
-
-      <div class="control-group">
-        <label for="opacityRange">Opacity</label>
-        <input type="range" id="opacityRange" min="10" max="95" value="75" />
-      </div>
-      
-      <div class="control-group">
+      <div class="control-group" style="margin-top: 8px;">
         <label for="colorPicker">Color</label>
         <input type="color" id="colorPicker" value="#000000" />
       </div>

@@ -10,7 +10,7 @@ let bgColor = '#000000';
 let isAntiScreenshotEnabled = true;
 let isAutoHideEnabled = false;
 let isKeyboardControlEnabled = false;
-let isMouseOutside = false;
+let targetTabs = [];
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
 
@@ -34,18 +34,6 @@ function initOverlay() {
   document.addEventListener('mousemove', onMouseMove);
   
   document.addEventListener('keydown', onKeyDown);
-
-  document.addEventListener('mouseleave', () => {
-    if (isAutoHideEnabled) {
-      isMouseOutside = true;
-      updateVisibility();
-    }
-  });
-
-  document.addEventListener('mouseenter', () => {
-    isMouseOutside = false;
-    updateVisibility();
-  });
 }
 
 function hexToRgb(hex) {
@@ -105,7 +93,13 @@ function updateStyles() {
 function updateVisibility() {
   if (!overlayContainer) return;
 
-  const shouldBeVisible = isEnabled && (!(isAutoHideEnabled && isMouseOutside) || isPopupOpen);
+  let tabMatch = true;
+  if (isAutoHideEnabled) {
+    const currentHost = window.location.hostname.toLowerCase();
+    tabMatch = targetTabs.includes(currentHost);
+  }
+
+  const shouldBeVisible = isEnabled && (tabMatch || isPopupOpen);
   
   if (shouldBeVisible) {
     overlayContainer.classList.add('active');
@@ -194,6 +188,7 @@ function applySettings(settings) {
   if (settings.color !== undefined) bgColor = settings.color;
   if (settings.antiScreenshot !== undefined) isAntiScreenshotEnabled = settings.antiScreenshot;
   if (settings.autoHide !== undefined) isAutoHideEnabled = settings.autoHide;
+  if (settings.targetTabs !== undefined) targetTabs = settings.targetTabs || [];
   if (settings.keyboardControl !== undefined) isKeyboardControlEnabled = settings.keyboardControl;
   
   if (settings.isPopupOpen !== undefined) {
@@ -212,7 +207,7 @@ function applySettings(settings) {
 }
 
 
-chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide', 'keyboardControl'], (result) => {
+chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'height', 'width', 'borderRadius', 'opacity', 'color', 'isPopupOpen', 'autoHide', 'keyboardControl', 'targetTabs'], (result) => {
   applySettings(result);
 });
 

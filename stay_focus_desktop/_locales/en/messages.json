@@ -57,6 +57,12 @@
     "message": "Use Mouse or Up/Down arrows to move."
   },
   "antiScreenshot": {
-    "message": "Screenshot Avoidance"
+    "message": "Anti-Screenshot"
+  },
+  "shortcutMove": {
+    "message": "Move Spotlight"
+  },
+  "shortcutToggle": {
+    "message": "Toggle Spotlight"
   }
 }

@@ -647,6 +647,7 @@ if (!gotTheLock) {
 
     createWindow();
     createTray();
+    registerKeyboardControl(currentSettings.keyboardControl);
 
     globalShortcut.register('CommandOrControl+Shift+L', () => {
       toggleLayer();

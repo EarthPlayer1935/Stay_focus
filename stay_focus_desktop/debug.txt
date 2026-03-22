@@ -1,0 +1,187 @@
+Spawning powershell\nSTDOUT: Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Add-Type @'
+\nSTDOUT: >> u\nSTDOUT: sing System;
+>> using System.Runtime.InteropServices;
+>> using System.Collections.Generic;
+>> \nSTDOUT: using System.Diagnostics;
+>> public class WinHelper {
+>>   public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+>> \nSTDOUT:   [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+>>   [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+\nSTDOUT: >>   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+>>   [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAt\nSTDOUT: tribute, int cbAttribute);
+>>   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+\nSTDOUT: >>   [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+>> \nSTDOUT:   public struct RECT { public int L, T, R, B; }
+>> 
+\nSTDOUT: >> \nSTDOUT:   public static string GetWindows(string[] names) {
+>>     IntPtr fg = GetForegroundWindow();
+>>     \nSTDOUT: List<string> results = new List<string>();
+>>     EnumWindows((hWnd, lParam) => {
+>>       if (IsWindowVisible(hWnd)) {
+\nSTDOUT: >>         uint pid;
+>>         GetWindowThreadProcessId(hWnd, out pid);
+>>         string procName\nSTDOUT:  = null;
+>>         try {
+>> \nSTDOUT:           procName = Process.GetProcessById((int)pid).ProcessName;
+>>         } catch { }
+\nSTDOUT: >> 
+\nSTDOUT: >>         if (procName != null) {
+>> \nSTDOUT:           bool match = false;
+>>           foreach (string n in names) {
+>>           \nSTDOUT:   if (string.Equals(n, procName, StringComparison.OrdinalIgnoreCase)) {
+>>               match = true;
+>> \nSTDOUT:               break;
+>>             }
+>> \nSTDOUT:           }
+>>           i\nSTDOUT: f (match) {
+>>             RECT r;
+>>             in\nSTDOUT: t DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+>>             if (DwmGetWindowAttribute(hWnd, DWMWA_EXTENDED_FRAME_BOUNDS, out r, Marshal.SizeOf(typeof(RECT))) != 0) {
+>> \nSTDOUT:               GetWindowRect(hWnd, out r);
+>>             }
+>>             int isFg = (hWnd == fg) \nSTDOUT: ? 1 : 0;
+>>             results.Add(r.L + "," + r.T + "," + (r.R - r.L) + "," + (r.B - r.T) + "," + isFg);
+>> \nSTDOUT:           }
+>>         }
+>>       }
+>>       return true;
+\nSTDOUT: >>     }, IntPtr.Zero);
+>>     return string.Join("|", results.ToArray());
+>> \nSTDOUT:   }
+>> 
+\nSTDOUT: >> \nSTDOUT:   public static int[] GetVisibleProcessIds() {
+>>     List<int> pids = new List<int>();
+\nSTDOUT: >>     EnumWindows((hWnd, lParam) => {
+>> \nSTDOUT:       if (IsWindowVisible(hWnd)) {
+>>         uint pid;
+\nSTDOUT: >>         GetWindowThreadProcessId(hWnd, out pid);
+>>         if (!pi\nSTDOUT: ds.Contains((int)pid)) {
+>>           pids.Add((int)pid);
+>>         }
+>> \nSTDOUT:       }
+>>       return true;
+>>  \nSTDOUT:    }, IntPtr.Zero);
+>>     return pids.ToArray();
+>>   }
+\nSTDOUT: >> }
+>> \nSTDOUT: '@
+>> 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $pids = [WinHelper]::GetVisibleProcessIds()
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = ""
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> if ($pids.Cou\nSTDOUT: nt -gt 0) {
+\nSTDOUT: >>   $names = Get-Process -Id $pids -ErrorAction SilentlyContinue | Select-Object -Property ProcessName -Unique | Sort-Object -Property Process\nSTDOUT: Name | ForEach-Object { $_.ProcessName }
+>>   $res = $names -join '|'
+>> }
+>> \nSTDOUT: Write-Output "PROCESSES_RESULT:$res"
+>> 
+\nSTDOUT: PROCESSES_RESULT:Antigravity|ApplicationFrameHost|chrome|cockpit-tools|electron|explorer|MSPCManager|SystemSettings|TextInputHost|YoudaoDict
+\nPARSED PROCESSES_RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $pids = [WinHelper]::GetVisibleProcessIds()
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $res = ""
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> if ($pids.Count -gt 0) {
+>>   $names = Get-Process -Id $pids -ErrorAction SilentlyContinue | Select-Object -Property ProcessName -Unique | Sort-Object -Property ProcessName | ForEach-Object { $_.ProcessName }
+>>   $res = $names -join '|'
+>> }
+>> Write-Output "PROCESSES_RESULT:$res"
+>> 
+\nSTDOUT: PROCESSES_RESULT:Antigravity|ApplicationFrameHost|chrome|cockpit-tools|electron|explorer|MSPCManager|SystemSettings|TextInputHost|YoudaoDict
+\nPARSED PROCESSES_RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $pids = [WinHelper]::GetVisibleProcessIds()
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = ""
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> if\nSTDOUT:  ($pids.Count -gt 0) {
+\nSTDOUT: >>   $names = Get-Process -Id $pids -ErrorAction SilentlyContinue | Select-Object -Property ProcessName -Unique | Sort-Object -Property ProcessName | ForEach-Object { $_.ProcessName }
+\nSTDOUT: >>   $res = $names -join '|'
+>> }
+>> Write-Output "PROCESSES_RESULT:$res"
+\nSTDOUT: >> 
+\nSTDOUT: PROCESSES_RESULT:Antigravity|ApplicationFrameHost|chrome|cockpit-tools|electron|explorer|MSPCManager|SystemSettings|TextInputHost|YoudaoDict
+\nPARSED PROCESSES_RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $pids = [WinHelper]::GetVisibleProcessIds()
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $res = \nSTDOUT: ""
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: if ($pids.Count -gt 0) {
+\nSTDOUT: >> \nSTDOUT:   $names = Get-Process -Id $pids -ErrorAction SilentlyContinue | Select-Object -Property ProcessName -Unique | Sort-Object -Property ProcessName | ForEach-Object { $_.ProcessName }
+>>   $res = $names -join '|'
+\nSTDOUT: >> }
+>> Write-Output "PROCESSES_RESULT:$res"
+>> \nSTDOUT: 
+\nSTDOUT: PROCESSES_RESULT:Antigravity|ApplicationFrameHost|chrome|cockpit-tools|electron|explorer|MSPCManager|SystemSettings|TextInputHost|YoudaoDict
+\nPARSED PROCESSES_RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> Write-Ou\nSTDOUT: tput "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $names = @('chrome')
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $res = [WinHelper]::GetWindows([string[]]$names)
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> Write-Output "RESULT:$res"
+RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> 
+PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nPARSED RESULT\nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $names = @('chrome'\nSTDOUT: )
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $names = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $re\nSTDOUT: s = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> $nam\nSTDOUT: es = @('chrome')
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: $res = [WinHelper]::GetWindows([string[]]$names)
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: Write-Output "RESULT:$res"
+\nSTDOUT: RESULT:1426,76,279,614,0|0,0,1920,1032,0|0,0,1920,1032,0
+\nPARSED RESULT\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \nSTDOUT: 
+\nSTDOUT: PS D:\D-Destop\?????\stay_focus\stay_focus_desktop> \n

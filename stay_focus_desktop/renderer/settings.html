@@ -97,10 +97,10 @@
       <div class="control-group process-group" id="processGroup">
         <div class="process-hint" id="processHint">No target window — global mode</div>
         <div class="process-tags" id="processTags"></div>
-        <div class="process-input-row" style="margin-top:0;">
-          <input type="text" id="processInput" placeholder="e.g. notepad or chrome.exe" list="processList" />
-          <datalist id="processList"></datalist>
+        <div class="process-input-row" style="margin-top:0; position: relative;">
+          <input type="text" id="processInput" placeholder="e.g. notepad or chrome.exe" autocomplete="off" />
           <button id="btnAddProcess" class="add-btn">+</button>
+          <div id="processDropdown" class="process-dropdown hidden"></div>
         </div>
       </div>
 

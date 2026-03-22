@@ -240,29 +240,66 @@ document.addEventListener('DOMContentLoaded', async () => {
   processInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') addProcess();
   });
-  processInput.addEventListener('input', (e) => {
-    const list = document.getElementById('processList');
-    if (e.inputType === 'insertReplacementText' || 
-        (list && Array.from(list.options).some(opt => opt.value === processInput.value))) {
-      addProcess();
-    }
-  });
 
-  async function refreshProcessList() {
-    if (!electron || !electron.getRunningProcesses) return;
-    const processes = await electron.getRunningProcesses();
-    const list = document.getElementById('processList');
-    if (!list) return;
-    
-    list.innerHTML = '';
-    processes.forEach(name => {
-      const option = document.createElement('option');
-      option.value = name;
-      list.appendChild(option);
+
+  // ── 自定义进程下拉列表逻辑 ─────────────────────────────────────
+  const processDropdown = document.getElementById('processDropdown');
+
+  function showProcessDropdown(processes) {
+    processDropdown.innerHTML = '';
+    const filtered = processes.filter(name => !targetProcesses.some(p => p.toLowerCase() === name.toLowerCase()));
+    if (filtered.length === 0) {
+      processDropdown.classList.add('hidden');
+      return;
+    }
+    filtered.forEach(name => {
+      const item = document.createElement('div');
+      item.className = 'process-dropdown-item';
+      item.textContent = name;
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        processInput.value = name;
+        processDropdown.classList.add('hidden');
+        addProcess();
+      });
+      processDropdown.appendChild(item);
     });
+    processDropdown.classList.remove('hidden');
   }
 
-  processInput.addEventListener('focus', refreshProcessList);
+  async function refreshProcessDropdown() {
+    if (!electron || !electron.getRunningProcesses) return;
+    const processes = await electron.getRunningProcesses();
+    showProcessDropdown(processes);
+  }
+
+  processInput.addEventListener('focus', refreshProcessDropdown);
+
+  processInput.addEventListener('input', () => {
+    const val = processInput.value.trim().toLowerCase();
+    if (!val) {
+      refreshProcessDropdown();
+      return;
+    }
+    const items = Array.from(processDropdown.querySelectorAll('.process-dropdown-item'));
+    let any = false;
+    items.forEach(item => {
+      const match = item.textContent.toLowerCase().includes(val);
+      item.style.display = match ? '' : 'none';
+      if (match) any = true;
+    });
+    processDropdown.classList.toggle('hidden', !any);
+  });
+
+  processInput.addEventListener('blur', () => {
+    setTimeout(() => processDropdown.classList.add('hidden'), 150);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (processDropdown && !processDropdown.contains(e.target) && e.target !== processInput) {
+      processDropdown.classList.add('hidden');
+    }
+  });
 
   // Disable process group when auto-hide is off
   function setProcessGroupEnabled(enabled) {

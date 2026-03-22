@@ -190,7 +190,7 @@ h1 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: stretch;
   padding: 8px 10px;
   margin: 0 -10px;
   border-bottom: 1px dotted #e0e0e0;
@@ -207,7 +207,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 8px;
   flex: 1;
 }
@@ -218,13 +218,13 @@ h1 {
   color: var(--text-color);
   opacity: 0.85;
   cursor: pointer;
-  line-height: 1.25;
+  line-height: 1.2;
   word-break: break-word;
   white-space: normal;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  min-height: 28px;
+  min-height: 32px;
 }
 
 .control-group label {
@@ -397,6 +397,34 @@ input:disabled + .slider {
 .add-btn:active { opacity: 0.7; }
 .process-group.disabled { opacity: 0.45; pointer-events: none; }
 body.dark-mode .process-input-row input[type='text'] { background: #1a1a1a; border-color: #444; }
+
+/* -- Process custom dropdown -- */
+.process-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 36px; /* leave space for + button */
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 200;
+  max-height: 160px;
+  overflow-y: auto;
+}
+.process-dropdown.hidden { display: none; }
+.process-dropdown-item {
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-color);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.15s;
+}
+.process-dropdown-item:hover { background: var(--hover-bg); }
+body.dark-mode .process-dropdown { background: #2d2d2d; border-color: #444; }
 
 .process-warning {
   margin-top: -6px;

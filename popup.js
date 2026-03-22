@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="opacityRange"]').textContent        = t('opacity');
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
+    document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
     document.querySelector('[for="toggleKeyboardControl"]').textContent = t('keyboardControl');
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');
@@ -97,9 +98,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  document.querySelectorAll('.switch-group').forEach(row => {
+  document.querySelectorAll('.switch-group, .mini-switch').forEach(row => {
     row.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN') {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SPAN' && e.target.tagName !== 'LABEL') {
         const checkbox = row.querySelector('input[type="checkbox"]');
         if (checkbox) checkbox.click();
       }
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toggleHighlightMode = document.getElementById('toggleHighlightMode');
   const toggleLinkSize = document.getElementById('toggleLinkSize');
   const toggleAutoHide = document.getElementById('toggleAutoHide');
+  const toggleAntiScreenshot = document.getElementById('toggleAntiScreenshot');
   const toggleKeyboardControl = document.getElementById('toggleKeyboardControl');
   const heightRange = document.getElementById('heightRange');
   const widthRange = document.getElementById('widthRange');
@@ -122,12 +124,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnRounded = document.getElementById('btnRounded');
   const btnCircle = document.getElementById('btnCircle');
 
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'height', 'width', 'borderRadius', 'opacity', 'color'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
     toggleLinkSize.checked = result.linkSize || false;
     toggleAutoHide.checked = result.autoHide !== undefined ? result.autoHide : true;
+    toggleAntiScreenshot.checked = result.antiScreenshot !== undefined ? result.antiScreenshot : true;
     toggleKeyboardControl.checked = result.keyboardControl || false;
     heightRange.value = result.height || 50;
     widthRange.value = result.width || 200;
@@ -164,6 +167,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   toggleAutoHide.addEventListener('change', (e) => {
     updateSettings({ autoHide: e.target.checked });
+  });
+
+  toggleAntiScreenshot.addEventListener('change', (e) => {
+    updateSettings({ antiScreenshot: e.target.checked });
   });
 
   toggleKeyboardControl.addEventListener('change', (e) => {

@@ -52,5 +52,8 @@
   },
   "footerTip": {
     "message": "移動滑鼠或按方向鍵來移動聚焦框。"
+  },
+  "antiScreenshot": {
+    "message": "截圖規避"
   }
 }

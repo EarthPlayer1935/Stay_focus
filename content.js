@@ -7,6 +7,7 @@ let windowWidth = 200;
 let currentBorderRadius = 12;
 let bgOpacity = 75;
 let bgColor = '#000000';
+let isAntiScreenshotEnabled = true;
 let isAutoHideEnabled = false;
 let isKeyboardControlEnabled = false;
 let isMouseOutside = false;
@@ -130,6 +131,22 @@ function onMouseMove(e) {
 function onKeyDown(e) {
   if (!isEnabled) return;
 
+  if (isAntiScreenshotEnabled) {
+    const isWinSnipping = e.shiftKey && e.metaKey && (e.code === 'KeyS' || e.key.toLowerCase() === 's');
+    const isMacSnipping = e.shiftKey && e.metaKey && ['Digit3', 'Digit4', 'Digit5'].includes(e.code);
+    const isPrtScn = e.code === 'PrintScreen' || e.key === 'PrintScreen';
+    const isAltPrtScn = e.altKey && isPrtScn;
+
+    if (isWinSnipping || isMacSnipping || isPrtScn || isAltPrtScn) {
+      if (overlayContainer) {
+        overlayContainer.style.opacity = '0';
+        setTimeout(() => {
+          overlayContainer.style.opacity = '1';
+        }, 1500);
+      }
+    }
+  }
+
   const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
   const isArrowKey = arrowKeys.includes(e.key);
   
@@ -175,6 +192,7 @@ function applySettings(settings) {
   if (settings.borderRadius !== undefined) currentBorderRadius = settings.borderRadius;
   if (settings.opacity !== undefined) bgOpacity = settings.opacity;
   if (settings.color !== undefined) bgColor = settings.color;
+  if (settings.antiScreenshot !== undefined) isAntiScreenshotEnabled = settings.antiScreenshot;
   if (settings.autoHide !== undefined) isAutoHideEnabled = settings.autoHide;
   if (settings.keyboardControl !== undefined) isKeyboardControlEnabled = settings.keyboardControl;
   

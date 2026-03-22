@@ -336,7 +336,11 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/overlay.html'));
 
-  mainWindow.setContentProtection(currentSettings.antiScreenshot);
+  if (process.platform !== 'darwin') {
+    mainWindow.setContentProtection(currentSettings.antiScreenshot);
+  } else {
+    registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
+  }
 
   mainWindow.webContents.once('did-finish-load', () => {
     // Start auto-hide timers after renderer is ready
@@ -370,6 +374,10 @@ function toggleLayer() {
     mainWindow.show();
   }
   isLayerVisible = !isLayerVisible;
+  
+  if (process.platform === 'darwin') {
+    registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
+  }
 }
 
 function openSettings() {
@@ -423,6 +431,38 @@ function registerKeyboardControl(enable) {
   });
 }
 
+function registerMacScreenshotShortcut(enable) {
+  if (process.platform !== 'darwin') return;
+  const keys = ['Command+Shift+3', 'Command+Shift+4', 'Command+Shift+5'];
+  if (enable) {
+    keys.forEach(key => {
+      try {
+        globalShortcut.register(key, () => {
+          if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible) {
+            mainWindow.hide();
+            
+            let args = '';
+            if (key === 'Command+Shift+3') args = '';
+            else if (key === 'Command+Shift+4') args = '-i';
+            else if (key === 'Command+Shift+5') args = '-U';
+            
+            require('child_process').exec(`screencapture ${args}`, () => {
+              if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible && currentSettings.enabled) {
+                mainWindow.showInactive();
+              }
+            });
+          }
+        });
+      } catch(e) {}
+    });
+  } else {
+    keys.forEach(key => {
+      try { globalShortcut.unregister(key); } catch(e) {}
+    });
+  }
+}
+
+
 ipcMain.handle('get-os-info', () => {
   const os = require('os');
   const release = os.release().split('.');
@@ -451,9 +491,13 @@ ipcMain.on('save-settings', (event, newSettings) => {
     registerKeyboardControl(currentSettings.keyboardControl);
   }
 
-  if (oldAntiScreenshot !== currentSettings.antiScreenshot) {
+  if (oldAntiScreenshot !== currentSettings.antiScreenshot || oldEnabled !== currentSettings.enabled) {
     if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.setContentProtection(currentSettings.antiScreenshot);
+      if (process.platform !== 'darwin') {
+        mainWindow.setContentProtection(currentSettings.antiScreenshot);
+      } else {
+        registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
+      }
     }
   }
 

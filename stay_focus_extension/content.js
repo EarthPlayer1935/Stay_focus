@@ -14,6 +14,27 @@ let targetTabs = [];
 let currentY = window.innerHeight / 2 - windowHeight / 2;
 let currentX = window.innerWidth / 2 - windowWidth / 2;
 
+let isHidingForScreenshot = false;
+let screenshotTimeout = null;
+
+function hideOverlayForScreenshot() {
+  if (overlayContainer) {
+    overlayContainer.style.opacity = '0';
+    isHidingForScreenshot = true;
+    clearTimeout(screenshotTimeout);
+    screenshotTimeout = setTimeout(() => {
+      restoreOverlayOpacity();
+    }, 2000);
+  }
+}
+
+function restoreOverlayOpacity() {
+  if (overlayContainer && isHidingForScreenshot) {
+    overlayContainer.style.opacity = '1';
+    isHidingForScreenshot = false;
+  }
+}
+
 let overlayContainer = null;
 let overlayWindow = null;
 
@@ -32,8 +53,9 @@ function initOverlay() {
   updateStyles();
   
   document.addEventListener('mousemove', onMouseMove);
-  
   document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+  window.addEventListener('focus', restoreOverlayOpacity);
 }
 
 function hexToRgb(hex) {
@@ -126,18 +148,12 @@ function onKeyDown(e) {
   if (!isEnabled) return;
 
   if (isAntiScreenshotEnabled) {
-    const isWinSnipping = e.shiftKey && e.metaKey && (e.code === 'KeyS' || e.key.toLowerCase() === 's');
-    const isMacSnipping = e.shiftKey && e.metaKey && ['Digit3', 'Digit4', 'Digit5'].includes(e.code);
+    if (e.metaKey && e.shiftKey) {
+      hideOverlayForScreenshot();
+    }
     const isPrtScn = e.code === 'PrintScreen' || e.key === 'PrintScreen';
-    const isAltPrtScn = e.altKey && isPrtScn;
-
-    if (isWinSnipping || isMacSnipping || isPrtScn || isAltPrtScn) {
-      if (overlayContainer) {
-        overlayContainer.style.opacity = '0';
-        setTimeout(() => {
-          overlayContainer.style.opacity = '1';
-        }, 1500);
-      }
+    if (isPrtScn) {
+      hideOverlayForScreenshot();
     }
   }
 
@@ -174,6 +190,19 @@ function onKeyDown(e) {
     }
   } else if (e.key === 'Escape') {
     chrome.storage.local.set({ enabled: false });
+  }
+}
+
+function onKeyUp(e) {
+  if (!isEnabled || !isAntiScreenshotEnabled) return;
+
+  if (!e.metaKey || !e.shiftKey) {
+    restoreOverlayOpacity();
+  }
+
+  const isPrtScn = e.code === 'PrintScreen' || e.key === 'PrintScreen';
+  if (isPrtScn) {
+    hideOverlayForScreenshot();
   }
 }
 

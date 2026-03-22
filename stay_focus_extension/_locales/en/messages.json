@@ -39,7 +39,7 @@
     "message": "Color"
   },
   "autoHideOnLeave": {
-    "message": "Only Enable for Specified Programs"
+    "message": "Only Enable for Specified Tabs"
   },
   "keyboardControl": {
     "message": "Keyboard Control"

@@ -111,6 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const toggleAntiScreenshot = document.getElementById('toggleAntiScreenshot');
   const toggleKeyboardControl = document.getElementById('toggleKeyboardControl');
   const colorPicker = document.getElementById('colorPicker');
+  const heightRange = document.getElementById('heightRange');
+  const widthRange = document.getElementById('widthRange');
+  const borderRadiusRange = document.getElementById('borderRadiusRange');
+  const opacityRange = document.getElementById('opacityRange');
 
   const btnSquare = document.getElementById('btnSquare');
   const btnRounded = document.getElementById('btnRounded');
@@ -124,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let targetTabs = [];
 
-  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'color', 'targetTabs'], (result) => {
+  chrome.storage.local.get(['enabled', 'fullRowMode', 'highlightMode', 'linkSize', 'autoHide', 'antiScreenshot', 'keyboardControl', 'color', 'targetTabs', 'height', 'width', 'borderRadius', 'opacity'], (result) => {
     toggleFocus.checked = result.enabled || false;
     toggleFullRow.checked = result.fullRowMode || false;
     toggleHighlightMode.checked = result.highlightMode || false;
@@ -133,6 +137,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleAntiScreenshot.checked = result.antiScreenshot !== undefined ? result.antiScreenshot : true;
     toggleKeyboardControl.checked = result.keyboardControl || false;
     colorPicker.value = result.color || '#000000';
+    if (heightRange && result.height !== undefined) heightRange.value = result.height;
+    if (widthRange && result.width !== undefined) widthRange.value = result.width;
+    if (borderRadiusRange && result.borderRadius !== undefined) borderRadiusRange.value = result.borderRadius;
+    if (opacityRange && result.opacity !== undefined) opacityRange.value = result.opacity;
     if (Array.isArray(result.targetTabs)) {
       targetTabs = result.targetTabs;
     }
@@ -214,6 +222,40 @@ document.addEventListener('DOMContentLoaded', async () => {
   colorPicker.addEventListener('change', (e) => {
     updateSettings({ color: e.target.value });
   });
+
+  if (heightRange) {
+    heightRange.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      updateSettings({ height: val });
+      if (toggleLinkSize.checked && widthRange) {
+        widthRange.value = val;
+        updateSettings({ width: val });
+      }
+    });
+  }
+
+  if (widthRange) {
+    widthRange.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      updateSettings({ width: val });
+      if (toggleLinkSize.checked && heightRange) {
+        heightRange.value = val;
+        updateSettings({ height: val });
+      }
+    });
+  }
+
+  if (borderRadiusRange) {
+    borderRadiusRange.addEventListener('input', (e) => {
+      updateSettings({ borderRadius: parseInt(e.target.value, 10) });
+    });
+  }
+
+  if (opacityRange) {
+    opacityRange.addEventListener('input', (e) => {
+      updateSettings({ opacity: parseInt(e.target.value, 10) });
+    });
+  }
 
   // ── Tab tag management ───────────────────────────────────────────────
 

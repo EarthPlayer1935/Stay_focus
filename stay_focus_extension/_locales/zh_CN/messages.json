@@ -55,5 +55,11 @@
   },
   "antiScreenshot": {
     "message": "截图规避"
+  },
+  "shortcutMove": {
+    "message": "移动聚焦框"
+  },
+  "shortcutExit": {
+    "message": "关闭聚焦"
   }
 }

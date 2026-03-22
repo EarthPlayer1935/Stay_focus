@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('[for="colorPicker"]').textContent         = t('color');
     document.querySelector('[for="toggleAutoHide"]').textContent      = t('autoHideOnLeave');
     document.querySelector('[for="toggleAntiScreenshot"]').textContent = t('antiScreenshot') || 'Screenshot Avoidance';
+    document.getElementById('labelShortcutMove').textContent = t('shortcutMove');
+    document.getElementById('labelShortcutExit').textContent = t('shortcutExit');
     document.querySelector('[for="toggleKeyboardControl"]').textContent = t('keyboardControl');
     document.getElementById('btnSquare').title                        = t('shapeSquare');
     document.getElementById('btnRounded').title                       = t('shapeRounded');

@@ -2,7 +2,6 @@
   "name": "stay_focus",
   "version": "2.5.3",
   "description": "[English](./README.md) | **中文**",
-  "main": "background.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node scripts/build.js",

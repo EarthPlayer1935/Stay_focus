@@ -11,7 +11,8 @@ if (!fs.existsSync(releaseDir)) {
 }
 
 // 获取版本号
-const manifestPath = path.join(rootDir, 'manifest.json');
+const extensionDir = path.join(rootDir, 'stay_focus_extension');
+const manifestPath = path.join(extensionDir, 'manifest.json');
 let version = 'unknown';
 if (fs.existsSync(manifestPath)) {
   const manifest = require(manifestPath);
@@ -49,28 +50,10 @@ archive.on('error', function(err) {
 
 archive.pipe(output);
 
-console.log('添加文件到压缩包中，忽略无用项...');
-
-const ignoreList = [
-  'node_modules/**',
-  'scripts/**',
-  'release/**/*', // 可以忽略 release 下的所有文件
-  '.git/**',
-  '.github/**',
-  'README*.md',
-  'LICENSE',
-  'package*.json',
-  '.gitignore',
-  'task.md',
-  'implementation_plan.md',
-  'stay_focus_desktop/**',
-  'docs/**',
-  '.gemini/**'
-];
+console.log('添加文件到压缩包中...');
 
 archive.glob('**/*', {
-  cwd: rootDir,
-  ignore: ignoreList
+  cwd: extensionDir
 });
 
 archive.finalize();

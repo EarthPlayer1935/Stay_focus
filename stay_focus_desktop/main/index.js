@@ -692,8 +692,13 @@ autoUpdater.on('update-downloaded', (info) => {
   autoUpdater.quitAndInstall();
 });
 
-ipcMain.on('download-update', () => {
+ipcMain.on('download-update', async () => {
   createProgressWindow();
+  try {
+    await autoUpdater.checkForUpdates();
+  } catch (err) {
+    console.error('Failed to re-check update before downloading:', err);
+  }
   autoUpdater.downloadUpdate();
 });
 ipcMain.on('close-update-window', () => {

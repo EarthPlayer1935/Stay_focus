@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.15](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.14...v2.5.15) (2026-03-23)
+
+
+### 🐛 Bug Fixes
+
+* fetch latest update info before downloading to prevent stale updates ([e4dc833](https://github.com/EarthPlayer1935/Stay_focus/commit/e4dc83348d7b4f8d45009241539385562e601b01))
+
 ## [2.5.2](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.1...v2.5.2) (2026-03-21)
 
 ## [2.5.1](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.0...v2.5.1) (2026-03-21)

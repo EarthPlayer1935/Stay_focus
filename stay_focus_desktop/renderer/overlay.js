@@ -1,3 +1,7 @@
+const urlParams = new URLSearchParams(window.location.search);
+const offsetGlobalX = parseInt(urlParams.get('winX') || '0', 10);
+const offsetGlobalY = parseInt(urlParams.get('winY') || '0', 10);
+
 const overlayContainer = document.getElementById('overlay-container');
 const overlayWindow = document.getElementById('overlay-window');
 const maskClip = document.getElementById('mask-clip');
@@ -117,11 +121,16 @@ if (window.electronAPI) {
     window.electronAPI.onAutoHideState((event, state) => {
       if (typeof state === 'object' && state !== null) {
         // Limited scope mode
-        activeRect = state;
-        maskClip.style.left = `${state.x}px`;
-        maskClip.style.top = `${state.y}px`;
-        maskClip.style.width = `${state.w}px`;
-        maskClip.style.height = `${state.h}px`;
+        activeRect = {
+          x: state.x - offsetGlobalX,
+          y: state.y - offsetGlobalY,
+          w: state.w,
+          h: state.h
+        };
+        maskClip.style.left = `${activeRect.x}px`;
+        maskClip.style.top = `${activeRect.y}px`;
+        maskClip.style.width = `${activeRect.w}px`;
+        maskClip.style.height = `${activeRect.h}px`;
         maskClip.style.borderRadius = isWin11 ? '8px' : '0px';
         autoHideVisible = true;
       } else if (state === true) {

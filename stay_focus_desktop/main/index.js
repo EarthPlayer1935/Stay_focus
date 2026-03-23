@@ -43,7 +43,7 @@ function saveSettingsToFile(settings) {
   }
 }
 
-let mainWindow;
+let overlayWindows = [];
 let settingsWindow;
 let progressWindow;
 let tray;
@@ -261,27 +261,29 @@ function startAutoHideTimers() {
   const names = currentSettings.targetProcesses;
   if (!names || names.length === 0) {
     // Global mode: always show the overlay (nothing to do)
-    if (mainWindow && !mainWindow.isDestroyed() && currentSettings.enabled) {
-      mainWindow.webContents.send('auto-hide-state', true);
+    if (currentSettings.enabled) {
+      overlayWindows.forEach(win => {
+        if (!win.isDestroyed()) win.webContents.send('auto-hide-state', true);
+      });
     }
     return;
   }
 
   function loop() {
-    if (!currentSettings.autoHide || !currentSettings.enabled || (mainWindow && mainWindow.isDestroyed())) return;
+    if (!currentSettings.autoHide || !currentSettings.enabled) return;
     queryWindowRects(names, (rects) => {
       cachedWindowRects = rects;
       
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        const { x, y } = screen.getCursorScreenPoint();
-        const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
-        
-        const state = activeRect || false;
-        const stateStr = JSON.stringify(state);
-        if (stateStr !== lastAutoHideState) {
-          lastAutoHideState = stateStr;
-          mainWindow.webContents.send('auto-hide-state', state);
-        }
+      const { x, y } = screen.getCursorScreenPoint();
+      const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
+      
+      const state = activeRect || false;
+      const stateStr = JSON.stringify(state);
+      if (stateStr !== lastAutoHideState) {
+        lastAutoHideState = stateStr;
+        overlayWindows.forEach(win => {
+          if (!win.isDestroyed()) win.webContents.send('auto-hide-state', state);
+        });
       }
       
       slowTimer = setTimeout(loop, 30);
@@ -297,15 +299,51 @@ function refreshAutoHide() {
   } else {
     stopAutoHideTimers();
     // If auto-hide is off (or overlay disabled), ensure overlay knows to show
-    if (mainWindow && !mainWindow.isDestroyed() && currentSettings.enabled) {
-      mainWindow.webContents.send('auto-hide-state', true);
+    if (currentSettings.enabled) {
+      overlayWindows.forEach(win => {
+        if (!win.isDestroyed()) win.webContents.send('auto-hide-state', true);
+      });
     }
   }
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-function createWindow() {
-  mainWindow = new BrowserWindow({
+let topTimer = null;
+
+function createWindows() {
+  const displays = screen.getAllDisplays();
+  displays.forEach(display => createOverlayWindow(display));
+
+  if (!topTimer) {
+    topTimer = setInterval(() => {
+      if (isLayerVisible) {
+        overlayWindows.forEach(win => {
+          if (!win.isDestroyed()) win.moveTop();
+        });
+      }
+    }, 500);
+  }
+
+  screen.on('display-added', handleDisplayChange);
+  screen.on('display-removed', handleDisplayChange);
+  screen.on('display-metrics-changed', handleDisplayChange);
+}
+
+function handleDisplayChange() {
+  overlayWindows.forEach(win => {
+    if (!win.isDestroyed()) win.close();
+  });
+  overlayWindows = [];
+  const displays = screen.getAllDisplays();
+  displays.forEach(display => createOverlayWindow(display));
+}
+
+function createOverlayWindow(display) {
+  const win = new BrowserWindow({
+    x: display.bounds.x,
+    y: display.bounds.y,
+    width: display.bounds.width,
+    height: display.bounds.height,
     transparent: true,
     frame: false,
     alwaysOnTop: true,
@@ -318,34 +356,29 @@ function createWindow() {
     }
   });
 
-  mainWindow.setIgnoreMouseEvents(true, { forward: true });
-  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  win.setIgnoreMouseEvents(true, { forward: true });
+  win.setAlwaysOnTop(true, 'screen-saver');
 
-  const topTimer = setInterval(() => {
-    if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible) {
-      mainWindow.moveTop();
-    }
-  }, 500);
-
-  mainWindow.on('closed', () => {
-    clearInterval(topTimer);
-    mainWindow = null;
+  win.on('closed', () => {
+    overlayWindows = overlayWindows.filter(w => w !== win);
   });
 
-  mainWindow.maximize();
-
-  mainWindow.loadFile(path.join(__dirname, '../renderer/overlay.html'));
+  win.loadFile(path.join(__dirname, '../renderer/overlay.html'), {
+    query: { winX: display.bounds.x.toString(), winY: display.bounds.y.toString() }
+  });
 
   if (process.platform !== 'darwin') {
-    mainWindow.setContentProtection(currentSettings.antiScreenshot);
+    win.setContentProtection(currentSettings.antiScreenshot);
   } else {
     registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
   }
 
-  mainWindow.webContents.once('did-finish-load', () => {
+  win.webContents.once('did-finish-load', () => {
     // Start auto-hide timers after renderer is ready
     refreshAutoHide();
   });
+
+  overlayWindows.push(win);
 }
 
 function createTray() {
@@ -369,9 +402,9 @@ function createTray() {
 
 function toggleLayer() {
   if (isLayerVisible) {
-    mainWindow.hide();
+    overlayWindows.forEach(w => { if (!w.isDestroyed()) w.hide(); });
   } else {
-    mainWindow.show();
+    overlayWindows.forEach(w => { if (!w.isDestroyed()) w.show(); });
   }
   isLayerVisible = !isLayerVisible;
   
@@ -423,7 +456,9 @@ function registerKeyboardControl(enable) {
     if (enable) {
       globalShortcut.register(combo, () => {
         if (!isLayerVisible) return;
-        if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('keyboard-move', key);
+        overlayWindows.forEach(win => {
+          if (!win.isDestroyed()) win.webContents.send('keyboard-move', key);
+        });
       });
     } else {
       globalShortcut.unregister(combo);
@@ -438,8 +473,8 @@ function registerMacScreenshotShortcut(enable) {
     keys.forEach(key => {
       try {
         globalShortcut.register(key, () => {
-          if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible) {
-            mainWindow.hide();
+          if (isLayerVisible) {
+            overlayWindows.forEach(w => { if (!w.isDestroyed()) w.hide(); });
             
             let args = '';
             if (key === 'Command+Shift+3') args = '';
@@ -447,8 +482,8 @@ function registerMacScreenshotShortcut(enable) {
             else if (key === 'Command+Shift+5') args = '-U';
             
             require('child_process').exec(`screencapture ${args}`, () => {
-              if (mainWindow && !mainWindow.isDestroyed() && isLayerVisible && currentSettings.enabled) {
-                mainWindow.showInactive();
+              if (isLayerVisible && currentSettings.enabled) {
+                overlayWindows.forEach(w => { if (!w.isDestroyed()) w.showInactive(); });
               }
             });
           }
@@ -498,21 +533,21 @@ ipcMain.on('save-settings', (event, newSettings) => {
   currentSettings = { ...currentSettings, ...newSettings };
   saveSettingsToFile(currentSettings);
 
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.webContents.send('update-settings', currentSettings);
-  }
+  overlayWindows.forEach(win => {
+    if (!win.isDestroyed()) win.webContents.send('update-settings', currentSettings);
+  });
 
   if (oldKbCtrl !== currentSettings.keyboardControl) {
     registerKeyboardControl(currentSettings.keyboardControl);
   }
 
   if (oldAntiScreenshot !== currentSettings.antiScreenshot || oldEnabled !== currentSettings.enabled) {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      if (process.platform !== 'darwin') {
-        mainWindow.setContentProtection(currentSettings.antiScreenshot);
-      } else {
-        registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
-      }
+    if (process.platform !== 'darwin') {
+      overlayWindows.forEach(win => {
+        if (!win.isDestroyed()) win.setContentProtection(currentSettings.antiScreenshot);
+      });
+    } else {
+      registerMacScreenshotShortcut(currentSettings.antiScreenshot && currentSettings.enabled && isLayerVisible);
     }
   }
 
@@ -675,7 +710,7 @@ if (!gotTheLock) {
     configPath = path.join(app.getPath('userData'), 'config.json');
     currentSettings = loadSettings();
 
-    createWindow();
+    createWindows();
     createTray();
     registerKeyboardControl(currentSettings.keyboardControl);
 
@@ -684,8 +719,8 @@ if (!gotTheLock) {
     });
 
     app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+      if (overlayWindows.length === 0) {
+        createWindows();
       }
     });
     

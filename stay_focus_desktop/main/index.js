@@ -363,6 +363,8 @@ function createOverlayWindow(display) {
     overlayWindows = overlayWindows.filter(w => w !== win);
   });
 
+  win.maximize();
+
   win.loadFile(path.join(__dirname, '../renderer/overlay.html'), {
     query: { winX: display.bounds.x.toString(), winY: display.bounds.y.toString() }
   });

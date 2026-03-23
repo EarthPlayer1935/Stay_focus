@@ -82,6 +82,18 @@ document.addEventListener('mousemove', (e) => {
   updateStyles();
 });
 
+document.addEventListener('mouseleave', () => {
+  if (!isEnabled) return;
+
+  // Move the spotlight just slightly off-screen to hide the "hole"
+  // If we move it too far (e.g., -innerWidth * 2), the 9999px box-shadow 
+  // won't be large enough to reach the opposite edge of the screen!
+  currentY = -windowHeight * 2;
+  currentX = -windowWidth * 2;
+  
+  updateStyles();
+});
+
 // IPC settings sync
 if (window.electronAPI) {
   if (window.electronAPI.getOsInfo) {

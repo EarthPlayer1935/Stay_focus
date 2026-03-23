@@ -27,6 +27,9 @@ let activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
 // Whether auto-hide has forced us to hide (separate from isEnabled)
 let autoHideVisible = true;
 
+// Track if mouse is currently on this display
+let isMouseOnThisMonitor = true;
+
 function hexToRgb(hex) {
   let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
   hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
@@ -46,9 +49,13 @@ function applyVisibility() {
 function updateStyles() {
   overlayWindow.style.height = `${windowHeight}px`;
 
+  // Determine effective position based on presence
+  let effectiveX = isMouseOnThisMonitor ? currentX : -windowWidth * 2;
+  let effectiveY = isMouseOnThisMonitor ? currentY : -windowHeight * 2;
+
   // Calculate local coordinates relative to mask-clip
-  let localX = currentX - activeRect.x;
-  let localY = currentY - activeRect.y;
+  let localX = effectiveX - activeRect.x;
+  let localY = effectiveY - activeRect.y;
 
   if (isFullRow) {
     overlayWindow.style.width = '100vw'; // Note: full-row might need special handling if clip is on
@@ -75,8 +82,19 @@ function updateStyles() {
   applyVisibility();
 }
 
-// We no longer use local mousemove/mouseleave as they are flaky when ignoreMouseEvents is on.
-// Instead we trust the 50fps updates from the main process.
+document.addEventListener('mousemove', (e) => {
+  if (!isEnabled) return;
+  
+  // Instantly mark as active since native movement is tracked
+  isMouseOnThisMonitor = true;
+
+  currentY = e.clientY - (windowHeight / 2);
+  currentX = e.clientX - (windowWidth / 2);
+  
+  updateStyles();
+});
+
+// We continuously receive IPC position to hide residue if mouse leaves screen
 
 // IPC settings sync
 if (window.electronAPI) {
@@ -118,18 +136,20 @@ if (window.electronAPI) {
       const { state, mousePos } = data;
       
       // 1. Detect if mouse is on this specifically mapped monitor
-      const isMouseOnThisMonitor = (
+      const actuallyOnMonitor = (
         mousePos.x >= offsetGlobalX && 
         mousePos.x < offsetGlobalX + offsetGlobalW &&
         mousePos.y >= offsetGlobalY && 
         mousePos.y < offsetGlobalY + offsetGlobalH
       );
 
-      if (isMouseOnThisMonitor && state) {
-        // Mouse is here and we should show the spotlight
-        currentX = mousePos.x - offsetGlobalX - (windowWidth / 2);
-        currentY = mousePos.y - offsetGlobalY - (windowHeight / 2);
-        
+      // We only forcefully hide if IPC shows it has left. 
+      // If it enters, the native mousemove will immediately set isMouseOnThisMonitor = true.
+      if (!actuallyOnMonitor) {
+        isMouseOnThisMonitor = false;
+      }
+
+      if (state) {
         if (typeof state === 'object' && state !== null) {
           // Limited scope mode
           activeRect = {
@@ -146,11 +166,9 @@ if (window.electronAPI) {
         }
         autoHideVisible = true;
       } else {
-        // Hide spotlight (either mouse is elsewhere or auto-hide says no)
+        // Hide spotlight (auto-hide says no)
         autoHideVisible = false;
-        // Also move it offscreen to avoid "residue" in case opacity > 0
-        currentX = -windowWidth * 2;
-        currentY = -windowHeight * 2;
+        isMouseOnThisMonitor = false;
       }
 
       updateStyles();

@@ -280,7 +280,7 @@ function startAutoHideTimers() {
         }
       });
       
-      slowTimer = setTimeout(loop, 20); // 50fps for smoother movement
+      slowTimer = setTimeout(loop, 30);
     });
   }
   

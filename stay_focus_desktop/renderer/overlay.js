@@ -1,6 +1,8 @@
 const urlParams = new URLSearchParams(window.location.search);
 const offsetGlobalX = parseInt(urlParams.get('winX') || '0', 10);
 const offsetGlobalY = parseInt(urlParams.get('winY') || '0', 10);
+const offsetGlobalW = parseInt(urlParams.get('winW') || '0', 10);
+const offsetGlobalH = parseInt(urlParams.get('winH') || '0', 10);
 
 const overlayContainer = document.getElementById('overlay-container');
 const overlayWindow = document.getElementById('overlay-window');
@@ -73,26 +75,8 @@ function updateStyles() {
   applyVisibility();
 }
 
-document.addEventListener('mousemove', (e) => {
-  if (!isEnabled) return;
-
-  currentY = e.clientY - (windowHeight / 2);
-  currentX = e.clientX - (windowWidth / 2);
-  
-  updateStyles();
-});
-
-document.addEventListener('mouseleave', () => {
-  if (!isEnabled) return;
-
-  // Move the spotlight just slightly off-screen to hide the "hole"
-  // If we move it too far (e.g., -innerWidth * 2), the 9999px box-shadow 
-  // won't be large enough to reach the opposite edge of the screen!
-  currentY = -windowHeight * 2;
-  currentX = -windowWidth * 2;
-  
-  updateStyles();
-});
+// We no longer use local mousemove/mouseleave as they are flaky when ignoreMouseEvents is on.
+// Instead we trust the 50fps updates from the main process.
 
 // IPC settings sync
 if (window.electronAPI) {
@@ -129,35 +113,46 @@ if (window.electronAPI) {
   });
 
   // Auto-hide state from main process: can be boolean (global) or rect object
-  if (window.electronAPI.onAutoHideState) {
-    window.electronAPI.onAutoHideState((event, state) => {
-      if (typeof state === 'object' && state !== null) {
-        // Limited scope mode
-        activeRect = {
-          x: state.x - offsetGlobalX,
-          y: state.y - offsetGlobalY,
-          w: state.w,
-          h: state.h
-        };
-        maskClip.style.left = `${activeRect.x}px`;
-        maskClip.style.top = `${activeRect.y}px`;
-        maskClip.style.width = `${activeRect.w}px`;
-        maskClip.style.height = `${activeRect.h}px`;
-        maskClip.style.borderRadius = isWin11 ? '8px' : '0px';
-        autoHideVisible = true;
-      } else if (state === true) {
-        // Global mode
-        activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
-        maskClip.style.left = '0px';
-        maskClip.style.top = '0px';
-        maskClip.style.width = '100vw';
-        maskClip.style.height = '100vh';
-        maskClip.style.borderRadius = '0px';
+  if (window.electronAPI.onSyncOverlayState) {
+    window.electronAPI.onSyncOverlayState((event, data) => {
+      const { state, mousePos } = data;
+      
+      // 1. Detect if mouse is on this specifically mapped monitor
+      const isMouseOnThisMonitor = (
+        mousePos.x >= offsetGlobalX && 
+        mousePos.x < offsetGlobalX + offsetGlobalW &&
+        mousePos.y >= offsetGlobalY && 
+        mousePos.y < offsetGlobalY + offsetGlobalH
+      );
+
+      if (isMouseOnThisMonitor && state) {
+        // Mouse is here and we should show the spotlight
+        currentX = mousePos.x - offsetGlobalX - (windowWidth / 2);
+        currentY = mousePos.y - offsetGlobalY - (windowHeight / 2);
+        
+        if (typeof state === 'object' && state !== null) {
+          // Limited scope mode
+          activeRect = {
+            x: state.x - offsetGlobalX,
+            y: state.y - offsetGlobalY,
+            w: state.w,
+            h: state.h
+          };
+          maskClip.style.borderRadius = isWin11 ? '8px' : '0px';
+        } else {
+          // Global mode
+          activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
+          maskClip.style.borderRadius = '0px';
+        }
         autoHideVisible = true;
       } else {
-        // Hidden
+        // Hide spotlight (either mouse is elsewhere or auto-hide says no)
         autoHideVisible = false;
+        // Also move it offscreen to avoid "residue" in case opacity > 0
+        currentX = -windowWidth * 2;
+        currentY = -windowHeight * 2;
       }
+
       updateStyles();
     });
   }

@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getSystemLocale: () => ipcRenderer.invoke('get-system-locale'),
   onKeyboardMove: (callback) => ipcRenderer.on('keyboard-move', callback),
   onAutoHideState: (callback) => ipcRenderer.on('auto-hide-state', callback),
+  onSyncOverlayState: (callback) => ipcRenderer.on('sync-overlay-state', callback),
   getRunningProcesses: () => ipcRenderer.invoke('get-running-processes'),
   getVersion: () => ipcRenderer.invoke('get-version'),
   onUpdateAvailable: (callback) => ipcRenderer.on('update-available', callback),

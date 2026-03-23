@@ -259,34 +259,28 @@ function startAutoHideTimers() {
   stopAutoHideTimers();
 
   const names = currentSettings.targetProcesses;
-  if (!names || names.length === 0) {
-    // Global mode: always show the overlay (nothing to do)
-    if (currentSettings.enabled) {
-      overlayWindows.forEach(win => {
-        if (!win.isDestroyed()) win.webContents.send('auto-hide-state', true);
-      });
-    }
-    return;
-  }
-
   function loop() {
-    if (!currentSettings.autoHide || !currentSettings.enabled) return;
-    queryWindowRects(names, (rects) => {
+    if (!currentSettings.enabled) return;
+    queryWindowRects(names || [], (rects) => {
       cachedWindowRects = rects;
       
       const { x, y } = screen.getCursorScreenPoint();
       const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
       
-      const state = activeRect || false;
-      const stateStr = JSON.stringify(state);
-      if (stateStr !== lastAutoHideState) {
-        lastAutoHideState = stateStr;
-        overlayWindows.forEach(win => {
-          if (!win.isDestroyed()) win.webContents.send('auto-hide-state', state);
-        });
-      }
+      const state = activeRect || (names && names.length > 0 ? false : true);
       
-      slowTimer = setTimeout(loop, 30);
+      // Always send the current global mouse position to help renderers 
+      // detect when to hide themselves (residue cleanup)
+      overlayWindows.forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('sync-overlay-state', {
+            state: state,
+            mousePos: { x, y }
+          });
+        }
+      });
+      
+      slowTimer = setTimeout(loop, 20); // 50fps for smoother movement
     });
   }
   
@@ -294,17 +288,7 @@ function startAutoHideTimers() {
 }
 
 function refreshAutoHide() {
-  if (currentSettings.autoHide && currentSettings.enabled) {
-    startAutoHideTimers();
-  } else {
-    stopAutoHideTimers();
-    // If auto-hide is off (or overlay disabled), ensure overlay knows to show
-    if (currentSettings.enabled) {
-      overlayWindows.forEach(win => {
-        if (!win.isDestroyed()) win.webContents.send('auto-hide-state', true);
-      });
-    }
-  }
+  startAutoHideTimers();
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -330,11 +314,19 @@ function createWindows() {
 }
 
 function handleDisplayChange() {
+  const displays = screen.getAllDisplays();
+  
+  // Only rebuild if the number of displays or their IDs changed
+  // This avoids flickering on minor metrics changes
+  const currentIds = overlayWindows.map(w => w.displayId).sort().join(',');
+  const nextIds = displays.map(d => d.id).sort().join(',');
+  
+  if (currentIds === nextIds && overlayWindows.length > 0) return;
+
   overlayWindows.forEach(win => {
     if (!win.isDestroyed()) win.close();
   });
   overlayWindows = [];
-  const displays = screen.getAllDisplays();
   displays.forEach(display => createOverlayWindow(display));
 }
 
@@ -356,6 +348,9 @@ function createOverlayWindow(display) {
     }
   });
 
+  win.displayId = display.id;
+  win.displayBounds = display.bounds;
+
   win.setIgnoreMouseEvents(true, { forward: true });
   win.setAlwaysOnTop(true, 'screen-saver');
 
@@ -366,7 +361,12 @@ function createOverlayWindow(display) {
   win.maximize();
 
   win.loadFile(path.join(__dirname, '../renderer/overlay.html'), {
-    query: { winX: display.bounds.x.toString(), winY: display.bounds.y.toString() }
+    query: { 
+      winX: display.bounds.x.toString(), 
+      winY: display.bounds.y.toString(),
+      winW: display.bounds.width.toString(),
+      winH: display.bounds.height.toString()
+    }
   });
 
   if (process.platform !== 'darwin') {
@@ -376,7 +376,6 @@ function createOverlayWindow(display) {
   }
 
   win.webContents.once('did-finish-load', () => {
-    // Start auto-hide timers after renderer is ready
     refreshAutoHide();
   });
 

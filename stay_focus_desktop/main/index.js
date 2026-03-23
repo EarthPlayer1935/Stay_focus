@@ -259,6 +259,10 @@ function startAutoHideTimers() {
   stopAutoHideTimers();
 
   const names = currentSettings.targetProcesses;
+  let lastSentStateStr = null;
+  let lastSentX = null;
+  let lastSentY = null;
+
   function loop() {
     if (!currentSettings.enabled) return;
     queryWindowRects(names || [], (rects) => {
@@ -268,17 +272,26 @@ function startAutoHideTimers() {
       const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
       
       const state = activeRect || (names && names.length > 0 ? false : true);
+      const stateStr = JSON.stringify(state);
       
-      // Always send the current global mouse position to help renderers 
-      // detect when to hide themselves (residue cleanup)
-      overlayWindows.forEach(win => {
-        if (!win.isDestroyed()) {
-          win.webContents.send('sync-overlay-state', {
-            state: state,
-            mousePos: { x, y }
-          });
-        }
-      });
+      // Delta state syncing: limit IPC broadcasts to actual changes or significant mouse moves
+      const isSignificantMove = lastSentX === null || Math.abs(x - lastSentX) > 2 || Math.abs(y - lastSentY) > 2;
+      const isStateChanged = stateStr !== lastSentStateStr;
+
+      if (isSignificantMove || isStateChanged) {
+        lastSentStateStr = stateStr;
+        lastSentX = x;
+        lastSentY = y;
+
+        overlayWindows.forEach(win => {
+          if (!win.isDestroyed()) {
+            win.webContents.send('sync-overlay-state', {
+              state: state,
+              mousePos: { x, y }
+            });
+          }
+        });
+      }
       
       slowTimer = setTimeout(loop, 30);
     });

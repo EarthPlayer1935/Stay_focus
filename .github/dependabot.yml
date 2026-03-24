@@ -1,0 +1,22 @@
+version: 2
+updates:
+  # 监控根目录下的 package.json (npm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily" # 可选: "daily", "weekly", "monthly"
+    commit-message:
+      prefix: "chore(deps)" # 根据您的项目规范定制
+    labels:
+      - "dependencies"
+
+  # 监控 stay_focus_desktop 目录下的 package.json (npm)
+  - package-ecosystem: "npm"
+    directory: "/stay_focus_desktop"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(deps-desktop)"
+    labels:
+      - "dependencies"
+      - "desktop"

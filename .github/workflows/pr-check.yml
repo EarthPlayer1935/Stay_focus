@@ -1,0 +1,37 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-build:
+    name: Test Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Check Extension Build
+        run: |
+          npm install
+          npm run build
+        shell: pwsh
+
+      - name: Check Desktop App Build
+        working-directory: stay_focus_desktop
+        env:
+          ELECTRON_BUILDER_HTTP_TIMEOUT: 120000
+        run: |
+          npm install
+          # 仅打包测试 (不生成安装程序且不发布)
+          npx electron-builder --dir -p never
+        shell: pwsh

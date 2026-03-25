@@ -159,10 +159,20 @@ if (window.electronAPI) {
             h: state.h
           };
           maskClip.style.borderRadius = isWin11 ? '8px' : '0px';
+          maskClip.style.left = `${activeRect.x}px`;
+          maskClip.style.top = `${activeRect.y}px`;
+          maskClip.style.width = `${activeRect.w}px`;
+          maskClip.style.height = `${activeRect.h}px`;
+          maskClip.style.overflow = 'hidden';
         } else {
           // Global mode
           activeRect = { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight };
           maskClip.style.borderRadius = '0px';
+          maskClip.style.left = '0px';
+          maskClip.style.top = '0px';
+          maskClip.style.width = '100vw';
+          maskClip.style.height = '100vh';
+          maskClip.style.overflow = 'hidden';
         }
         autoHideVisible = true;
       } else {

@@ -265,6 +265,34 @@ function startAutoHideTimers() {
 
   function loop() {
     if (!currentSettings.enabled) return;
+
+    if (!currentSettings.autoHide) {
+      const { x, y } = screen.getCursorScreenPoint();
+      const state = true;
+      const stateStr = "true";
+      
+      const isSignificantMove = lastSentX === null || Math.abs(x - lastSentX) > 2 || Math.abs(y - lastSentY) > 2;
+      const isStateChanged = stateStr !== lastSentStateStr;
+
+      if (isSignificantMove || isStateChanged) {
+        lastSentStateStr = stateStr;
+        lastSentX = x;
+        lastSentY = y;
+
+        overlayWindows.forEach(win => {
+          if (!win.isDestroyed()) {
+            win.webContents.send('sync-overlay-state', {
+              state: state,
+              mousePos: { x, y }
+            });
+          }
+        });
+      }
+      
+      slowTimer = setTimeout(loop, 30);
+      return;
+    }
+
     queryWindowRects(names || [], (rects) => {
       cachedWindowRects = rects;
       

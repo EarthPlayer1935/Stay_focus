@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.16](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.15...v2.5.16) (2026-03-25)
+
+
+### 🐛 Bug Fixes
+
+* correct spotlight alignment and dropdown clicking issues ([#5](https://github.com/EarthPlayer1935/Stay_focus/issues/5)) ([92aa2ad](https://github.com/EarthPlayer1935/Stay_focus/commit/92aa2add04c6ffa9018a1dc7575269085e0fc74f))
+
+
+### 🔧 Chores
+
+* **deps-desktop:** bump electron in /stay_focus_desktop ([b07dd32](https://github.com/EarthPlayer1935/Stay_focus/commit/b07dd32a81e39dc1957b50904c9b9606c8f10e3e))
+* **deps-desktop:** bump electron-builder in /stay_focus_desktop ([6febd2f](https://github.com/EarthPlayer1935/Stay_focus/commit/6febd2f2cd7078234e140082269d5cecee24c8cb))
+
 ## [2.5.15](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.14...v2.5.15) (2026-03-23)
 
 

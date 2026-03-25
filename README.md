@@ -2,6 +2,7 @@
 
 # Stay Focus
 
+✨ **[Visit the Official Website / 访问官网](https://earthplayer1935.github.io/Stay_focus/)** ✨
 A lightweight tool that adds a focus spotlight to any webpage or your entire screen (Desktop version) — helping you concentrate on what you're reading.
 
 ## Features

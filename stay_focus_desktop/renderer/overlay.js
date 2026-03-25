@@ -41,6 +41,17 @@ function hexToRgb(hex) {
   } : { r: 0, g: 0, b: 0 };
 }
 
+let cachedRgb = null;
+let lastBgColor = '';
+
+function getCachedRgb(hex) {
+  if (hex !== lastBgColor) {
+    lastBgColor = hex;
+    cachedRgb = hexToRgb(hex);
+  }
+  return cachedRgb;
+}
+
 function applyVisibility() {
   // Visible only when enabled AND auto-hide allows it
   overlayContainer.style.display = (isEnabled && autoHideVisible) ? 'block' : 'none';
@@ -69,7 +80,7 @@ function updateStyles() {
 
   overlayWindow.style.top = `${localY}px`;
 
-  const rgb = hexToRgb(bgColor);
+  const rgb = getCachedRgb(bgColor);
   const alpha = bgOpacity / 100;
 
   if (isHighlightMode) {
@@ -82,6 +93,8 @@ function updateStyles() {
   applyVisibility();
 }
 
+let rafPending = false;
+
 document.addEventListener('mousemove', (e) => {
   if (!isEnabled) return;
   
@@ -91,7 +104,13 @@ document.addEventListener('mousemove', (e) => {
   currentY = e.clientY - (windowHeight / 2);
   currentX = e.clientX - (windowWidth / 2);
   
-  updateStyles();
+  if (!rafPending) {
+    rafPending = true;
+    requestAnimationFrame(() => {
+      updateStyles();
+      rafPending = false;
+    });
+  }
 });
 
 // We continuously receive IPC position to hide residue if mouse leaves screen

@@ -4,7 +4,7 @@ const { autoUpdater } = require('electron-updater');
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
-const { execFile, spawn, execSync } = require('child_process');
+const { execFile, spawn } = require('child_process');
 
 const DEFAULT_SETTINGS = {
   enabled: true,
@@ -64,7 +64,6 @@ let psProcessesCallback = null;
 
 function ensurePsChild() {
   if (psQueryProcess) return;
-  fs.appendFileSync("debug.txt", "Spawning powershell\\n");
   psQueryProcess = spawn('powershell', ['-NoProfile', '-NonInteractive']);
   
   // Initialize the C# helper once
@@ -140,13 +139,11 @@ public class WinHelper {
 
   let buffer = '';
   psQueryProcess.stdout.on('data', (data) => {
-    fs.appendFileSync("debug.txt", "STDOUT: " + data.toString() + "\\n");
     buffer += data.toString();
     const lines = buffer.split('\n');
     while (lines.length > 1) {
       const line = lines.shift().trim();
       if (line.startsWith('RESULT:')) {
-        fs.appendFileSync("debug.txt", "PARSED RESULT\\n");
         const payload = line.substring(7);
         if (psQueryCallback) {
           const rects = payload.split('|').filter(Boolean).map(s => {
@@ -162,7 +159,6 @@ public class WinHelper {
           psQueryCallback = null;
         }
       } else if (line.startsWith('PROCESSES_RESULT:')) {
-        fs.appendFileSync("debug.txt", "PARSED PROCESSES_RESULT\\n");
         const payload = line.substring(17);
         if (psProcessesCallback) {
           const names = payload.split('|').filter(Boolean);
@@ -174,12 +170,9 @@ public class WinHelper {
     buffer = lines[0];
   });
   
-  psQueryProcess.stderr.on('data', (data) => {
-    fs.appendFileSync("debug.txt", "STDERR: " + data.toString() + "\\n");
-  });
+  psQueryProcess.stderr.on('data', () => {});
 
-  psQueryProcess.on('exit', (code) => {
-    fs.appendFileSync("debug.txt", "EXIT: " + code + "\\n");
+  psQueryProcess.on('exit', () => {
     psQueryProcess = null;
   });
 }
@@ -247,6 +240,14 @@ function pointInRect(px, py, { x, y, w, h }) {
   return px >= x && px <= x + w && py >= y && py <= y + h;
 }
 
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
 function stopAutoHideTimers() {
   if (slowTimer) { clearTimeout(slowTimer); slowTimer = null; }
   if (fastTimer) { clearInterval(fastTimer); fastTimer = null; }
@@ -262,39 +263,58 @@ function startAutoHideTimers() {
   let lastSentStateStr = null;
   let lastSentX = null;
   let lastSentY = null;
+  let lastWindowQueryTime = 0;
+
+  function broadcastIfChanged(state, x, y) {
+    const stateStr = typeof state === 'boolean' ? String(state) : JSON.stringify(state);
+    const isSignificantMove = lastSentX === null || Math.abs(x - lastSentX) > 2 || Math.abs(y - lastSentY) > 2;
+    const isStateChanged = stateStr !== lastSentStateStr;
+
+    if (isSignificantMove || isStateChanged) {
+      lastSentStateStr = stateStr;
+      lastSentX = x;
+      lastSentY = y;
+
+      overlayWindows.forEach(win => {
+        if (!win.isDestroyed()) {
+          win.webContents.send('sync-overlay-state', {
+            state: state,
+            mousePos: { x, y }
+          });
+        }
+      });
+    }
+  }
 
   function loop() {
     if (!currentSettings.enabled) return;
-    queryWindowRects(names || [], (rects) => {
-      cachedWindowRects = rects;
-      
-      const { x, y } = screen.getCursorScreenPoint();
-      const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
-      
-      const state = activeRect || (names && names.length > 0 ? false : true);
-      const stateStr = JSON.stringify(state);
-      
-      // Delta state syncing: limit IPC broadcasts to actual changes or significant mouse moves
-      const isSignificantMove = lastSentX === null || Math.abs(x - lastSentX) > 2 || Math.abs(y - lastSentY) > 2;
-      const isStateChanged = stateStr !== lastSentStateStr;
 
-      if (isSignificantMove || isStateChanged) {
-        lastSentStateStr = stateStr;
-        lastSentX = x;
-        lastSentY = y;
+    const { x, y } = screen.getCursorScreenPoint();
 
-        overlayWindows.forEach(win => {
-          if (!win.isDestroyed()) {
-            win.webContents.send('sync-overlay-state', {
-              state: state,
-              mousePos: { x, y }
-            });
-          }
-        });
-      }
-      
+    if (!currentSettings.autoHide) {
+      broadcastIfChanged(true, x, y);
       slowTimer = setTimeout(loop, 30);
-    });
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastWindowQueryTime >= 500) {
+      // Refresh window positions every 500ms instead of every 30ms
+      lastWindowQueryTime = now;
+      queryWindowRects(names || [], (rects) => {
+        cachedWindowRects = rects;
+        const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
+        const state = activeRect || (names && names.length > 0 ? false : true);
+        broadcastIfChanged(state, x, y);
+        slowTimer = setTimeout(loop, 30);
+      });
+    } else {
+      // Use cached window rects between queries
+      const activeRect = cachedWindowRects.find(r => pointInRect(x, y, r) && r.isForeground);
+      const state = activeRect || (names && names.length > 0 ? false : true);
+      broadcastIfChanged(state, x, y);
+      slowTimer = setTimeout(loop, 30);
+    }
   }
   
   loop();
@@ -318,7 +338,7 @@ function createWindows() {
           if (!win.isDestroyed()) win.moveTop();
         });
       }
-    }, 500);
+    }, 2000);
   }
 
   screen.on('display-added', handleDisplayChange);
@@ -512,7 +532,7 @@ function registerMacScreenshotShortcut(enable) {
 }
 
 
-ipcMain.handle('get-os-info', () => {
+ipcMain.handle('get-os-info', async () => {
   const os = require('os');
   const release = os.release().split('.');
   const build = parseInt(release[2] || '0', 10);
@@ -521,7 +541,11 @@ ipcMain.handle('get-os-info', () => {
   let isAdmin = false;
   if (process.platform === 'win32') {
     try {
-      execSync('net session', { stdio: 'ignore' });
+      await new Promise((resolve, reject) => {
+        execFile('net', ['session'], { stdio: 'ignore' }, (err) => {
+          err ? reject(err) : resolve();
+        });
+      });
       isAdmin = true;
     } catch (e) {
       isAdmin = false;
@@ -540,7 +564,7 @@ ipcMain.handle('get-settings', () => currentSettings);
 ipcMain.on('save-settings', (event, newSettings) => {
   const oldKbCtrl = currentSettings.keyboardControl;
   const oldAutoHide = currentSettings.autoHide;
-  const oldProcesses = JSON.stringify(currentSettings.targetProcesses);
+  const oldProcesses = [...currentSettings.targetProcesses];
   const oldEnabled = currentSettings.enabled;
   const oldAntiScreenshot = currentSettings.antiScreenshot;
 
@@ -569,7 +593,7 @@ ipcMain.on('save-settings', (event, newSettings) => {
   if (
     oldAutoHide !== currentSettings.autoHide ||
     oldEnabled !== currentSettings.enabled ||
-    oldProcesses !== JSON.stringify(currentSettings.targetProcesses)
+    !arraysEqual(oldProcesses, currentSettings.targetProcesses)
   ) {
     refreshAutoHide();
   }

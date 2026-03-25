@@ -202,11 +202,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   let targetProcesses = Array.isArray(settings.targetProcesses) ? [...settings.targetProcesses] : [];
 
   function renderTags() {
-    processTags.innerHTML = '';
+    processTags.textContent = '';
     if (targetProcesses.length === 0) {
       processHint.style.display = 'block';
     } else {
       processHint.style.display = 'none';
+      const fragment = document.createDocumentFragment();
       targetProcesses.forEach((name, idx) => {
         const tag = document.createElement('span');
         tag.className = 'process-tag';
@@ -215,17 +216,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         removeBtn.className = 'tag-remove';
         removeBtn.textContent = '×';
         removeBtn.title = 'Remove';
-        removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          targetProcesses.splice(idx, 1);
-          renderTags();
-          updateSettings({ targetProcesses: [...targetProcesses] });
-        });
+        removeBtn.dataset.index = idx;
         tag.appendChild(removeBtn);
-        processTags.appendChild(tag);
+        fragment.appendChild(tag);
       });
+      processTags.appendChild(fragment);
     }
   }
+
+  // Event delegation for tag removal
+  processTags.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.tag-remove');
+    if (removeBtn) {
+      e.stopPropagation();
+      const idx = parseInt(removeBtn.dataset.index, 10);
+      targetProcesses.splice(idx, 1);
+      renderTags();
+      updateSettings({ targetProcesses: [...targetProcesses] });
+    }
+  });
 
   function addProcess() {
     const raw = processInput.value.trim();

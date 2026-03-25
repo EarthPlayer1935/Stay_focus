@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [2.5.17](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.16...v2.5.17) (2026-03-25)
+
+
+### 🐛 Bug Fixes
+
+* **overlay:** ensure global mode is active when autoHide is disabled ([eb9e58b](https://github.com/EarthPlayer1935/Stay_focus/commit/eb9e58b39bbf959361ac867dc6c7dc76d4c30ccc))
+
+
+### 🔧 Chores
+
+* **release:** 2.5.16 ([4423671](https://github.com/EarthPlayer1935/Stay_focus/commit/442367174308c00a41f7e97f2648ad4d070cace2))
+
+
+### ⚡️ Performance Improvements
+
+* optimize polling loop, remove sync debug I/O, and improve rendering ([a66079d](https://github.com/EarthPlayer1935/Stay_focus/commit/a66079dddf6468c0a2c152d427c98e8565f4dded))
+
 ## [2.5.16](https://github.com/EarthPlayer1935/Stay_focus/compare/v2.5.15...v2.5.16) (2026-03-25)
 
 

@@ -281,6 +281,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   processInput.addEventListener('focus', refreshProcessDropdown);
+  processInput.addEventListener('click', refreshProcessDropdown);
 
   processInput.addEventListener('input', () => {
     const val = processInput.value.trim().toLowerCase();
